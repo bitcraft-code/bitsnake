@@ -19,8 +19,11 @@
     "test": "jest"
   },
   "dependencies": {
+    "@expo-google-fonts/press-start-2p": "^0.4.1",
     "@react-native-async-storage/async-storage": "1.21.0",
     "expo": "~50.0.0",
+    "expo-font": "~11.10.3",
+    "expo-splash-screen": "~0.26.5",
     "i18next": "^25.8.17",
     "react": "18.2.0",
     "react-i18next": "^16.5.6",

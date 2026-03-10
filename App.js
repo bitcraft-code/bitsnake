@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   ScrollView,
   Dimensions,
@@ -9,11 +8,15 @@ import {
   Pressable,
 } from 'react-native';
 import { registerRootComponent } from 'expo';
+import { useFonts } from '@expo-google-fonts/press-start-2p/useFonts';
+import { PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import './src/i18n';
 import { loadSavedLanguage, setSavedLanguage, supportedLngs } from './src/i18n';
 import { useTranslation } from 'react-i18next';
+import { FONT_FAMILY } from './src/theme';
 import GameBoard from './src/components/GameBoard';
+import RetroText from './src/components/RetroText';
 import MenuScreen from './src/screens/MenuScreen';
 import GameOverScreen from './src/screens/GameOverScreen';
 
@@ -40,7 +43,7 @@ const OptionCheckbox = ({ value, onValueChange, style }) => (
       style,
     ]}
   >
-    {value ? <Text style={styles.optionCheckboxMark}>✓</Text> : null}
+    {value ? <RetroText style={styles.optionCheckboxMark}>✓</RetroText> : null}
   </Pressable>
 );
 
@@ -62,6 +65,7 @@ const OBSTACLE_COUNT_MIN = 3;
 const OBSTACLE_COUNT_MAX = 7;
 
 export default function App() {
+  const [fontsLoaded, fontError] = useFonts({ PressStart2P_400Regular });
   const { t, i18n } = useTranslation();
   const [gameState, setGameState] = useState('menu');
   const [difficulty, setDifficulty] = useState('medium');
@@ -405,6 +409,8 @@ export default function App() {
     // Jogo permanece em pausa; o usuário retoma pelo botão ▶/❚❚ do D-pad
   };
 
+  if (!fontsLoaded && !fontError) return null;
+
   // RENDERIZAÇÃO CONDICIONAL BASEADA NO ESTADO DO JOGO
   if (gameState === 'menu') {
     return <MenuScreen onStart={initGame} />;
@@ -426,24 +432,24 @@ export default function App() {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerBlock}>
-          <Text style={styles.scoreLabel}>{t('game.score')}</Text>
-          <Text style={styles.score}>{score}</Text>
+          <RetroText style={styles.scoreLabel}>{t('game.score')}</RetroText>
+          <RetroText style={styles.score}>{score}</RetroText>
         </View>
         <View style={styles.headerBlock}>
-          <Text style={styles.timeLabel}>{t('game.time')}</Text>
-          <Text style={styles.timeValue}>
+          <RetroText style={styles.timeLabel}>{t('game.time')}</RetroText>
+          <RetroText style={styles.timeValue}>
             {Math.floor(elapsedSeconds / 60)}:{(elapsedSeconds % 60).toString().padStart(2, '0')}
-          </Text>
+          </RetroText>
         </View>
         <View style={styles.headerBlock}>
-          <Text style={styles.highScoreLabel}>{t('game.record')}</Text>
-          <Text style={styles.highScoreValue}>{highScore}</Text>
+          <RetroText style={styles.highScoreLabel}>{t('game.record')}</RetroText>
+          <RetroText style={styles.highScoreValue}>{highScore}</RetroText>
         </View>
         <Pressable
           onPress={openOptions}
           style={({ pressed }) => [styles.optionsButton, pressed && styles.btnPressed]}
         >
-          <Text style={styles.optionsButtonText}>⚙</Text>
+          <RetroText style={styles.optionsButtonText}>⚙</RetroText>
         </Pressable>
       </View>
 
@@ -466,9 +472,9 @@ export default function App() {
           pressed && styles.btnPressed,
         ]}
       >
-        <Text style={[styles.playPauseButtonText, paused && styles.playPauseButtonTextPaused]}>
+        <RetroText style={[styles.playPauseButtonText, paused && styles.playPauseButtonTextPaused]}>
           {paused ? t('game.play') : t('game.pause')}
-        </Text>
+        </RetroText>
       </Pressable>
 
       <View style={styles.dpadContainer}>
@@ -476,7 +482,7 @@ export default function App() {
           onPress={() => handleDirectionChange('up')}
           style={({ pressed }) => [styles.dpadBtn, pressed && styles.dpadBtnPressed]}
         >
-          <Text style={styles.arrow}>▲</Text>
+          <RetroText style={styles.arrow}>▲</RetroText>
         </Pressable>
 
         <View style={styles.middleRow}>
@@ -484,14 +490,14 @@ export default function App() {
             onPress={() => handleDirectionChange('left')}
             style={({ pressed }) => [styles.dpadBtn, pressed && styles.dpadBtnPressed]}
           >
-            <Text style={styles.arrow}>◀</Text>
+            <RetroText style={styles.arrow}>◀</RetroText>
           </Pressable>
           <View style={styles.dpadSpacer} />
           <Pressable
             onPress={() => handleDirectionChange('right')}
             style={({ pressed }) => [styles.dpadBtn, pressed && styles.dpadBtnPressed]}
           >
-            <Text style={styles.arrow}>▶</Text>
+            <RetroText style={styles.arrow}>▶</RetroText>
           </Pressable>
         </View>
 
@@ -499,7 +505,7 @@ export default function App() {
           onPress={() => handleDirectionChange('down')}
           style={({ pressed }) => [styles.dpadBtn, pressed && styles.dpadBtnPressed]}
         >
-          <Text style={styles.arrow}>▼</Text>
+          <RetroText style={styles.arrow}>▼</RetroText>
         </Pressable>
       </View>
 
@@ -507,7 +513,7 @@ export default function App() {
         onPress={goMenu}
         style={({ pressed }) => [styles.menuButton, pressed && styles.btnPressed]}
       >
-        <Text style={styles.menuButtonText}>{t('game.mainMenu')}</Text>
+        <RetroText style={styles.menuButtonText}>{t('game.mainMenu')}</RetroText>
       </Pressable>
 
       <Modal
@@ -520,25 +526,25 @@ export default function App() {
           <Pressable style={styles.drawerBackdrop} onPress={closeOptions} />
           <View style={styles.drawerPanel}>
             <View style={styles.drawerHeader}>
-              <Text style={styles.drawerTitle}>{t('game.options')}</Text>
+              <RetroText style={styles.drawerTitle}>{t('game.options')}</RetroText>
               <Pressable
                 onPress={closeOptions}
                 style={({ pressed }) => [styles.drawerCloseBtn, pressed && styles.btnPressed]}
                 hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
               >
-                <Text style={styles.drawerCloseText}>✕</Text>
+                <RetroText style={styles.drawerCloseText}>✕</RetroText>
               </Pressable>
             </View>
             <ScrollView style={styles.drawerContent}>
               <View style={styles.optionRow}>
-                <Text style={styles.optionLabel}>{t('game.optionGhostWalls')}</Text>
+                <RetroText style={styles.optionLabel}>{t('game.optionGhostWalls')}</RetroText>
                 <OptionCheckbox
                   value={wallMode === 'wrap'}
                   onValueChange={(value) => setWallMode(value ? 'wrap' : 'normal')}
                 />
               </View>
               <View style={styles.optionRow}>
-                <Text style={styles.optionLabel}>{t('game.optionObstacles')}</Text>
+                <RetroText style={styles.optionLabel}>{t('game.optionObstacles')}</RetroText>
                 <OptionCheckbox
                   value={obstaclesEnabled}
                   onValueChange={(value) => {
@@ -558,7 +564,7 @@ export default function App() {
                 />
               </View>
               <View style={styles.optionRow}>
-                <Text style={[styles.optionLabel, styles.optionLabelNoFlex]}>{t('game.optionSpeed')}</Text>
+                <RetroText style={[styles.optionLabel, styles.optionLabelNoFlex]}>{t('game.optionSpeed')}</RetroText>
                 <View style={styles.languageButtonsRow}>
                   {SPEED_LEVELS.map((level) => (
                     <Pressable
@@ -570,15 +576,15 @@ export default function App() {
                         pressed && styles.btnPressed,
                       ]}
                     >
-                      <Text style={[styles.langBtnText, speedLevel === level && styles.langBtnTextActive]}>
+                      <RetroText style={[styles.langBtnText, speedLevel === level && styles.langBtnTextActive]}>
                         {level}
-                      </Text>
+                      </RetroText>
                     </Pressable>
                   ))}
                 </View>
               </View>
               <View style={styles.optionRow}>
-                <Text style={[styles.optionLabel, styles.optionLabelNoFlex]}>{t('menu.language')}</Text>
+                <RetroText style={[styles.optionLabel, styles.optionLabelNoFlex]}>{t('menu.language')}</RetroText>
                 <View style={styles.languageButtonsRow}>
                   {supportedLngs.map((lng) => (
                     <Pressable
@@ -590,9 +596,9 @@ export default function App() {
                         pressed && styles.btnPressed,
                       ]}
                     >
-                      <Text style={[styles.langBtnText, i18n.language === lng && styles.langBtnTextActive]}>
+                      <RetroText style={[styles.langBtnText, i18n.language === lng && styles.langBtnTextActive]}>
                         {languageLabels[lng]}
-                      </Text>
+                      </RetroText>
                     </Pressable>
                   ))}
                 </View>
@@ -642,7 +648,8 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   optionsButtonText: {
-    fontSize: 22,
+    fontFamily: FONT_FAMILY,
+    fontSize: 18,
     color: '#ff8800',
   },
   drawerOverlay: {
@@ -672,8 +679,8 @@ const styles = StyleSheet.create({
     borderBottomColor: '#1a3322',
   },
   drawerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontFamily: FONT_FAMILY,
+    fontSize: 14,
     color: '#00ff41',
     letterSpacing: 2,
     textTransform: 'uppercase',
@@ -682,9 +689,9 @@ const styles = StyleSheet.create({
     padding: SPACING / 2,
   },
   drawerCloseText: {
-    fontSize: 20,
+    fontFamily: FONT_FAMILY,
+    fontSize: 16,
     color: '#ff8800',
-    fontWeight: 'bold',
   },
   drawerContent: {
     flex: 1,
@@ -700,7 +707,8 @@ const styles = StyleSheet.create({
     borderBottomColor: '#1a3322',
   },
   optionLabel: {
-    fontSize: 14,
+    fontFamily: FONT_FAMILY,
+    fontSize: 11,
     color: '#e0e0e0',
     flex: 1,
     marginRight: SPACING,
@@ -727,9 +735,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 255, 65, 0.22)',
   },
   optionCheckboxMark: {
+    fontFamily: FONT_FAMILY,
     color: '#000',
-    fontSize: 15,
-    fontWeight: '900',
+    fontSize: 12,
     textShadowColor: 'rgba(0,0,0,0.3)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 0,
@@ -752,54 +760,55 @@ const styles = StyleSheet.create({
     backgroundColor: '#0a2a1a',
   },
   langBtnText: {
-    fontSize: 11,
-    fontWeight: '700',
+    fontFamily: FONT_FAMILY,
+    fontSize: 9,
     color: '#4a6a4a',
     letterSpacing: 1,
   },
   langBtnTextActive: {
+    fontFamily: FONT_FAMILY,
     color: '#00ff41',
   },
   scoreLabel: {
-    fontSize: 10,
-    fontWeight: '700',
+    fontFamily: FONT_FAMILY,
+    fontSize: 9,
     color: '#4a6a4a',
     letterSpacing: 2,
     textTransform: 'uppercase',
   },
   score: {
-    fontSize: 28,
-    fontWeight: '900',
+    fontFamily: FONT_FAMILY,
+    fontSize: 22,
     color: '#00ff41',
     textShadowColor: '#00ff41',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 8,
   },
   timeLabel: {
-    fontSize: 10,
-    fontWeight: '700',
+    fontFamily: FONT_FAMILY,
+    fontSize: 9,
     color: '#4a4a6a',
     letterSpacing: 2,
     textTransform: 'uppercase',
   },
   timeValue: {
-    fontSize: 28,
-    fontWeight: '900',
+    fontFamily: FONT_FAMILY,
+    fontSize: 22,
     color: '#4488ff',
     textShadowColor: '#4488ff',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 8,
   },
   highScoreLabel: {
-    fontSize: 10,
-    fontWeight: '700',
+    fontFamily: FONT_FAMILY,
+    fontSize: 9,
     color: '#5a4a2a',
     letterSpacing: 2,
     textTransform: 'uppercase',
   },
   highScoreValue: {
-    fontSize: 28,
-    fontWeight: '900',
+    fontFamily: FONT_FAMILY,
+    fontSize: 22,
     color: '#ff8800',
     textShadowColor: '#ff8800',
     textShadowOffset: { width: 0, height: 0 },
@@ -829,13 +838,14 @@ const styles = StyleSheet.create({
     shadowColor: '#00ff41',
   },
   playPauseButtonText: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontFamily: FONT_FAMILY,
+    fontSize: 13,
     color: '#ff8800',
     letterSpacing: 2,
     textTransform: 'uppercase',
   },
   playPauseButtonTextPaused: {
+    fontFamily: FONT_FAMILY,
     color: '#00ff41',
   },
   dpadContainer: {
@@ -876,9 +886,9 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   arrow: {
-    fontSize: 24,
+    fontFamily: FONT_FAMILY,
+    fontSize: 20,
     color: '#00ff41',
-    fontWeight: 'bold',
   },
   menuButton: {
     borderWidth: 1,
@@ -895,9 +905,9 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   menuButtonText: {
+    fontFamily: FONT_FAMILY,
     color: '#ff3333',
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 11,
     letterSpacing: 2,
     textTransform: 'uppercase',
   },

@@ -1,37 +1,38 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import RetroText from '../components/RetroText';
 
 const GameOverScreen = ({ score, highScore, onRestart, onMenu }) => {
   const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>GAME OVER</Text>
+      <RetroText style={styles.title}>GAME OVER</RetroText>
       <View style={styles.titleLine} />
 
       <View style={styles.scoreCard}>
-        <Text style={styles.scoreLabel}>{t('gameOver.yourScore')}</Text>
-        <Text style={styles.scoreValue}>{score}</Text>
+        <RetroText style={styles.scoreLabel}>{t('gameOver.yourScore')}</RetroText>
+        <RetroText style={styles.scoreValue}>{score}</RetroText>
 
         {score >= highScore && score > 0 && (
           <View style={styles.newRecordBadge}>
-            <Text style={styles.newRecordText}>{t('gameOver.newRecord')}</Text>
+            <RetroText style={styles.newRecordText}>{t('gameOver.newRecord')}</RetroText>
           </View>
         )}
       </View>
 
       <View style={styles.highScoreCard}>
-        <Text style={styles.highScoreLabel}>{t('gameOver.highScore')}</Text>
-        <Text style={styles.highScoreValue}>{highScore}</Text>
+        <RetroText style={styles.highScoreLabel}>{t('gameOver.highScore')}</RetroText>
+        <RetroText style={styles.highScoreValue}>{highScore}</RetroText>
       </View>
 
       <TouchableOpacity onPress={onRestart} style={styles.restartButton} activeOpacity={0.7}>
-        <Text style={styles.buttonText}>{t('gameOver.playAgain')}</Text>
+        <RetroText style={styles.buttonText}>{t('gameOver.playAgain')}</RetroText>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={onMenu} style={styles.menuButton} activeOpacity={0.7}>
-        <Text style={styles.buttonTextSecondary}>{t('gameOver.backToMenu')}</Text>
+        <RetroText style={styles.buttonTextSecondary}>{t('gameOver.backToMenu')}</RetroText>
       </TouchableOpacity>
     </View>
   );
@@ -46,8 +47,7 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   title: {
-    fontSize: 44,
-    fontWeight: '900',
+    fontSize: 34,
     color: '#ff3333',
     letterSpacing: 4,
     textShadowColor: '#ff3333',
@@ -78,15 +78,14 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   scoreLabel: {
-    fontSize: 12,
+    fontSize: 10,
     color: '#4a6a4a',
     marginBottom: 8,
     letterSpacing: 2,
     textTransform: 'uppercase',
   },
   scoreValue: {
-    fontSize: 52,
-    fontWeight: '900',
+    fontSize: 40,
     color: '#00ff41',
     textShadowColor: '#00ff41',
     textShadowOffset: { width: 0, height: 0 },
@@ -107,8 +106,7 @@ const styles = StyleSheet.create({
   },
   newRecordText: {
     color: '#ff8800',
-    fontSize: 12,
-    fontWeight: 'bold',
+    fontSize: 10,
     letterSpacing: 2,
     textTransform: 'uppercase',
   },
@@ -123,15 +121,14 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   highScoreLabel: {
-    fontSize: 12,
+    fontSize: 10,
     color: '#4a5a6a',
     marginBottom: 6,
     letterSpacing: 2,
     textTransform: 'uppercase',
   },
   highScoreValue: {
-    fontSize: 32,
-    fontWeight: '900',
+    fontSize: 24,
     color: '#ff8800',
     textShadowColor: '#ff8800',
     textShadowOffset: { width: 0, height: 0 },
@@ -166,15 +163,13 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#00ff41',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 13,
     letterSpacing: 2,
     textTransform: 'uppercase',
   },
   buttonTextSecondary: {
     color: '#ff3333',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 13,
     letterSpacing: 2,
     textTransform: 'uppercase',
   },

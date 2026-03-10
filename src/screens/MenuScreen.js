@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import RetroText from '../components/RetroText';
 
 const MenuScreen = ({ onStart }) => {
   const { t } = useTranslation();
@@ -8,25 +9,25 @@ const MenuScreen = ({ onStart }) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.titleBox}>
-        <Text style={styles.title}>BITSNAKE</Text>
+        <RetroText style={styles.title}>BITSNAKE</RetroText>
         <View style={styles.titleGlow} />
       </View>
-      <Text style={styles.subtitle}>{t('menu.subtitle')}</Text>
+      <RetroText style={styles.subtitle}>{t('menu.subtitle')}</RetroText>
 
       <TouchableOpacity onPress={onStart} style={styles.startButton} activeOpacity={0.7}>
-        <Text style={styles.buttonText}>{t('menu.startGame')}</Text>
+        <RetroText style={styles.buttonText}>{t('menu.startGame')}</RetroText>
       </TouchableOpacity>
 
       <View style={styles.instructions}>
-        <Text style={styles.instructionTitle}>{t('menu.howToPlay')}</Text>
-        <Text style={styles.instructionsText}>
+        <RetroText style={styles.instructionTitle}>{t('menu.howToPlay')}</RetroText>
+        <RetroText style={styles.instructionsText}>
           {t('menu.instruction1')}{'\n'}
           {t('menu.instruction2')}{'\n'}
           {t('menu.instruction3')}
-        </Text>
+        </RetroText>
       </View>
 
-      <Text style={styles.footer}>BitCraft Team</Text>
+      <RetroText style={styles.footer}>BitCraft Team</RetroText>
     </ScrollView>
   );
 };
@@ -44,8 +45,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 52,
-    fontWeight: '900',
+    fontSize: 40,
     color: '#00ff41',
     letterSpacing: 6,
     textShadowColor: '#00ff41',
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: 11,
     color: '#4a6a4a',
     marginBottom: 36,
     marginTop: 8,
@@ -87,8 +87,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#00ff41',
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 14,
     letterSpacing: 2,
     textTransform: 'uppercase',
   },
@@ -102,21 +101,20 @@ const styles = StyleSheet.create({
     width: '90%',
   },
   instructionTitle: {
-    fontSize: 13,
-    fontWeight: 'bold',
+    fontSize: 11,
     color: '#00ff41',
     marginBottom: 10,
     letterSpacing: 2,
     textTransform: 'uppercase',
   },
   instructionsText: {
-    fontSize: 13,
+    fontSize: 11,
     color: '#5a7a5a',
-    lineHeight: 22,
+    lineHeight: 18,
   },
   footer: {
     marginTop: 32,
-    fontSize: 10,
+    fontSize: 9,
     color: '#1a2a1a',
     letterSpacing: 3,
     textTransform: 'uppercase',
