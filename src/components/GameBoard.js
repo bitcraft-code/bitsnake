@@ -6,21 +6,38 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const FOOD_OPACITY = { 1: 0.4, 2: 0.7, 3: 1 };
 
-export const GameBoard = ({ snake, foods = [], boardSize, wallMode = 'normal' }) => {
+export const GameBoard = ({
+  snake,
+  foods = [],
+  boardSize,
+  wallMode = 'normal',
+  blinkTick = 0,
+  blinkStartMs = 4000,
+  blinkIntervalMs = 200,
+}) => {
   const maxWidth = Math.min(SCREEN_WIDTH - 30, 380);
   const cellSize = Math.floor((maxWidth - BOARD_BORDER * 2) / boardSize);
   const boardWidth = cellSize * boardSize + BOARD_BORDER * 2;
   const ghostWalls = wallMode === 'wrap';
+  const now = Date.now();
 
   const isSnakeHead = (r, c) => snake[0]?.row === r && snake[0]?.col === c;
   const isSnakeBody = (r, c) => snake.slice(1).some((s) => s.row === r && s.col === c);
   const getFoodAt = (r, c) => foods.find((f) => f.row === r && f.col === c);
+
+  const isFoodVisible = (food) => {
+    if (!food.spawnTime) return true;
+    const elapsed = now - food.spawnTime;
+    if (elapsed < blinkStartMs) return true;
+    return Math.floor(elapsed / blinkIntervalMs) % 2 === 0;
+  };
 
   const getCellStyle = (r, c) => {
     if (isSnakeHead(r, c)) return styles.snakeHead;
     if (isSnakeBody(r, c)) return styles.snakeBody;
     const food = getFoodAt(r, c);
     if (food) {
+      if (!isFoodVisible(food)) return styles.emptyCell;
       const opacity = FOOD_OPACITY[food.points] ?? 1;
       return { ...styles.food, backgroundColor: `rgba(255, 51, 51, ${opacity})` };
     }

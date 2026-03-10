@@ -35,6 +35,14 @@ const languageLabels = { en: 'EN', de: 'DE', fr: 'FR', es: 'ES', pt: 'PT' };
 const SPEED_LEVEL_MS = { 1: 250, 2: 200, 3: 150, 4: 100, 5: 70 };
 const SPEED_LEVELS = [1, 2, 3, 4, 5];
 
+// Comidas 2 e 3 pontos: piscam após X s e expiram após Y s
+const FOOD_BLINK_START_MS = 4000;
+const FOOD_EXPIRE_MS = 8000;
+const FOOD_BLINK_INTERVAL_MS = 200;
+
+// Se ficar X s sem nenhuma comida visível, gera novas (sem pontuar)
+const NO_FOOD_SPAWN_MS = 5000;
+
 export default function App() {
   const { t, i18n } = useTranslation();
   const [gameState, setGameState] = useState('menu');
@@ -51,10 +59,12 @@ export default function App() {
   const [paused, setPaused] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [speedLevel, setSpeedLevel] = useState(3);
+  const [blinkTick, setBlinkTick] = useState(0);
 
   const gameLoopRef = useRef(null);
   const nextDirectionRef = useRef('right');
   const foodsRef = useRef([]);
+  const snakeRef = useRef([]);
 
   useEffect(() => {
     loadHighScore();
@@ -64,6 +74,10 @@ export default function App() {
   useEffect(() => {
     foodsRef.current = foods;
   }, [foods]);
+
+  useEffect(() => {
+    snakeRef.current = snake;
+  }, [snake]);
 
   const loadHighScore = async () => {
     try {
@@ -126,10 +140,23 @@ export default function App() {
       if (attempts > 200) continue;
       occupied.add(`${row},${col}`);
       const points = 1 + Math.floor(Math.random() * 3);
-      result.push({ row, col, points });
+      const item = { row, col, points };
+      if (points >= 2) item.spawnTime = Date.now();
+      result.push(item);
     }
 
     return result;
+  };
+
+  const removeExpiredFoods = () => {
+    const now = Date.now();
+    setFoods((prev) => {
+      const next = prev.filter(
+        (f) => !f.spawnTime || now - f.spawnTime < FOOD_EXPIRE_MS
+      );
+      foodsRef.current = next;
+      return next;
+    });
   };
 
   const moveSnake = () => {
@@ -216,13 +243,35 @@ export default function App() {
   useEffect(() => {
     if (gameState !== 'playing' || paused) return;
 
-    gameLoopRef.current = setInterval(
-      moveSnake,
-      SPEED_LEVEL_MS[speedLevel],
-    );
+    const tick = () => {
+      moveSnake();
+      removeExpiredFoods();
+    };
+    gameLoopRef.current = setInterval(tick, SPEED_LEVEL_MS[speedLevel]);
 
     return () => clearInterval(gameLoopRef.current);
   }, [gameState, paused, speedLevel]);
+
+  useEffect(() => {
+    if (gameState !== 'playing' || paused) return;
+    const hasExpirable = foods.some((f) => f.spawnTime != null);
+    if (!hasExpirable) return;
+    const blinkInterval = setInterval(
+      () => setBlinkTick((t) => t + 1),
+      FOOD_BLINK_INTERVAL_MS
+    );
+    return () => clearInterval(blinkInterval);
+  }, [gameState, paused, foods]);
+
+  useEffect(() => {
+    if (gameState !== 'playing' || paused || foods.length > 0) return;
+    const timer = setTimeout(() => {
+      const newFoods = generateFoods(snakeRef.current);
+      setFoods(newFoods);
+      foodsRef.current = newFoods;
+    }, NO_FOOD_SPAWN_MS);
+    return () => clearTimeout(timer);
+  }, [gameState, paused, foods.length]);
 
   const handleDirectionChange = (newDir) => {
     if (!['up', 'down', 'left', 'right'].includes(newDir)) return;
@@ -291,7 +340,15 @@ export default function App() {
         </Pressable>
       </View>
 
-      <GameBoard snake={snake} foods={foods} boardSize={boardSize} wallMode={wallMode} />
+      <GameBoard
+        snake={snake}
+        foods={foods}
+        boardSize={boardSize}
+        wallMode={wallMode}
+        blinkTick={blinkTick}
+        blinkStartMs={FOOD_BLINK_START_MS}
+        blinkIntervalMs={FOOD_BLINK_INTERVAL_MS}
+      />
 
       <Pressable
         onPress={togglePause}
