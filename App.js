@@ -227,7 +227,7 @@ export default function App() {
 
   const closeOptions = () => {
     setOptionsOpen(false);
-    setPaused(false);
+    // Jogo permanece em pausa; o usuário retoma pelo botão ▶/❚❚ do D-pad
   };
 
   // RENDERIZAÇÃO CONDICIONAL BASEADA NO ESTADO DO JOGO
