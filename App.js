@@ -86,7 +86,7 @@ export default function App() {
     setDirection('right');
     setNextDirection('right');
     nextDirectionRef.current = 'right';
-    setPaused(false);
+    setPaused(true);
     setOptionsOpen(false);
     setGameState('playing');
   };
@@ -270,6 +270,16 @@ export default function App() {
 
       <GameBoard snake={snake} food={food} boardSize={boardSize} wallMode={wallMode} />
 
+      <TouchableOpacity
+        onPress={togglePause}
+        style={[styles.playPauseButton, paused && styles.playPauseButtonPaused]}
+        activeOpacity={0.7}
+      >
+        <Text style={[styles.playPauseButtonText, paused && styles.playPauseButtonTextPaused]}>
+          {paused ? t('game.play') : t('game.pause')}
+        </Text>
+      </TouchableOpacity>
+
       <View style={styles.dpadContainer}>
         <TouchableOpacity
           onPress={() => handleDirectionChange('up')}
@@ -287,18 +297,7 @@ export default function App() {
           >
             <Text style={styles.arrow}>◀</Text>
           </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={togglePause}
-            activeOpacity={0.7}
-            style={[
-              styles.dpadCenter,
-              paused && styles.dpadCenterPaused,
-            ]}
-          >
-            <Text style={styles.centerIcon}>{paused ? '▶' : '❚❚'}</Text>
-          </TouchableOpacity>
-
+          <View style={styles.dpadSpacer} />
           <TouchableOpacity
             onPress={() => handleDirectionChange('right')}
             activeOpacity={0.7}
@@ -483,14 +482,51 @@ const styles = StyleSheet.create({
     textShadowRadius: 8,
   },
 
+  playPauseButton: {
+    width: '92%',
+    paddingVertical: 14,
+    marginTop: 8,
+    marginBottom: 8,
+    backgroundColor: '#1a1200',
+    borderWidth: 1,
+    borderColor: '#ff8800',
+    borderRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#ff8800',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  playPauseButtonPaused: {
+    borderColor: '#00ff41',
+    backgroundColor: '#0a1a0a',
+    shadowColor: '#00ff41',
+  },
+  playPauseButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#ff8800',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+  },
+  playPauseButtonTextPaused: {
+    color: '#00ff41',
+  },
   dpadContainer: {
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: 0,
     marginBottom: 18,
   },
   middleRow: {
     flexDirection: 'row',
     marginVertical: 4,
+    alignItems: 'center',
+  },
+  dpadSpacer: {
+    width: 70,
+    marginHorizontal: 0,
   },
   dpadBtn: {
     width: 62,
@@ -508,38 +544,11 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 3,
   },
-  dpadCenter: {
-    width: 58,
-    height: 58,
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: '#ff8800',
-    backgroundColor: '#1a1200',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 6,
-    shadowColor: '#ff8800',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  dpadCenterPaused: {
-    borderColor: '#00ff41',
-    backgroundColor: '#0a1a0a',
-    shadowColor: '#00ff41',
-  },
   arrow: {
     fontSize: 24,
     color: '#00ff41',
     fontWeight: 'bold',
   },
-  centerIcon: {
-    fontSize: 14,
-    color: '#ff8800',
-    fontWeight: 'bold',
-  },
-
   menuButton: {
     borderWidth: 1,
     borderColor: '#ff3333',

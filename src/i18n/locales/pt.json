@@ -14,7 +14,9 @@
     "record": "Recorde:",
     "mainMenu": "🏠 Menu Principal",
     "options": "Opções",
-    "optionGhostWalls": "Paredes fantasmas"
+    "optionGhostWalls": "Paredes fantasmas",
+    "play": "Continuar",
+    "pause": "Pausar"
   },
   "gameOver": {
     "title": "💀 Game Over!",

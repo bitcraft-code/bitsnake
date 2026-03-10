@@ -14,7 +14,9 @@
     "record": "Rekord:",
     "mainMenu": "🏠 Hauptmenü",
     "options": "Optionen",
-    "optionGhostWalls": "Geisterwände"
+    "optionGhostWalls": "Geisterwände",
+    "play": "Weiter",
+    "pause": "Pause"
   },
   "gameOver": {
     "title": "💀 Game Over!",

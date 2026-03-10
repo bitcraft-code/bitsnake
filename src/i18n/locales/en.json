@@ -14,7 +14,9 @@
     "record": "Record:",
     "mainMenu": "🏠 Main Menu",
     "options": "Options",
-    "optionGhostWalls": "Ghost walls"
+    "optionGhostWalls": "Ghost walls",
+    "play": "Continue",
+    "pause": "Pause"
   },
   "gameOver": {
     "title": "💀 Game Over!",

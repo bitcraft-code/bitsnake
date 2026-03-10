@@ -14,7 +14,9 @@
     "record": "Record :",
     "mainMenu": "🏠 Menu principal",
     "options": "Options",
-    "optionGhostWalls": "Murs fantômes"
+    "optionGhostWalls": "Murs fantômes",
+    "play": "Continuer",
+    "pause": "Pause"
   },
   "gameOver": {
     "title": "💀 Game Over !",
