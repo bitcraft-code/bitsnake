@@ -43,7 +43,7 @@ export default function App() {
   const [wallMode, setWallMode] = useState('normal');
 
   const [snake, setSnake] = useState([]);
-  const [food, setFood] = useState(null);
+  const [foods, setFoods] = useState([]);
   const [direction, setDirection] = useState('right');
   const [nextDirection, setNextDirection] = useState('right');
   const [score, setScore] = useState(0);
@@ -54,7 +54,7 @@ export default function App() {
 
   const gameLoopRef = useRef(null);
   const nextDirectionRef = useRef('right');
-  const foodRef = useRef(null);
+  const foodsRef = useRef([]);
 
   useEffect(() => {
     loadHighScore();
@@ -62,8 +62,8 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    foodRef.current = food;
-  }, [food]);
+    foodsRef.current = foods;
+  }, [foods]);
 
   const loadHighScore = async () => {
     try {
@@ -94,9 +94,9 @@ export default function App() {
     ];
 
     setSnake(initialSnake);
-    const initialFood = generateFood(initialSnake);
-    setFood(initialFood);
-    foodRef.current = initialFood;
+    const initialFoods = generateFoods(initialSnake);
+    setFoods(initialFoods);
+    foodsRef.current = initialFoods;
     setScore(0);
     setDirection('right');
     setNextDirection('right');
@@ -106,26 +106,30 @@ export default function App() {
     setGameState('playing');
   };
 
-  const generateFood = (currentSnake) => {
-    let newFood;
-    let onSnake;
+  const generateFoods = (currentSnake) => {
+    const r = Math.random();
+    const count = r < 0.6 ? 1 : r < 0.88 ? 2 : 3;
+    const result = [];
+    const occupied = new Set(
+      (currentSnake || []).map((s) => `${s.row},${s.col}`)
+    );
 
-    do {
-      onSnake = false;
-      newFood = {
-        row: Math.floor(Math.random() * boardSize),
-        col: Math.floor(Math.random() * boardSize),
-      };
+    for (let i = 0; i < count; i++) {
+      let row, col;
+      let attempts = 0;
+      do {
+        row = Math.floor(Math.random() * boardSize);
+        col = Math.floor(Math.random() * boardSize);
+        attempts++;
+        if (attempts > 200) break;
+      } while (occupied.has(`${row},${col}`));
+      if (attempts > 200) continue;
+      occupied.add(`${row},${col}`);
+      const points = 1 + Math.floor(Math.random() * 3);
+      result.push({ row, col, points });
+    }
 
-      for (let segment of currentSnake || []) {
-        if (segment.row === newFood.row && segment.col === newFood.col) {
-          onSnake = true;
-          break;
-        }
-      }
-    } while (onSnake);
-
-    return newFood;
+    return result;
   };
 
   const moveSnake = () => {
@@ -166,14 +170,16 @@ export default function App() {
         if (head.col >= boardSize) head.col = 0;
       }
 
-      const currentFood = foodRef.current;
-      const ateFood = currentFood && head.row === currentFood.row && head.col === currentFood.col;
-      if (ateFood) {
-        setScore((s) => s + 10);
+      const currentFoods = foodsRef.current || [];
+      const eaten = currentFoods.find(
+        (f) => f.row === head.row && f.col === head.col
+      );
+      if (eaten) {
+        setScore((s) => s + eaten.points);
         const newSnake = [head, ...prevSnake];
-        const nextFood = generateFood(newSnake);
-        foodRef.current = nextFood;
-        setFood(nextFood);
+        const nextFoods = generateFoods(newSnake);
+        foodsRef.current = nextFoods;
+        setFoods(nextFoods);
         return newSnake;
       } else {
         return [head, ...prevSnake.slice(0, -1)];
@@ -285,7 +291,7 @@ export default function App() {
         </Pressable>
       </View>
 
-      <GameBoard snake={snake} food={food} boardSize={boardSize} wallMode={wallMode} />
+      <GameBoard snake={snake} foods={foods} boardSize={boardSize} wallMode={wallMode} />
 
       <Pressable
         onPress={togglePause}

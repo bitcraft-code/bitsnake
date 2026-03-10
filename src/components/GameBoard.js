@@ -4,7 +4,9 @@ import { View, StyleSheet, Dimensions } from 'react-native';
 const BOARD_BORDER = 2;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-export const GameBoard = ({ snake, food, boardSize, wallMode = 'normal' }) => {
+const FOOD_OPACITY = { 1: 0.4, 2: 0.7, 3: 1 };
+
+export const GameBoard = ({ snake, foods = [], boardSize, wallMode = 'normal' }) => {
   const maxWidth = Math.min(SCREEN_WIDTH - 30, 380);
   const cellSize = Math.floor((maxWidth - BOARD_BORDER * 2) / boardSize);
   const boardWidth = cellSize * boardSize + BOARD_BORDER * 2;
@@ -12,12 +14,16 @@ export const GameBoard = ({ snake, food, boardSize, wallMode = 'normal' }) => {
 
   const isSnakeHead = (r, c) => snake[0]?.row === r && snake[0]?.col === c;
   const isSnakeBody = (r, c) => snake.slice(1).some((s) => s.row === r && s.col === c);
-  const isFood = (r, c) => food?.row === r && food?.col === c;
+  const getFoodAt = (r, c) => foods.find((f) => f.row === r && f.col === c);
 
   const getCellStyle = (r, c) => {
     if (isSnakeHead(r, c)) return styles.snakeHead;
     if (isSnakeBody(r, c)) return styles.snakeBody;
-    if (isFood(r, c)) return styles.food;
+    const food = getFoodAt(r, c);
+    if (food) {
+      const opacity = FOOD_OPACITY[food.points] ?? 1;
+      return { ...styles.food, backgroundColor: `rgba(255, 51, 51, ${opacity})` };
+    }
     return styles.emptyCell;
   };
 
