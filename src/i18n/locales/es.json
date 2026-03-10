@@ -13,7 +13,8 @@
     "score": "Puntuación:",
     "record": "Récord:",
     "mainMenu": "🏠 Menú principal",
-    "options": "Opciones"
+    "options": "Opciones",
+    "optionGhostWalls": "Paredes fantasmas"
   },
   "gameOver": {
     "title": "💀 ¡Game Over!",

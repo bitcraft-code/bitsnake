@@ -13,7 +13,8 @@
     "score": "Score :",
     "record": "Record :",
     "mainMenu": "🏠 Menu principal",
-    "options": "Options"
+    "options": "Options",
+    "optionGhostWalls": "Murs fantômes"
   },
   "gameOver": {
     "title": "💀 Game Over !",

@@ -13,7 +13,8 @@
     "score": "Score:",
     "record": "Record:",
     "mainMenu": "🏠 Main Menu",
-    "options": "Options"
+    "options": "Options",
+    "optionGhostWalls": "Ghost walls"
   },
   "gameOver": {
     "title": "💀 Game Over!",

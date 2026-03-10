@@ -4,10 +4,11 @@ import { View, StyleSheet, Dimensions } from 'react-native';
 const BOARD_BORDER = 2;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-export const GameBoard = ({ snake, food, boardSize }) => {
+export const GameBoard = ({ snake, food, boardSize, wallMode = 'normal' }) => {
   const maxWidth = Math.min(SCREEN_WIDTH - 30, 380);
   const cellSize = Math.floor((maxWidth - BOARD_BORDER * 2) / boardSize);
   const boardWidth = cellSize * boardSize + BOARD_BORDER * 2;
+  const ghostWalls = wallMode === 'wrap';
 
   const isSnakeHead = (r, c) => snake[0]?.row === r && snake[0]?.col === c;
   const isSnakeBody = (r, c) => snake.slice(1).some((s) => s.row === r && s.col === c);
@@ -21,7 +22,7 @@ export const GameBoard = ({ snake, food, boardSize }) => {
   };
 
   return (
-    <View style={[styles.board, { width: boardWidth }]}>
+    <View style={[styles.board, { width: boardWidth }, ghostWalls && styles.boardDashed]}>
       {Array.from({ length: boardSize }).map((_, row) => (
         <View key={row} style={styles.row}>
           {Array.from({ length: boardSize }).map((_, col) => (
@@ -48,6 +49,9 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 6,
     overflow: 'hidden',
+  },
+  boardDashed: {
+    borderStyle: 'dashed',
   },
   row: {
     flexDirection: 'row',

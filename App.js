@@ -8,6 +8,7 @@ import {
   Dimensions,
   Modal,
   Pressable,
+  Switch,
 } from 'react-native';
 import { registerRootComponent } from 'expo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -267,7 +268,7 @@ export default function App() {
         </TouchableOpacity>
       </View>
 
-      <GameBoard snake={snake} food={food} boardSize={boardSize} />
+      <GameBoard snake={snake} food={food} boardSize={boardSize} wallMode={wallMode} />
 
       <View style={styles.dpadContainer}>
         <TouchableOpacity
@@ -340,7 +341,15 @@ export default function App() {
               </TouchableOpacity>
             </View>
             <ScrollView style={styles.drawerContent}>
-              {/* Opções serão adicionadas em commits futuros */}
+              <View style={styles.optionRow}>
+                <Text style={styles.optionLabel}>{t('game.optionGhostWalls')}</Text>
+                <Switch
+                  value={wallMode === 'wrap'}
+                  onValueChange={(value) => setWallMode(value ? 'wrap' : 'normal')}
+                  trackColor={{ false: '#1a3322', true: '#0a2a1a' }}
+                  thumbColor={wallMode === 'wrap' ? '#00ff41' : '#4a6a4a'}
+                />
+              </View>
             </ScrollView>
           </View>
         </View>
@@ -428,6 +437,20 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 16,
+  },
+  optionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1a3322',
+  },
+  optionLabel: {
+    fontSize: 14,
+    color: '#e0e0e0',
+    flex: 1,
+    marginRight: 12,
   },
   scoreLabel: {
     fontSize: 10,
