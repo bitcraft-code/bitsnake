@@ -54,11 +54,16 @@ export default function App() {
 
   const gameLoopRef = useRef(null);
   const nextDirectionRef = useRef('right');
+  const foodRef = useRef(null);
 
   useEffect(() => {
     loadHighScore();
     loadSavedLanguage();
   }, []);
+
+  useEffect(() => {
+    foodRef.current = food;
+  }, [food]);
 
   const loadHighScore = async () => {
     try {
@@ -89,7 +94,9 @@ export default function App() {
     ];
 
     setSnake(initialSnake);
-    setFood(generateFood(initialSnake));
+    const initialFood = generateFood(initialSnake);
+    setFood(initialFood);
+    foodRef.current = initialFood;
     setScore(0);
     setDirection('right');
     setNextDirection('right');
@@ -159,11 +166,14 @@ export default function App() {
         if (head.col >= boardSize) head.col = 0;
       }
 
-      const ateFood = food && head.row === food.row && head.col === food.col;
+      const currentFood = foodRef.current;
+      const ateFood = currentFood && head.row === currentFood.row && head.col === currentFood.col;
       if (ateFood) {
         setScore((s) => s + 10);
         const newSnake = [head, ...prevSnake];
-        setFood(generateFood(newSnake));
+        const nextFood = generateFood(newSnake);
+        foodRef.current = nextFood;
+        setFood(nextFood);
         return newSnake;
       } else {
         return [head, ...prevSnake.slice(0, -1)];
