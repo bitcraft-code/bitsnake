@@ -12,7 +12,8 @@
   "game": {
     "score": "Punkte:",
     "record": "Rekord:",
-    "mainMenu": "🏠 Hauptmenü"
+    "mainMenu": "🏠 Hauptmenü",
+    "options": "Optionen"
   },
   "gameOver": {
     "title": "💀 Game Over!",

@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
+  Modal,
+  Pressable,
 } from 'react-native';
 import { registerRootComponent } from 'expo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -39,6 +41,7 @@ export default function App() {
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [optionsOpen, setOptionsOpen] = useState(false);
 
   const gameLoopRef = useRef(null);
   const nextDirectionRef = useRef('right');
@@ -83,6 +86,7 @@ export default function App() {
     setNextDirection('right');
     nextDirectionRef.current = 'right';
     setPaused(false);
+    setOptionsOpen(false);
     setGameState('playing');
   };
 
@@ -212,7 +216,18 @@ export default function App() {
 
   const goMenu = () => {
     if (gameLoopRef.current) clearInterval(gameLoopRef.current);
+    setOptionsOpen(false);
     setGameState('menu');
+  };
+
+  const openOptions = () => {
+    setPaused(true);
+    setOptionsOpen(true);
+  };
+
+  const closeOptions = () => {
+    setOptionsOpen(false);
+    setPaused(false);
   };
 
   // RENDERIZAÇÃO CONDICIONAL BASEADA NO ESTADO DO JOGO
@@ -243,6 +258,13 @@ export default function App() {
           <Text style={styles.highScoreLabel}>{t('game.record')}</Text>
           <Text style={styles.highScoreValue}>{highScore}</Text>
         </View>
+        <TouchableOpacity
+          onPress={openOptions}
+          style={styles.optionsButton}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.optionsButtonText}>⚙</Text>
+        </TouchableOpacity>
       </View>
 
       <GameBoard snake={snake} food={food} boardSize={boardSize} />
@@ -297,6 +319,32 @@ export default function App() {
       <TouchableOpacity onPress={goMenu} style={styles.menuButton} activeOpacity={0.7}>
         <Text style={styles.menuButtonText}>{t('game.mainMenu')}</Text>
       </TouchableOpacity>
+
+      <Modal
+        visible={optionsOpen}
+        transparent
+        animationType="slide"
+        onRequestClose={closeOptions}
+      >
+        <View style={styles.drawerOverlay}>
+          <Pressable style={styles.drawerBackdrop} onPress={closeOptions} />
+          <View style={styles.drawerPanel}>
+            <View style={styles.drawerHeader}>
+              <Text style={styles.drawerTitle}>{t('game.options')}</Text>
+              <TouchableOpacity
+                onPress={closeOptions}
+                style={styles.drawerCloseBtn}
+                hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+              >
+                <Text style={styles.drawerCloseText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+            <ScrollView style={styles.drawerContent}>
+              {/* Opções serão adicionadas em commits futuros */}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -313,6 +361,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     width: '92%',
     marginBottom: 14,
     paddingVertical: 10,
@@ -324,6 +373,61 @@ const styles = StyleSheet.create({
   },
   headerBlock: {
     alignItems: 'center',
+  },
+  optionsButton: {
+    padding: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  optionsButtonText: {
+    fontSize: 22,
+    color: '#ff8800',
+  },
+  drawerOverlay: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  drawerBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  drawerPanel: {
+    width: Math.min(SCREEN_WIDTH * 0.85, 320),
+    alignSelf: 'stretch',
+    backgroundColor: '#0d1419',
+    borderLeftWidth: 1,
+    borderLeftColor: '#1a3322',
+    paddingTop: 48,
+  },
+  drawerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1a3322',
+  },
+  drawerTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#00ff41',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+  },
+  drawerCloseBtn: {
+    padding: 4,
+  },
+  drawerCloseText: {
+    fontSize: 20,
+    color: '#ff8800',
+    fontWeight: 'bold',
+  },
+  drawerContent: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 16,
   },
   scoreLabel: {
     fontSize: 10,
