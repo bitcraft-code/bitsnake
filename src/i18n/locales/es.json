@@ -13,7 +13,7 @@
     "score": "Puntuación:",
     "time": "Tiempo:",
     "record": "Récord:",
-    "mainMenu": "🏠 Menú principal",
+    "mainMenu": "← Menú principal",
     "options": "Opciones",
     "optionGhostWalls": "Paredes fantasmas",
     "optionObstacles": "Obstáculos",
@@ -26,7 +26,7 @@
     "yourScore": "Tu puntuación:",
     "newRecord": "🏆 ¡Nuevo récord!",
     "highScore": "Récord:",
-    "playAgain": "🔄 Jugar de nuevo",
-    "backToMenu": "🏠 Volver al menú"
+    "playAgain": "► Jugar de nuevo",
+    "backToMenu": "← Volver al menú"
   }
 }

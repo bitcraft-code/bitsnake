@@ -13,7 +13,7 @@
     "score": "Score:",
     "time": "Time:",
     "record": "Record:",
-    "mainMenu": "🏠 Main Menu",
+    "mainMenu": "← Main Menu",
     "options": "Options",
     "optionGhostWalls": "Ghost walls",
     "optionObstacles": "Obstacles",
@@ -26,7 +26,7 @@
     "yourScore": "Your Score:",
     "newRecord": "🏆 New Record!",
     "highScore": "Record:",
-    "playAgain": "🔄 Play Again",
-    "backToMenu": "🏠 Back to Menu"
+    "playAgain": "► Play Again",
+    "backToMenu": "← Back to Menu"
   }
 }

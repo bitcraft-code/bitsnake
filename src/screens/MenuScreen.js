@@ -27,7 +27,8 @@ const MenuScreen = ({ onStart }) => {
         </RetroText>
       </View>
 
-      <RetroText style={styles.footer}>BitCraft Team</RetroText>
+      <View style={styles.footerSpacer} />
+      <RetroText style={styles.footer}>BitCraft Team®</RetroText>
     </ScrollView>
   );
 };
@@ -39,6 +40,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
+    paddingBottom: 32,
   },
   titleBox: {
     marginBottom: 4,
@@ -112,10 +114,13 @@ const styles = StyleSheet.create({
     color: '#5a7a5a',
     lineHeight: 18,
   },
+  footerSpacer: {
+    flex: 1,
+    minHeight: 24,
+  },
   footer: {
-    marginTop: 32,
     fontSize: 9,
-    color: '#1a2a1a',
+    color: '#00aa33',
     letterSpacing: 3,
     textTransform: 'uppercase',
   },
