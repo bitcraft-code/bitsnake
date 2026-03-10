@@ -31,6 +31,10 @@ const SPACING = 12;
 
 const languageLabels = { en: 'EN', de: 'DE', fr: 'FR', es: 'ES', pt: 'PT' };
 
+// Velocidade premium: 1 = mais lento, 5 = mais rápido (intervalo em ms)
+const SPEED_LEVEL_MS = { 1: 250, 2: 200, 3: 150, 4: 100, 5: 70 };
+const SPEED_LEVELS = [1, 2, 3, 4, 5];
+
 export default function App() {
   const { t, i18n } = useTranslation();
   const [gameState, setGameState] = useState('menu');
@@ -46,6 +50,7 @@ export default function App() {
   const [highScore, setHighScore] = useState(0);
   const [paused, setPaused] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
+  const [speedLevel, setSpeedLevel] = useState(3);
 
   const gameLoopRef = useRef(null);
   const nextDirectionRef = useRef('right');
@@ -197,11 +202,11 @@ export default function App() {
 
     gameLoopRef.current = setInterval(
       moveSnake,
-      difficultySettings[difficulty].speed,
+      SPEED_LEVEL_MS[speedLevel],
     );
 
     return () => clearInterval(gameLoopRef.current);
-  }, [gameState, paused]);
+  }, [gameState, paused, speedLevel]);
 
   const handleDirectionChange = (newDir) => {
     if (!['up', 'down', 'left', 'right'].includes(newDir)) return;
@@ -352,6 +357,26 @@ export default function App() {
                   trackColor={{ false: '#1a3322', true: '#0a2a1a' }}
                   thumbColor={wallMode === 'wrap' ? '#00ff41' : '#4a6a4a'}
                 />
+              </View>
+              <View style={styles.optionRow}>
+                <Text style={[styles.optionLabel, styles.optionLabelNoFlex]}>{t('game.optionSpeed')}</Text>
+                <View style={styles.languageButtonsRow}>
+                  {SPEED_LEVELS.map((level) => (
+                    <Pressable
+                      key={level}
+                      onPress={() => setSpeedLevel(level)}
+                      style={({ pressed }) => [
+                        styles.langBtn,
+                        speedLevel === level && styles.langBtnActive,
+                        pressed && styles.btnPressed,
+                      ]}
+                    >
+                      <Text style={[styles.langBtnText, speedLevel === level && styles.langBtnTextActive]}>
+                        {level}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
               </View>
               <View style={styles.optionRow}>
                 <Text style={[styles.optionLabel, styles.optionLabelNoFlex]}>{t('menu.language')}</Text>
