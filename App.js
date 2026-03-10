@@ -7,10 +7,16 @@ import {
   ScrollView,
   Dimensions,
 } from 'react-native';
+import { registerRootComponent } from 'expo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import './src/i18n';
+import { loadSavedLanguage } from './src/i18n';
+import { useTranslation } from 'react-i18next';
 import GameBoard from './src/components/GameBoard';
 import MenuScreen from './src/screens/MenuScreen';
 import GameOverScreen from './src/screens/GameOverScreen';
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const difficultySettings = {
   easy: { speed: 200, size: 15 },
@@ -19,9 +25,8 @@ const difficultySettings = {
   expert: { speed: 70, size: 20 },
 };
 
-const { width, height } = Dimensions.get('window');
-
 export default function App() {
+  const { t } = useTranslation();
   const [gameState, setGameState] = useState('menu');
   const [difficulty, setDifficulty] = useState('medium');
   const [boardSize, setBoardSize] = useState(20);
@@ -36,17 +41,11 @@ export default function App() {
   const [paused, setPaused] = useState(false);
 
   const gameLoopRef = useRef(null);
-  const gameSpeedRef = useRef(difficultySettings.medium.speed);
 
   useEffect(() => {
     loadHighScore();
+    loadSavedLanguage();
   }, []);
-
-  useEffect(() => {
-    if (difficultySettings[difficulty]) {
-      gameSpeedRef.current = difficultySettings[difficulty].speed;
-    }
-  }, [difficulty]);
 
   const loadHighScore = async () => {
     try {
@@ -54,6 +53,7 @@ export default function App() {
       if (saved) setHighScore(parseInt(saved, 10));
     } catch (error) {
       console.error('Failed to load high score:', error);
+      setHighScore(0);
     }
   };
 
@@ -66,10 +66,17 @@ export default function App() {
   };
 
   const initGame = () => {
-    setSnake([
-      { row: Math.floor(boardSize / 2), col: Math.floor(boardSize / 2) },
-    ]);
-    setFood(generateFood());
+    const startRow = Math.floor(boardSize / 2);
+    const startCol = Math.floor(boardSize / 2);
+
+    const initialSnake = [
+      { row: startRow, col: startCol },
+      { row: startRow, col: startCol - 1 },
+      { row: startRow, col: startCol - 2 },
+    ];
+
+    setSnake(initialSnake);
+    setFood(generateFood(initialSnake));
     setScore(0);
     setDirection('right');
     setNextDirection('right');
@@ -77,7 +84,7 @@ export default function App() {
     setGameState('playing');
   };
 
-  const generateFood = () => {
+  const generateFood = (currentSnake) => {
     let newFood;
     let onSnake;
 
@@ -88,7 +95,7 @@ export default function App() {
         col: Math.floor(Math.random() * boardSize),
       };
 
-      for (let segment of snake) {
+      for (let segment of currentSnake || []) {
         if (segment.row === newFood.row && segment.col === newFood.col) {
           onSnake = true;
           break;
@@ -136,21 +143,38 @@ export default function App() {
         if (head.col >= boardSize) head.col = 0;
       }
 
-      if (head.row === food.row && head.col === food.col) {
+      const ateFood = food && head.row === food.row && head.col === food.col;
+      if (ateFood) {
         setScore((s) => s + 10);
-        setFood(generateFood());
+        return [head, ...prevSnake];
       } else {
         return [head, ...prevSnake.slice(0, -1)];
       }
+    });
 
+    // Verificar colisão com próprio corpo (após mover)
+    setSnake((prevSnake) => {
+      const newHead = prevSnake[0];
       for (let i = 1; i < prevSnake.length; i++) {
-        if (head.row === prevSnake[i].row && head.col === prevSnake[i].col) {
+        if (
+          newHead.row === prevSnake[i].row &&
+          newHead.col === prevSnake[i].col
+        ) {
           handleGameOver();
           return prevSnake;
         }
       }
+      return prevSnake;
+    });
 
-      return [head, ...prevSnake.slice(0, -1)];
+    // Gerar nova comida se comeu
+    setFood((prevFood) => {
+      if (!prevFood || !snake[0]) return null;
+      const head = snake[0];
+      if (head.row === prevFood.row && head.col === prevFood.col) {
+        return generateFood(snake);
+      }
+      return prevFood;
     });
   };
 
@@ -168,14 +192,16 @@ export default function App() {
   useEffect(() => {
     if (gameState !== 'playing' || paused) return;
 
-    gameLoopRef.current = setInterval(moveSnake, gameSpeedRef.current);
+    gameLoopRef.current = setInterval(
+      moveSnake,
+      difficultySettings[difficulty].speed,
+    );
 
     return () => clearInterval(gameLoopRef.current);
-  }, [gameState, paused]);
+  }, [gameState, paused, nextDirection]);
 
   const handleDirectionChange = (newDir) => {
     if (!['up', 'down', 'left', 'right'].includes(newDir)) return;
-
     const opposites = { up: 'down', down: 'up', left: 'right', right: 'left' };
     if (direction !== opposites[newDir]) {
       setNextDirection(newDir);
@@ -186,72 +212,14 @@ export default function App() {
     setPaused((prev) => !prev);
   };
 
-  const restartGame = () => {
-    initGame();
-  };
+  const restartGame = () => initGame();
 
   const goMenu = () => {
     if (gameLoopRef.current) clearInterval(gameLoopRef.current);
     setGameState('menu');
   };
 
-  // Layout de Joystick D-PAD para Mobile
-  const renderDpadControls = () => (
-    <View style={styles.dpadContainer}>
-      {/* Linha Superior */}
-      <View style={styles.dpadRow}>
-        <TouchableOpacity
-          onPress={() => handleDirectionChange('up')}
-          activeOpacity={0.7}
-          style={[styles.dpadBtn, styles.dpadUp]}
-        >
-          <Text style={styles.dpadArrow}>⬆️</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Linha do Meio - Esquerda/Direita */}
-      <View style={styles.dpadRow}>
-        <TouchableOpacity
-          onPress={() => handleDirectionChange('left')}
-          activeOpacity={0.7}
-          style={[styles.dpadBtn, styles.dpadLeft]}
-        >
-          <Text style={styles.dpadArrow}>⬅️</Text>
-        </TouchableOpacity>
-
-        {/* Botão Central Pausa */}
-        <TouchableOpacity
-          onPress={togglePause}
-          activeOpacity={0.7}
-          style={[styles.dpadBtn, styles.dpadCenter]}
-        >
-          <Text style={[styles.dpadArrow, { fontSize: 16 }]}>
-            {paused ? '▶️' : '⏸️'}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => handleDirectionChange('right')}
-          activeOpacity={0.7}
-          style={[styles.dpadBtn, styles.dpadRight]}
-        >
-          <Text style={styles.dpadArrow}>➡️</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Linha Inferior - Baixo */}
-      <View style={styles.dpadRow}>
-        <TouchableOpacity
-          onPress={() => handleDirectionChange('down')}
-          activeOpacity={0.7}
-          style={[styles.dpadBtn, styles.dpadDown]}
-        >
-          <Text style={styles.dpadArrow}>⬇️</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-
+  // RENDERIZAÇÃO CONDICIONAL BASEADA NO ESTADO DO JOGO
   if (gameState === 'menu') {
     return <MenuScreen onStart={initGame} />;
   }
@@ -267,30 +235,72 @@ export default function App() {
     );
   }
 
+  // Layout responsivo para mobile - estado 'playing'
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Pontuação */}
-      <View style={styles.scoreContainer}>
-        <Text style={styles.scoreLabel}>Pontuação:</Text>
-        <Text style={styles.score}>{score}</Text>
-        <Text style={styles.highScoreLabel}>Recorde: {highScore}</Text>
+      <View style={styles.header}>
+        <View style={styles.headerBlock}>
+          <Text style={styles.scoreLabel}>{t('game.score')}</Text>
+          <Text style={styles.score}>{score}</Text>
+        </View>
+        <View style={styles.headerBlock}>
+          <Text style={styles.highScoreLabel}>{t('game.record')}</Text>
+          <Text style={styles.highScoreValue}>{highScore}</Text>
+        </View>
       </View>
 
-      {/* Tabuleiro do Jogo */}
       <GameBoard snake={snake} food={food} boardSize={boardSize} />
 
-      {/* Controles Joystick D-PAD */}
-      {renderDpadControls()}
-
-      {/* Botões Adicionais */}
-      <View style={styles.actionButtons}>
+      <View style={styles.dpadContainer}>
         <TouchableOpacity
-          onPress={goMenu}
-          style={[styles.button, styles.secondaryButton]}
+          onPress={() => handleDirectionChange('up')}
+          activeOpacity={0.7}
+          style={styles.dpadBtn}
         >
-          <Text style={styles.buttonText}>🏠 Menu</Text>
+          <Text style={styles.arrow}>▲</Text>
+        </TouchableOpacity>
+
+        <View style={styles.middleRow}>
+          <TouchableOpacity
+            onPress={() => handleDirectionChange('left')}
+            activeOpacity={0.7}
+            style={styles.dpadBtn}
+          >
+            <Text style={styles.arrow}>◀</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={togglePause}
+            activeOpacity={0.7}
+            style={[
+              styles.dpadCenter,
+              paused && styles.dpadCenterPaused,
+            ]}
+          >
+            <Text style={styles.centerIcon}>{paused ? '▶' : '❚❚'}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => handleDirectionChange('right')}
+            activeOpacity={0.7}
+            style={styles.dpadBtn}
+          >
+            <Text style={styles.arrow}>▶</Text>
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity
+          onPress={() => handleDirectionChange('down')}
+          activeOpacity={0.7}
+          style={styles.dpadBtn}
+        >
+          <Text style={styles.arrow}>▼</Text>
         </TouchableOpacity>
       </View>
+
+      <TouchableOpacity onPress={goMenu} style={styles.menuButton} activeOpacity={0.7}>
+        <Text style={styles.menuButtonText}>{t('game.mainMenu')}</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -298,86 +308,135 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#0a0e1a',
     alignItems: 'center',
-    paddingTop: 40,
-    paddingHorizontal: 20,
+    paddingTop: SCREEN_HEIGHT > 800 ? 20 : 40,
+    paddingHorizontal: 15,
+    paddingBottom: 30,
   },
-  scoreContainer: {
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%',
-    marginBottom: 15,
+    width: '92%',
+    marginBottom: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    backgroundColor: '#111a2a',
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#1a3322',
+  },
+  headerBlock: {
+    alignItems: 'center',
   },
   scoreLabel: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#4a6a4a',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
   },
   score: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#4CAF50',
-    marginLeft: 10,
+    fontSize: 28,
+    fontWeight: '900',
+    color: '#00ff41',
+    textShadowColor: '#00ff41',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 8,
   },
   highScoreLabel: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FF9800',
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#5a4a2a',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
   },
+  highScoreValue: {
+    fontSize: 28,
+    fontWeight: '900',
+    color: '#ff8800',
+    textShadowColor: '#ff8800',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 8,
+  },
+
   dpadContainer: {
     alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 15,
+    marginTop: 8,
+    marginBottom: 18,
   },
-  dpadRow: {
+  middleRow: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    marginVertical: 2,
+    marginVertical: 4,
   },
   dpadBtn: {
-    width: 70,
-    height: 70,
-    backgroundColor: '#3F51B5',
-    borderRadius: 15,
+    width: 62,
+    height: 62,
+    backgroundColor: '#0d1a14',
+    borderWidth: 1,
+    borderColor: '#00ff41',
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
+    marginHorizontal: 6,
+    shadowColor: '#00ff41',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 3,
   },
-  dpadUp: { backgroundColor: '#3F51B5' },
-  dpadDown: { backgroundColor: '#3F51B5' },
-  dpadLeft: { backgroundColor: '#3F51B5' },
-  dpadRight: { backgroundColor: '#3F51B5' },
   dpadCenter: {
-    backgroundColor: '#FF9800',
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 58,
+    height: 58,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#ff8800',
+    backgroundColor: '#1a1200',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 6,
+    shadowColor: '#ff8800',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 3,
   },
-  dpadArrow: {
-    fontSize: 28,
-    color: 'white',
+  dpadCenterPaused: {
+    borderColor: '#00ff41',
+    backgroundColor: '#0a1a0a',
+    shadowColor: '#00ff41',
   },
-  actionButtons: {
-    marginTop: 15,
-  },
-  button: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 8,
-  },
-  secondaryButton: {
-    backgroundColor: '#FF9800',
-  },
-  buttonText: {
-    color: 'white',
+  arrow: {
+    fontSize: 24,
+    color: '#00ff41',
     fontWeight: 'bold',
-    fontSize: 16,
+  },
+  centerIcon: {
+    fontSize: 14,
+    color: '#ff8800',
+    fontWeight: 'bold',
+  },
+
+  menuButton: {
+    borderWidth: 1,
+    borderColor: '#ff3333',
+    backgroundColor: 'transparent',
+    paddingVertical: 12,
+    paddingHorizontal: 36,
+    borderRadius: 4,
+    shadowColor: '#ff3333',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  menuButtonText: {
+    color: '#ff3333',
+    fontSize: 14,
+    fontWeight: 'bold',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
   },
 });
+
+registerRootComponent(App);

@@ -1,0 +1,25 @@
+{
+  "menu": {
+    "title": "🐍 Bitsnake",
+    "subtitle": "Um jogo da cobrinha no estilo retro",
+    "startGame": "▶️ Iniciar Jogo",
+    "howToPlay": "Como Jogar:",
+    "instruction1": "• Use os botões direcionais para mover a cobra",
+    "instruction2": "• Coma os alimentos vermelhos para crescer",
+    "instruction3": "• Evite bater na própria cauda ou nas paredes",
+    "language": "Idioma"
+  },
+  "game": {
+    "score": "Pontuação:",
+    "record": "Recorde:",
+    "mainMenu": "🏠 Menu Principal"
+  },
+  "gameOver": {
+    "title": "💀 Game Over!",
+    "yourScore": "Sua Pontuação:",
+    "newRecord": "🏆 Novo Recorde!",
+    "highScore": "Recorde:",
+    "playAgain": "🔄 Jogar Novamente",
+    "backToMenu": "🏠 Voltar ao Menu"
+  }
+}

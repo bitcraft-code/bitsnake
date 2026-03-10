@@ -1,0 +1,25 @@
+{
+  "menu": {
+    "title": "🐍 Bitsnake",
+    "subtitle": "Un juego de la serpiente retro",
+    "startGame": "▶️ Iniciar juego",
+    "howToPlay": "Cómo jugar:",
+    "instruction1": "• Usa los botones direccionales para mover la serpiente",
+    "instruction2": "• Come la comida roja para crecer",
+    "instruction3": "• Evita chocar con tu cola o las paredes",
+    "language": "Idioma"
+  },
+  "game": {
+    "score": "Puntuación:",
+    "record": "Récord:",
+    "mainMenu": "🏠 Menú principal"
+  },
+  "gameOver": {
+    "title": "💀 ¡Game Over!",
+    "yourScore": "Tu puntuación:",
+    "newRecord": "🏆 ¡Nuevo récord!",
+    "highScore": "Récord:",
+    "playAgain": "🔄 Jugar de nuevo",
+    "backToMenu": "🏠 Volver al menú"
+  }
+}

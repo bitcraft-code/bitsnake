@@ -1,0 +1,25 @@
+{
+  "menu": {
+    "title": "🐍 Bitsnake",
+    "subtitle": "A retro-style Snake game",
+    "startGame": "▶️ Start Game",
+    "howToPlay": "How to Play:",
+    "instruction1": "• Use the directional buttons to move the snake",
+    "instruction2": "• Eat the red food to grow",
+    "instruction3": "• Avoid hitting your tail or the walls",
+    "language": "Language"
+  },
+  "game": {
+    "score": "Score:",
+    "record": "Record:",
+    "mainMenu": "🏠 Main Menu"
+  },
+  "gameOver": {
+    "title": "💀 Game Over!",
+    "yourScore": "Your Score:",
+    "newRecord": "🏆 New Record!",
+    "highScore": "Record:",
+    "playAgain": "🔄 Play Again",
+    "backToMenu": "🏠 Back to Menu"
+  }
+}

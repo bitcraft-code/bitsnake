@@ -1,0 +1,25 @@
+{
+  "menu": {
+    "title": "🐍 Bitsnake",
+    "subtitle": "Ein Retro-Schlangenspiel",
+    "startGame": "▶️ Spiel starten",
+    "howToPlay": "So spielst du:",
+    "instruction1": "• Nutze die Richtungstasten, um die Schlange zu bewegen",
+    "instruction2": "• Iss das rote Futter, um zu wachsen",
+    "instruction3": "• Vermeide es, deinen Schwanz oder die Wände zu treffen",
+    "language": "Sprache"
+  },
+  "game": {
+    "score": "Punkte:",
+    "record": "Rekord:",
+    "mainMenu": "🏠 Hauptmenü"
+  },
+  "gameOver": {
+    "title": "💀 Game Over!",
+    "yourScore": "Deine Punktzahl:",
+    "newRecord": "🏆 Neuer Rekord!",
+    "highScore": "Rekord:",
+    "playAgain": "🔄 Nochmal spielen",
+    "backToMenu": "🏠 Zum Menü"
+  }
+}

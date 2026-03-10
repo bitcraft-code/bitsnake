@@ -1,36 +1,37 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 const GameOverScreen = ({ score, highScore, onRestart, onMenu }) => {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Game Over! 🐍</Text>
+      <Text style={styles.title}>GAME OVER</Text>
+      <View style={styles.titleLine} />
 
-      <View style={styles.scoreContainer}>
-        <Text style={styles.finalScoreLabel}>Pontuação Final:</Text>
-        <Text style={styles.finalScore}>{score}</Text>
+      <View style={styles.scoreCard}>
+        <Text style={styles.scoreLabel}>{t('gameOver.yourScore')}</Text>
+        <Text style={styles.scoreValue}>{score}</Text>
 
         {score >= highScore && score > 0 && (
           <View style={styles.newRecordBadge}>
-            <Text style={styles.newRecordText}>🏆 Novo Recorde!</Text>
+            <Text style={styles.newRecordText}>{t('gameOver.newRecord')}</Text>
           </View>
         )}
-
-        <Text style={styles.highScoreLabel}>Recorde: {highScore}</Text>
       </View>
 
-      <TouchableOpacity
-        style={[styles.button, styles.primaryButton]}
-        onPress={onRestart}
-      >
-        <Text style={styles.buttonText}>Jogar Novamente</Text>
+      <View style={styles.highScoreCard}>
+        <Text style={styles.highScoreLabel}>{t('gameOver.highScore')}</Text>
+        <Text style={styles.highScoreValue}>{highScore}</Text>
+      </View>
+
+      <TouchableOpacity onPress={onRestart} style={styles.restartButton} activeOpacity={0.7}>
+        <Text style={styles.buttonText}>{t('gameOver.playAgain')}</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={[styles.button, styles.secondaryButton]}
-        onPress={onMenu}
-      >
-        <Text style={styles.buttonText}>Menu Principal</Text>
+      <TouchableOpacity onPress={onMenu} style={styles.menuButton} activeOpacity={0.7}>
+        <Text style={styles.buttonTextSecondary}>{t('gameOver.backToMenu')}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -39,67 +40,143 @@ const GameOverScreen = ({ score, highScore, onRestart, onMenu }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+    backgroundColor: '#0a0e1a',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
+    padding: 24,
   },
   title: {
-    fontSize: 42,
-    fontWeight: 'bold',
-    color: '#FF6B6B',
+    fontSize: 44,
+    fontWeight: '900',
+    color: '#ff3333',
+    letterSpacing: 4,
+    textShadowColor: '#ff3333',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 18,
+  },
+  titleLine: {
+    width: 180,
+    height: 3,
+    backgroundColor: '#ff3333',
+    borderRadius: 2,
+    marginTop: 6,
     marginBottom: 30,
+    shadowColor: '#ff3333',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    elevation: 8,
   },
-  scoreContainer: {
+  scoreCard: {
+    backgroundColor: '#111a2a',
+    padding: 24,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#1a3322',
     alignItems: 'center',
-    marginBottom: 40,
+    width: '85%',
+    marginBottom: 16,
   },
-  finalScoreLabel: {
-    fontSize: 20,
-    color: '#FFFFFF',
-    marginTop: 10,
+  scoreLabel: {
+    fontSize: 12,
+    color: '#4a6a4a',
+    marginBottom: 8,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
   },
-  finalScore: {
-    fontSize: 56,
-    fontWeight: 'bold',
-    color: '#4ECDC4',
-    marginBottom: 10,
+  scoreValue: {
+    fontSize: 52,
+    fontWeight: '900',
+    color: '#00ff41',
+    textShadowColor: '#00ff41',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 12,
   },
   newRecordBadge: {
-    backgroundColor: '#FFD93D',
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 25,
-    marginTop: 10,
-    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#ff8800',
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 3,
+    marginTop: 12,
+    shadowColor: '#ff8800',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    elevation: 4,
   },
   newRecordText: {
-    color: 'black',
+    color: '#ff8800',
+    fontSize: 12,
     fontWeight: 'bold',
-    fontSize: 16,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+  },
+  highScoreCard: {
+    backgroundColor: '#111a2a',
+    padding: 16,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#1a2233',
+    alignItems: 'center',
+    width: '85%',
+    marginBottom: 30,
   },
   highScoreLabel: {
-    fontSize: 24,
-    color: '#FFD93D',
-    marginTop: 5,
+    fontSize: 12,
+    color: '#4a5a6a',
+    marginBottom: 6,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
   },
-  button: {
-    width: 300,
-    paddingVertical: 18,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginBottom: 15,
+  highScoreValue: {
+    fontSize: 32,
+    fontWeight: '900',
+    color: '#ff8800',
+    textShadowColor: '#ff8800',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 8,
   },
-  primaryButton: {
-    backgroundColor: '#4ECDC4',
+  restartButton: {
+    borderWidth: 2,
+    borderColor: '#00ff41',
+    backgroundColor: 'transparent',
+    paddingVertical: 14,
+    paddingHorizontal: 44,
+    borderRadius: 4,
+    marginBottom: 14,
+    shadowColor: '#00ff41',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 6,
   },
-  secondaryButton: {
-    backgroundColor: '#FF6B6B',
+  menuButton: {
+    borderWidth: 2,
+    borderColor: '#ff3333',
+    backgroundColor: 'transparent',
+    paddingVertical: 14,
+    paddingHorizontal: 44,
+    borderRadius: 4,
+    shadowColor: '#ff3333',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 6,
   },
   buttonText: {
-    color: 'white',
-    fontSize: 20,
+    color: '#00ff41',
+    fontSize: 16,
     fontWeight: 'bold',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+  },
+  buttonTextSecondary: {
+    color: '#ff3333',
+    fontSize: 16,
+    fontWeight: 'bold',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
   },
 });
 
