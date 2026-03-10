@@ -735,9 +735,9 @@ const styles = StyleSheet.create({
   },
   optionCheckboxMark: {
     fontFamily: FONT_FAMILY,
-    color: '#000',
+    color: '#00ff41',
     fontSize: 12,
-    textShadowColor: 'rgba(0,0,0,0.3)',
+    textShadowColor: 'rgba(0, 255, 65, 0.5)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 0,
   },
