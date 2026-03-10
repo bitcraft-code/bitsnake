@@ -7,7 +7,6 @@ import {
   Dimensions,
   Modal,
   Pressable,
-  Switch,
 } from 'react-native';
 import { registerRootComponent } from 'expo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -30,6 +29,20 @@ const difficultySettings = {
 const SPACING = 12;
 
 const languageLabels = { en: 'EN', de: 'DE', fr: 'FR', es: 'ES', pt: 'PT' };
+
+const OptionCheckbox = ({ value, onValueChange, style }) => (
+  <Pressable
+    onPress={() => onValueChange(!value)}
+    style={({ pressed }) => [
+      styles.optionCheckbox,
+      value && styles.optionCheckboxChecked,
+      pressed && styles.btnPressed,
+      style,
+    ]}
+  >
+    {value ? <Text style={styles.optionCheckboxMark}>✓</Text> : null}
+  </Pressable>
+);
 
 // Velocidade premium: 1 = mais lento, 5 = mais rápido (intervalo em ms)
 const SPEED_LEVEL_MS = { 1: 250, 2: 200, 3: 150, 4: 100, 5: 70 };
@@ -494,16 +507,14 @@ export default function App() {
             <ScrollView style={styles.drawerContent}>
               <View style={styles.optionRow}>
                 <Text style={styles.optionLabel}>{t('game.optionGhostWalls')}</Text>
-                <Switch
+                <OptionCheckbox
                   value={wallMode === 'wrap'}
                   onValueChange={(value) => setWallMode(value ? 'wrap' : 'normal')}
-                  trackColor={{ false: '#1a3322', true: '#0a2a1a' }}
-                  thumbColor={wallMode === 'wrap' ? '#00ff41' : '#4a6a4a'}
                 />
               </View>
               <View style={styles.optionRow}>
                 <Text style={styles.optionLabel}>{t('game.optionObstacles')}</Text>
-                <Switch
+                <OptionCheckbox
                   value={obstaclesEnabled}
                   onValueChange={(value) => {
                     setObstaclesEnabled(value);
@@ -519,8 +530,6 @@ export default function App() {
                       obstaclesRef.current = [];
                     }
                   }}
-                  trackColor={{ false: '#1a3322', true: '#0a2a1a' }}
-                  thumbColor={obstaclesEnabled ? '#00ff41' : '#4a6a4a'}
                 />
               </View>
               <View style={styles.optionRow}>
@@ -673,6 +682,32 @@ const styles = StyleSheet.create({
   },
   optionLabelNoFlex: {
     flex: 0,
+  },
+  optionCheckbox: {
+    width: 26,
+    height: 26,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#00ff41',
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#00ff41',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  optionCheckboxChecked: {
+    backgroundColor: 'rgba(0, 255, 65, 0.22)',
+  },
+  optionCheckboxMark: {
+    color: '#000',
+    fontSize: 15,
+    fontWeight: '900',
+    textShadowColor: 'rgba(0,0,0,0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 0,
   },
   languageButtonsRow: {
     flexDirection: 'row',
