@@ -28,6 +28,8 @@ const difficultySettings = {
   expert: { speed: 70, size: 20 },
 };
 
+const SPACING = 12;
+
 export default function App() {
   const { t } = useTranslation();
   const [gameState, setGameState] = useState('menu');
@@ -362,18 +364,18 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: '#0a0e1a',
     alignItems: 'center',
-    paddingTop: SCREEN_HEIGHT > 800 ? 20 : 40,
-    paddingHorizontal: 15,
-    paddingBottom: 30,
+    paddingTop: SCREEN_HEIGHT > 800 ? SPACING * 2 : SPACING * 3,
+    paddingHorizontal: SPACING,
+    paddingBottom: SPACING * 3,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '92%',
-    marginBottom: 14,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    marginBottom: SPACING,
+    paddingVertical: SPACING,
+    paddingHorizontal: SPACING,
     backgroundColor: '#111a2a',
     borderRadius: 4,
     borderWidth: 1,
@@ -383,7 +385,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   optionsButton: {
-    padding: 8,
+    padding: SPACING,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -406,14 +408,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#0d1419',
     borderLeftWidth: 1,
     borderLeftColor: '#1a3322',
-    paddingTop: 48,
+    paddingTop: SPACING * 4,
   },
   drawerHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingBottom: 16,
+    paddingHorizontal: SPACING,
+    paddingBottom: SPACING,
     borderBottomWidth: 1,
     borderBottomColor: '#1a3322',
   },
@@ -425,7 +427,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   drawerCloseBtn: {
-    padding: 4,
+    padding: SPACING / 2,
   },
   drawerCloseText: {
     fontSize: 20,
@@ -434,14 +436,14 @@ const styles = StyleSheet.create({
   },
   drawerContent: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 16,
+    paddingHorizontal: SPACING,
+    paddingTop: SPACING,
   },
   optionRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 14,
+    paddingVertical: SPACING,
     borderBottomWidth: 1,
     borderBottomColor: '#1a3322',
   },
@@ -449,7 +451,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#e0e0e0',
     flex: 1,
-    marginRight: 12,
+    marginRight: SPACING,
   },
   scoreLabel: {
     fontSize: 10,
@@ -484,9 +486,9 @@ const styles = StyleSheet.create({
 
   playPauseButton: {
     width: '92%',
-    paddingVertical: 14,
-    marginTop: 8,
-    marginBottom: 8,
+    paddingVertical: SPACING,
+    marginTop: SPACING,
+    marginBottom: SPACING,
     backgroundColor: '#1a1200',
     borderWidth: 1,
     borderColor: '#ff8800',
@@ -517,15 +519,15 @@ const styles = StyleSheet.create({
   dpadContainer: {
     alignItems: 'center',
     marginTop: 0,
-    marginBottom: 18,
+    marginBottom: SPACING,
   },
   middleRow: {
     flexDirection: 'row',
-    marginVertical: 4,
+    marginVertical: SPACING,
     alignItems: 'center',
   },
   dpadSpacer: {
-    width: 70,
+    width: 62,
     marginHorizontal: 0,
   },
   dpadBtn: {
@@ -537,7 +539,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 6,
+    marginHorizontal: SPACING,
     shadowColor: '#00ff41',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.25,
@@ -553,9 +555,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ff3333',
     backgroundColor: 'transparent',
-    paddingVertical: 12,
-    paddingHorizontal: 36,
+    paddingVertical: SPACING,
+    paddingHorizontal: SPACING * 3,
     borderRadius: 4,
+    marginTop: SPACING,
     shadowColor: '#ff3333',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.3,
