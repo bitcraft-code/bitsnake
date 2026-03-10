@@ -12,7 +12,7 @@ import {
 import { registerRootComponent } from 'expo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import './src/i18n';
-import { loadSavedLanguage } from './src/i18n';
+import { loadSavedLanguage, setSavedLanguage, supportedLngs } from './src/i18n';
 import { useTranslation } from 'react-i18next';
 import GameBoard from './src/components/GameBoard';
 import MenuScreen from './src/screens/MenuScreen';
@@ -29,8 +29,10 @@ const difficultySettings = {
 
 const SPACING = 12;
 
+const languageLabels = { en: 'EN', de: 'DE', fr: 'FR', es: 'ES', pt: 'PT' };
+
 export default function App() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [gameState, setGameState] = useState('menu');
   const [difficulty, setDifficulty] = useState('medium');
   const [boardSize, setBoardSize] = useState(20);
@@ -351,6 +353,26 @@ export default function App() {
                   thumbColor={wallMode === 'wrap' ? '#00ff41' : '#4a6a4a'}
                 />
               </View>
+              <View style={styles.optionRow}>
+                <Text style={[styles.optionLabel, styles.optionLabelNoFlex]}>{t('menu.language')}</Text>
+                <View style={styles.languageButtonsRow}>
+                  {supportedLngs.map((lng) => (
+                    <Pressable
+                      key={lng}
+                      onPress={() => setSavedLanguage(lng)}
+                      style={({ pressed }) => [
+                        styles.langBtn,
+                        i18n.language === lng && styles.langBtnActive,
+                        pressed && styles.btnPressed,
+                      ]}
+                    >
+                      <Text style={[styles.langBtnText, i18n.language === lng && styles.langBtnTextActive]}>
+                        {languageLabels[lng]}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
+              </View>
             </ScrollView>
           </View>
         </View>
@@ -458,6 +480,35 @@ const styles = StyleSheet.create({
     color: '#e0e0e0',
     flex: 1,
     marginRight: SPACING,
+  },
+  optionLabelNoFlex: {
+    flex: 0,
+  },
+  languageButtonsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: SPACING / 2,
+  },
+  langBtn: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 3,
+    borderWidth: 1,
+    borderColor: '#1a3322',
+    backgroundColor: '#0d1419',
+  },
+  langBtnActive: {
+    borderColor: '#00ff41',
+    backgroundColor: '#0a2a1a',
+  },
+  langBtnText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#4a6a4a',
+    letterSpacing: 1,
+  },
+  langBtnTextActive: {
+    color: '#00ff41',
   },
   scoreLabel: {
     fontSize: 10,

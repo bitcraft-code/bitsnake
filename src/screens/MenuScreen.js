@@ -1,12 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { setSavedLanguage, supportedLngs } from '../i18n';
-
-const languageLabels = { en: 'EN', de: 'DE', fr: 'FR', es: 'ES', pt: 'PT' };
 
 const MenuScreen = ({ onStart }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -19,24 +16,6 @@ const MenuScreen = ({ onStart }) => {
       <TouchableOpacity onPress={onStart} style={styles.startButton} activeOpacity={0.7}>
         <Text style={styles.buttonText}>{t('menu.startGame')}</Text>
       </TouchableOpacity>
-
-      <View style={styles.languageRow}>
-        <Text style={styles.languageLabel}>{t('menu.language')}</Text>
-        <View style={styles.languageButtons}>
-          {supportedLngs.map((lng) => (
-            <TouchableOpacity
-              key={lng}
-              onPress={() => setSavedLanguage(lng)}
-              style={[styles.langBtn, i18n.language === lng && styles.langBtnActive]}
-              activeOpacity={0.7}
-            >
-              <Text style={[styles.langBtnText, i18n.language === lng && styles.langBtnTextActive]}>
-                {languageLabels[lng]}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
 
       <View style={styles.instructions}>
         <Text style={styles.instructionTitle}>{t('menu.howToPlay')}</Text>
@@ -112,49 +91,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     letterSpacing: 2,
     textTransform: 'uppercase',
-  },
-  languageRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 28,
-    marginBottom: 8,
-  },
-  languageLabel: {
-    fontSize: 12,
-    color: '#4a6a4a',
-    marginRight: 10,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  languageButtons: {
-    flexDirection: 'row',
-    gap: 6,
-  },
-  langBtn: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 3,
-    borderWidth: 1,
-    borderColor: '#1a3a1a',
-    backgroundColor: '#0d1a0d',
-  },
-  langBtnActive: {
-    borderColor: '#00ff41',
-    backgroundColor: '#0a2a0a',
-    shadowColor: '#00ff41',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.4,
-    shadowRadius: 6,
-    elevation: 4,
-  },
-  langBtnText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#2a4a2a',
-    letterSpacing: 1,
-  },
-  langBtnTextActive: {
-    color: '#00ff41',
   },
   instructions: {
     marginTop: 32,
