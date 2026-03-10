@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "BitSnake Game",
+    "slug": "bitsnake-game",
+    "version": "1.0.0",
+    "description": "A minimalist retro-style Snake game focused on fluid gameplay and clean code.",
+    "sdkVersion": "50.0.0",
+    "platforms": ["ios", "android"],
+    "ios": {
+      "bundleIdentifier": "com.bitcraft.bitsnake",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      }
+    },
+    "android": {
+      "adaptiveIcon": {},
+      "package": "com.bitcraft.bitsnake"
+    }
+  }
+}
