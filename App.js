@@ -146,7 +146,9 @@ export default function App() {
       const ateFood = food && head.row === food.row && head.col === food.col;
       if (ateFood) {
         setScore((s) => s + 10);
-        return [head, ...prevSnake];
+        const newSnake = [head, ...prevSnake];
+        setFood(generateFood(newSnake));
+        return newSnake;
       } else {
         return [head, ...prevSnake.slice(0, -1)];
       }
@@ -165,16 +167,6 @@ export default function App() {
         }
       }
       return prevSnake;
-    });
-
-    // Gerar nova comida se comeu
-    setFood((prevFood) => {
-      if (!prevFood || !snake[0]) return null;
-      const head = snake[0];
-      if (head.row === prevFood.row && head.col === prevFood.col) {
-        return generateFood(snake);
-      }
-      return prevFood;
     });
   };
 
