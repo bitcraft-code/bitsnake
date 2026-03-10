@@ -1,65 +1,68 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
+
+const BOARD_BORDER = 2;
+const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export const GameBoard = ({ snake, food, boardSize }) => {
-  const cellSize = Math.min(200 / boardSize, 15);
+  const maxWidth = Math.min(SCREEN_WIDTH - 30, 380);
+  const cellSize = Math.floor((maxWidth - BOARD_BORDER * 2) / boardSize);
+  const boardWidth = cellSize * boardSize + BOARD_BORDER * 2;
+
+  const isSnakeHead = (r, c) => snake[0]?.row === r && snake[0]?.col === c;
+  const isSnakeBody = (r, c) => snake.slice(1).some((s) => s.row === r && s.col === c);
+  const isFood = (r, c) => food?.row === r && food?.col === c;
+
+  const getCellStyle = (r, c) => {
+    if (isSnakeHead(r, c)) return styles.snakeHead;
+    if (isSnakeBody(r, c)) return styles.snakeBody;
+    if (isFood(r, c)) return styles.food;
+    return styles.emptyCell;
+  };
 
   return (
-    <View
-      style={[
-        styles.board,
-        { width: boardSize * cellSize, height: boardSize * cellSize },
-      ]}
-    >
-      {Array.from({ length: boardSize * boardSize }).map((_, index) => {
-        const row = Math.floor(index / boardSize);
-        const col = index % boardSize;
-
-        const isSnakeHead = snake[0]?.row === row && snake[0]?.col === col;
-        const isSnakeBody = snake
-          .slice(1)
-          .some((s) => s.row === row && s.col === col);
-        const isFood = food?.row === row && food?.col === col;
-
-        let cellStyle = styles.cell;
-        if (isSnakeHead) cellStyle = [styles.cell, styles.snakeHead];
-        else if (isSnakeBody) cellStyle = [styles.cell, styles.snakeBody];
-        else if (isFood) cellStyle = [styles.cell, styles.food];
-
-        return <View key={index} style={cellStyle} />;
-      })}
+    <View style={[styles.board, { width: boardWidth }]}>
+      {Array.from({ length: boardSize }).map((_, row) => (
+        <View key={row} style={styles.row}>
+          {Array.from({ length: boardSize }).map((_, col) => (
+            <View
+              key={col}
+              style={[{ width: cellSize, height: cellSize }, getCellStyle(row, col)]}
+            />
+          ))}
+        </View>
+      ))}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   board: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    backgroundColor: '#333',
-    borderWidth: 2,
-    borderColor: '#000',
+    backgroundColor: '#080c14',
+    borderWidth: BOARD_BORDER,
+    borderColor: '#00ff41',
     marginBottom: 20,
-    alignItems: 'flex-start',
+    shadowColor: '#00ff41',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 6,
+    overflow: 'hidden',
   },
-  cell: {
-    width: 15,
-    height: 15,
-    backgroundColor: '#fff',
-    borderWidth: 0.5,
-    borderColor: '#ddd',
+  row: {
+    flexDirection: 'row',
+  },
+  emptyCell: {
+    backgroundColor: '#0a1210',
   },
   snakeHead: {
-    backgroundColor: '#4CAF50',
-    borderRadius: 3,
+    backgroundColor: '#00ff41',
   },
   snakeBody: {
-    backgroundColor: '#8BC34A',
-    borderRadius: 2,
+    backgroundColor: '#00cc33',
   },
   food: {
-    backgroundColor: '#FF5252',
-    borderRadius: 7.5,
+    backgroundColor: '#ff3333',
   },
 });
 
