@@ -11,6 +11,7 @@
   },
   "game": {
     "score": "Punkte:",
+    "time": "Zeit:",
     "record": "Rekord:",
     "mainMenu": "🏠 Hauptmenü",
     "options": "Optionen",

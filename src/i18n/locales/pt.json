@@ -11,6 +11,7 @@
   },
   "game": {
     "score": "Pontuação:",
+    "time": "Tempo:",
     "record": "Recorde:",
     "mainMenu": "🏠 Menu Principal",
     "options": "Opções",

@@ -80,6 +80,7 @@ export default function App() {
   const [blinkTick, setBlinkTick] = useState(0);
   const [obstaclesEnabled, setObstaclesEnabled] = useState(false);
   const [obstacles, setObstacles] = useState([]);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   const gameLoopRef = useRef(null);
   const nextDirectionRef = useRef('right');
@@ -145,6 +146,7 @@ export default function App() {
       obstaclesRef.current = [];
     }
     setScore(0);
+    setElapsedSeconds(0);
     setDirection('right');
     setNextDirection('right');
     nextDirectionRef.current = 'right';
@@ -366,6 +368,12 @@ export default function App() {
     return () => clearInterval(interval);
   }, [gameState, paused, obstaclesEnabled]);
 
+  useEffect(() => {
+    if (gameState !== 'playing' || paused) return;
+    const interval = setInterval(() => setElapsedSeconds((s) => s + 1), 1000);
+    return () => clearInterval(interval);
+  }, [gameState, paused]);
+
   const handleDirectionChange = (newDir) => {
     if (!['up', 'down', 'left', 'right'].includes(newDir)) return;
     const opposites = { up: 'down', down: 'up', left: 'right', right: 'left' };
@@ -420,6 +428,12 @@ export default function App() {
         <View style={styles.headerBlock}>
           <Text style={styles.scoreLabel}>{t('game.score')}</Text>
           <Text style={styles.score}>{score}</Text>
+        </View>
+        <View style={styles.headerBlock}>
+          <Text style={styles.timeLabel}>{t('game.time')}</Text>
+          <Text style={styles.timeValue}>
+            {Math.floor(elapsedSeconds / 60)}:{(elapsedSeconds % 60).toString().padStart(2, '0')}
+          </Text>
         </View>
         <View style={styles.headerBlock}>
           <Text style={styles.highScoreLabel}>{t('game.record')}</Text>
@@ -758,6 +772,21 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color: '#00ff41',
     textShadowColor: '#00ff41',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 8,
+  },
+  timeLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#4a4a6a',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+  },
+  timeValue: {
+    fontSize: 28,
+    fontWeight: '900',
+    color: '#4488ff',
+    textShadowColor: '#4488ff',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 8,
   },
