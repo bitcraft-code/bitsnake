@@ -1,0 +1,5 @@
+# React Native
+node_modules/
+android/
+ios/
+**/build/
