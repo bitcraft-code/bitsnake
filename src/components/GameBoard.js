@@ -22,7 +22,13 @@ export const GameBoard = ({ snake, food, boardSize, wallMode = 'normal' }) => {
   };
 
   return (
-    <View style={[styles.board, { width: boardWidth }, ghostWalls && styles.boardDashed]}>
+    <View
+      style={[
+        styles.board,
+        { width: boardWidth },
+        ghostWalls && styles.boardGhost,
+      ]}
+    >
       {Array.from({ length: boardSize }).map((_, row) => (
         <View key={row} style={styles.row}>
           {Array.from({ length: boardSize }).map((_, col) => (
@@ -50,8 +56,11 @@ const styles = StyleSheet.create({
     elevation: 6,
     overflow: 'hidden',
   },
-  boardDashed: {
-    borderStyle: 'dashed',
+  boardGhost: {
+    borderStyle: 'dotted',
+    borderColor: 'rgba(0, 255, 65, 0.55)',
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
   },
   row: {
     flexDirection: 'row',
