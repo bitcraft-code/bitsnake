@@ -185,12 +185,23 @@ export default function App() {
     const count =
       OBSTACLE_COUNT_MIN +
       Math.floor(Math.random() * (OBSTACLE_COUNT_MAX - OBSTACLE_COUNT_MIN + 1));
+    const head = currentSnake?.[0];
     const occupied = new Set(
       [
         ...(currentSnake || []).map((s) => `${s.row},${s.col}`),
         ...(currentFoods || []).map((f) => `${f.row},${f.col}`),
       ]
     );
+    if (head) {
+      const minDist = 5;
+      for (let r = 0; r < boardSize; r++) {
+        for (let c = 0; c < boardSize; c++) {
+          if (Math.max(Math.abs(r - head.row), Math.abs(c - head.col)) < minDist) {
+            occupied.add(`${r},${c}`);
+          }
+        }
+      }
+    }
     const result = [];
     for (let i = 0; i < count; i++) {
       let row, col;
