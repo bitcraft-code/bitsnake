@@ -683,7 +683,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#00ff41',
     letterSpacing: 2,
-    textTransform: 'uppercase',
   },
   drawerCloseBtn: {
     padding: SPACING / 2,
