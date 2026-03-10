@@ -41,6 +41,7 @@ export default function App() {
   const [paused, setPaused] = useState(false);
 
   const gameLoopRef = useRef(null);
+  const nextDirectionRef = useRef('right');
 
   useEffect(() => {
     loadHighScore();
@@ -80,6 +81,7 @@ export default function App() {
     setScore(0);
     setDirection('right');
     setNextDirection('right');
+    nextDirectionRef.current = 'right';
     setPaused(false);
     setGameState('playing');
   };
@@ -107,11 +109,12 @@ export default function App() {
   };
 
   const moveSnake = () => {
-    setDirection(nextDirection);
+    const currentDirection = nextDirectionRef.current;
+    setDirection(currentDirection);
     setSnake((prevSnake) => {
       const head = { ...prevSnake[0] };
 
-      switch (nextDirection) {
+      switch (currentDirection) {
         case 'up':
           head.row--;
           break;
@@ -190,12 +193,13 @@ export default function App() {
     );
 
     return () => clearInterval(gameLoopRef.current);
-  }, [gameState, paused, nextDirection]);
+  }, [gameState, paused]);
 
   const handleDirectionChange = (newDir) => {
     if (!['up', 'down', 'left', 'right'].includes(newDir)) return;
     const opposites = { up: 'down', down: 'up', left: 'right', right: 'left' };
     if (direction !== opposites[newDir]) {
+      nextDirectionRef.current = newDir;
       setNextDirection(newDir);
     }
   };
