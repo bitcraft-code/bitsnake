@@ -9,6 +9,7 @@ const FOOD_OPACITY = { 1: 0.4, 2: 0.7, 3: 1 };
 export const GameBoard = ({
   snake,
   foods = [],
+  obstacles = [],
   boardSize,
   wallMode = 'normal',
   blinkTick = 0,
@@ -23,6 +24,7 @@ export const GameBoard = ({
 
   const isSnakeHead = (r, c) => snake[0]?.row === r && snake[0]?.col === c;
   const isSnakeBody = (r, c) => snake.slice(1).some((s) => s.row === r && s.col === c);
+  const isObstacle = (r, c) => obstacles.some((o) => o.row === r && o.col === c);
   const getFoodAt = (r, c) => foods.find((f) => f.row === r && f.col === c);
 
   const isFoodVisible = (food) => {
@@ -35,6 +37,7 @@ export const GameBoard = ({
   const getCellStyle = (r, c) => {
     if (isSnakeHead(r, c)) return styles.snakeHead;
     if (isSnakeBody(r, c)) return styles.snakeBody;
+    if (isObstacle(r, c)) return styles.obstacle;
     const food = getFoodAt(r, c);
     if (food) {
       if (!isFoodVisible(food)) return styles.emptyCell;
@@ -90,6 +93,11 @@ const styles = StyleSheet.create({
   },
   emptyCell: {
     backgroundColor: '#0a1210',
+  },
+  obstacle: {
+    backgroundColor: '#2a2a2a',
+    borderWidth: 1,
+    borderColor: '#3a3a3a',
   },
   snakeHead: {
     backgroundColor: '#00ff41',

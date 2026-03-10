@@ -43,6 +43,11 @@ const FOOD_BLINK_INTERVAL_MS = 200;
 // Se ficar X s sem nenhuma comida visível, gera novas (sem pontuar)
 const NO_FOOD_SPAWN_MS = 5000;
 
+// Obstáculos: renovam a cada X s; quantidade aleatória entre min e max
+const OBSTACLE_CHANGE_MS = 8000;
+const OBSTACLE_COUNT_MIN = 3;
+const OBSTACLE_COUNT_MAX = 7;
+
 export default function App() {
   const { t, i18n } = useTranslation();
   const [gameState, setGameState] = useState('menu');
@@ -60,11 +65,14 @@ export default function App() {
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [speedLevel, setSpeedLevel] = useState(3);
   const [blinkTick, setBlinkTick] = useState(0);
+  const [obstaclesEnabled, setObstaclesEnabled] = useState(false);
+  const [obstacles, setObstacles] = useState([]);
 
   const gameLoopRef = useRef(null);
   const nextDirectionRef = useRef('right');
   const foodsRef = useRef([]);
   const snakeRef = useRef([]);
+  const obstaclesRef = useRef([]);
 
   useEffect(() => {
     loadHighScore();
@@ -78,6 +86,10 @@ export default function App() {
   useEffect(() => {
     snakeRef.current = snake;
   }, [snake]);
+
+  useEffect(() => {
+    obstaclesRef.current = obstacles;
+  }, [obstacles]);
 
   const loadHighScore = async () => {
     try {
@@ -111,6 +123,14 @@ export default function App() {
     const initialFoods = generateFoods(initialSnake);
     setFoods(initialFoods);
     foodsRef.current = initialFoods;
+    if (obstaclesEnabled) {
+      const initialObstacles = generateObstacles(initialSnake, initialFoods);
+      setObstacles(initialObstacles);
+      obstaclesRef.current = initialObstacles;
+    } else {
+      setObstacles([]);
+      obstaclesRef.current = [];
+    }
     setScore(0);
     setDirection('right');
     setNextDirection('right');
@@ -145,6 +165,33 @@ export default function App() {
       result.push(item);
     }
 
+    return result;
+  };
+
+  const generateObstacles = (currentSnake, currentFoods) => {
+    const count =
+      OBSTACLE_COUNT_MIN +
+      Math.floor(Math.random() * (OBSTACLE_COUNT_MAX - OBSTACLE_COUNT_MIN + 1));
+    const occupied = new Set(
+      [
+        ...(currentSnake || []).map((s) => `${s.row},${s.col}`),
+        ...(currentFoods || []).map((f) => `${f.row},${f.col}`),
+      ]
+    );
+    const result = [];
+    for (let i = 0; i < count; i++) {
+      let row, col;
+      let attempts = 0;
+      do {
+        row = Math.floor(Math.random() * boardSize);
+        col = Math.floor(Math.random() * boardSize);
+        attempts++;
+        if (attempts > 300) break;
+      } while (occupied.has(`${row},${col}`));
+      if (attempts > 300) break;
+      occupied.add(`${row},${col}`);
+      result.push({ row, col });
+    }
     return result;
   };
 
@@ -195,6 +242,15 @@ export default function App() {
         if (head.row >= boardSize) head.row = 0;
         if (head.col < 0) head.col = boardSize - 1;
         if (head.col >= boardSize) head.col = 0;
+      }
+
+      const currentObstacles = obstaclesRef.current || [];
+      const hitObstacle = currentObstacles.some(
+        (o) => o.row === head.row && o.col === head.col
+      );
+      if (hitObstacle) {
+        handleGameOver();
+        return prevSnake;
       }
 
       const currentFoods = foodsRef.current || [];
@@ -273,6 +329,19 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [gameState, paused, foods.length]);
 
+  useEffect(() => {
+    if (gameState !== 'playing' || paused || !obstaclesEnabled) return;
+    const interval = setInterval(() => {
+      const newObstacles = generateObstacles(
+        snakeRef.current,
+        foodsRef.current || []
+      );
+      setObstacles(newObstacles);
+      obstaclesRef.current = newObstacles;
+    }, OBSTACLE_CHANGE_MS);
+    return () => clearInterval(interval);
+  }, [gameState, paused, obstaclesEnabled]);
+
   const handleDirectionChange = (newDir) => {
     if (!['up', 'down', 'left', 'right'].includes(newDir)) return;
     const opposites = { up: 'down', down: 'up', left: 'right', right: 'left' };
@@ -343,6 +412,7 @@ export default function App() {
       <GameBoard
         snake={snake}
         foods={foods}
+        obstacles={obstacles}
         boardSize={boardSize}
         wallMode={wallMode}
         blinkTick={blinkTick}
@@ -429,6 +499,28 @@ export default function App() {
                   onValueChange={(value) => setWallMode(value ? 'wrap' : 'normal')}
                   trackColor={{ false: '#1a3322', true: '#0a2a1a' }}
                   thumbColor={wallMode === 'wrap' ? '#00ff41' : '#4a6a4a'}
+                />
+              </View>
+              <View style={styles.optionRow}>
+                <Text style={styles.optionLabel}>{t('game.optionObstacles')}</Text>
+                <Switch
+                  value={obstaclesEnabled}
+                  onValueChange={(value) => {
+                    setObstaclesEnabled(value);
+                    if (value) {
+                      const next = generateObstacles(
+                        snakeRef.current,
+                        foodsRef.current || []
+                      );
+                      setObstacles(next);
+                      obstaclesRef.current = next;
+                    } else {
+                      setObstacles([]);
+                      obstaclesRef.current = [];
+                    }
+                  }}
+                  trackColor={{ false: '#1a3322', true: '#0a2a1a' }}
+                  thumbColor={obstaclesEnabled ? '#00ff41' : '#4a6a4a'}
                 />
               </View>
               <View style={styles.optionRow}>
