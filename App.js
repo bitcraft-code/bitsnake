@@ -12,7 +12,6 @@ import { GameBoard } from './src/components/GameBoard';
 import MenuScreen from './src/screens/MenuScreen';
 import GameOverScreen from './src/screens/GameOverScreen';
 
-// Configurações do jogo baseadas na Citação 3
 const difficultySettings = {
   easy: { speed: 200, size: 15 },
   medium: { speed: 150, size: 20 },
@@ -21,11 +20,10 @@ const difficultySettings = {
 };
 
 export default function App() {
-  // Estados do jogo baseados nas Citações 1-3
-  const [gameState, setGameState] = useState('menu'); // menu, playing, gameOver
+  const [gameState, setGameState] = useState('menu');
   const [difficulty, setDifficulty] = useState('medium');
   const [boardSize, setBoardSize] = useState(20);
-  const [wallMode, setWallMode] = useState('normal'); // normal, teleport
+  const [wallMode, setWallMode] = useState('normal');
 
   const [snake, setSnake] = useState([]);
   const [food, setFood] = useState(null);
@@ -35,23 +33,19 @@ export default function App() {
   const [highScore, setHighScore] = useState(0);
   const [paused, setPaused] = useState(false);
 
-  // Referências para loop do jogo
   const gameLoopRef = useRef(null);
   const gameSpeedRef = useRef(difficultySettings.medium.speed);
 
-  // Carregar high score inicial (Citação 3)
   useEffect(() => {
     loadHighScore();
   }, []);
 
-  // Atualizar velocidade quando dificuldade muda
   useEffect(() => {
     if (difficultySettings[difficulty]) {
       gameSpeedRef.current = difficultySettings[difficulty].speed;
     }
   }, [difficulty]);
 
-  // Carregar high score do AsyncStorage
   const loadHighScore = async () => {
     try {
       const saved = await AsyncStorage.getItem('snakeHighScore');
@@ -61,7 +55,6 @@ export default function App() {
     }
   };
 
-  // Salvar high score do AsyncStorage (Citação 3)
   const saveHighScore = async () => {
     try {
       await AsyncStorage.setItem('snakeHighScore', highScore.toString());
@@ -70,7 +63,6 @@ export default function App() {
     }
   };
 
-  // Inicializar jogo (Citação 3 - initGame)
   const initGame = () => {
     setSnake([
       { row: Math.floor(boardSize / 2), col: Math.floor(boardSize / 2) },
@@ -83,7 +75,6 @@ export default function App() {
     setGameState('playing');
   };
 
-  // Gerar comida (Citação 1, 3)
   const generateFood = () => {
     let newFood;
     let onSnake;
@@ -106,7 +97,6 @@ export default function App() {
     return newFood;
   };
 
-  // Mover cobra (Citação 1, 2)
   const moveSnake = () => {
     setDirection(nextDirection);
     setSnake((prevSnake) => {
@@ -127,7 +117,6 @@ export default function App() {
           break;
       }
 
-      // Wall mode handling (Citação 2)
       if (wallMode === 'normal') {
         if (
           head.row < 0 ||
@@ -139,22 +128,19 @@ export default function App() {
           return prevSnake;
         }
       } else {
-        // Teleport mode
         if (head.row < 0) head.row = boardSize - 1;
         if (head.row >= boardSize) head.row = 0;
         if (head.col < 0) head.col = boardSize - 1;
         if (head.col >= boardSize) head.col = 0;
       }
 
-      // Check food (Citação 2, 3)
       if (head.row === food.row && head.col === food.col) {
         setScore((s) => s + 10);
         setFood(generateFood());
       } else {
-        head.pop();
+        return [head, ...prevSnake.slice(0, -1)];
       }
 
-      // Self collision check (Citação 3)
       for (let i = 1; i < prevSnake.length; i++) {
         if (head.row === prevSnake[i].row && head.col === prevSnake[i].col) {
           handleGameOver();
@@ -166,7 +152,6 @@ export default function App() {
     });
   };
 
-  // Game Over (Citação 3)
   const handleGameOver = () => {
     if (gameLoopRef.current) clearInterval(gameLoopRef.current);
 
@@ -178,7 +163,6 @@ export default function App() {
     setGameState('gameOver');
   };
 
-  // Game Loop (Citação 1, 3)
   useEffect(() => {
     if (gameState !== 'playing' || paused) return;
 
@@ -187,7 +171,6 @@ export default function App() {
     return () => clearInterval(gameLoopRef.current);
   }, [gameState, paused]);
 
-  // Controles de teclado (Citação 2 - adaptado para RN com gestos/teclado virtual)
   const handleDirectionChange = (newDir) => {
     if (!['up', 'down', 'left', 'right'].includes(newDir)) return;
 
@@ -197,23 +180,19 @@ export default function App() {
     }
   };
 
-  // Pausar/Continuar (Citação 2 - togglePause)
   const togglePause = () => {
     setPaused((prev) => !prev);
   };
 
-  // Reiniciar jogo (Citação 2 - restartGame)
   const restartGame = () => {
     initGame();
   };
 
-  // Voltar ao menu (Citação 2 - goMenu)
   const goMenu = () => {
     if (gameLoopRef.current) clearInterval(gameLoopRef.current);
     setGameState('menu');
   };
 
-  // Renderizar tela baseada no estado
   if (gameState === 'menu') {
     return <MenuScreen onStart={initGame} />;
   }
@@ -231,39 +210,43 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.score}>Pontuação: {score}</Text>
+      {/* CORREÇÃO: Texto dentro de <Text> */}
+      <View style={styles.scoreContainer}>
+        <Text style={styles.scoreLabel}>Pontuação:</Text>
+        <Text style={styles.score}>{score}</Text>
+      </View>
 
       <GameBoard snake={snake} food={food} boardSize={boardSize} />
 
-      {/* Controles de direção */}
+      {/* CORREÇÃO: Textos dentro de <Text> */}
       <View style={styles.controls}>
         <TouchableOpacity
           onPress={() => handleDirectionChange('up')}
           style={styles.controlBtn}
         >
-          ⬆️
+          <Text style={styles.controlText}>⬆️</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => handleDirectionChange('left')}
           style={styles.controlBtn}
         >
-          ⬅️
+          <Text style={styles.controlText}>⬅️</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => handleDirectionChange('down')}
           style={styles.controlBtn}
         >
-          ⬇️
+          <Text style={styles.controlText}>⬇️</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => handleDirectionChange('right')}
           style={styles.controlBtn}
         >
-          ➡️
+          <Text style={styles.controlText}>➡️</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Botões de controle */}
+      {/* CORREÇÃO: Textos dentro de <Text> */}
       <View style={styles.actionButtons}>
         <TouchableOpacity onPress={togglePause} style={styles.button}>
           <Text style={styles.buttonText}>
@@ -286,13 +269,26 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
+    justifyContent: 'flex-start',
+    paddingTop: 60,
+    paddingHorizontal: 20,
   },
-  score: {
+  scoreContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+    width: '100%',
+  },
+  scoreLabel: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 10,
+    color: '#333',
+  },
+  score: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#4CAF50',
+    marginLeft: 10,
   },
   controls: {
     flexDirection: 'row',
@@ -306,6 +302,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: 5,
     borderRadius: 10,
+  },
+  controlText: {
+    fontSize: 32,
   },
   actionButtons: {
     flexDirection: 'row',
