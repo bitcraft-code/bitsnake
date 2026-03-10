@@ -5,10 +5,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Alert,
+  Dimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GameBoard } from './src/components/GameBoard';
+import GameBoard from './src/components/GameBoard';
 import MenuScreen from './src/screens/MenuScreen';
 import GameOverScreen from './src/screens/GameOverScreen';
 
@@ -18,6 +18,8 @@ const difficultySettings = {
   hard: { speed: 100, size: 20 },
   expert: { speed: 70, size: 20 },
 };
+
+const { width, height } = Dimensions.get('window');
 
 export default function App() {
   const [gameState, setGameState] = useState('menu');
@@ -193,6 +195,63 @@ export default function App() {
     setGameState('menu');
   };
 
+  // Layout de Joystick D-PAD para Mobile
+  const renderDpadControls = () => (
+    <View style={styles.dpadContainer}>
+      {/* Linha Superior */}
+      <View style={styles.dpadRow}>
+        <TouchableOpacity
+          onPress={() => handleDirectionChange('up')}
+          activeOpacity={0.7}
+          style={[styles.dpadBtn, styles.dpadUp]}
+        >
+          <Text style={styles.dpadArrow}>⬆️</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Linha do Meio - Esquerda/Direita */}
+      <View style={styles.dpadRow}>
+        <TouchableOpacity
+          onPress={() => handleDirectionChange('left')}
+          activeOpacity={0.7}
+          style={[styles.dpadBtn, styles.dpadLeft]}
+        >
+          <Text style={styles.dpadArrow}>⬅️</Text>
+        </TouchableOpacity>
+
+        {/* Botão Central Pausa */}
+        <TouchableOpacity
+          onPress={togglePause}
+          activeOpacity={0.7}
+          style={[styles.dpadBtn, styles.dpadCenter]}
+        >
+          <Text style={[styles.dpadArrow, { fontSize: 16 }]}>
+            {paused ? '▶️' : '⏸️'}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => handleDirectionChange('right')}
+          activeOpacity={0.7}
+          style={[styles.dpadBtn, styles.dpadRight]}
+        >
+          <Text style={styles.dpadArrow}>➡️</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Linha Inferior - Baixo */}
+      <View style={styles.dpadRow}>
+        <TouchableOpacity
+          onPress={() => handleDirectionChange('down')}
+          activeOpacity={0.7}
+          style={[styles.dpadBtn, styles.dpadDown]}
+        >
+          <Text style={styles.dpadArrow}>⬇️</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
   if (gameState === 'menu') {
     return <MenuScreen onStart={initGame} />;
   }
@@ -209,113 +268,109 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
-      {/* CORREÇÃO: Texto dentro de <Text> */}
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* Pontuação */}
       <View style={styles.scoreContainer}>
         <Text style={styles.scoreLabel}>Pontuação:</Text>
         <Text style={styles.score}>{score}</Text>
+        <Text style={styles.highScoreLabel}>Recorde: {highScore}</Text>
       </View>
 
+      {/* Tabuleiro do Jogo */}
       <GameBoard snake={snake} food={food} boardSize={boardSize} />
 
-      {/* CORREÇÃO: Textos dentro de <Text> */}
-      <View style={styles.controls}>
-        <TouchableOpacity
-          onPress={() => handleDirectionChange('up')}
-          style={styles.controlBtn}
-        >
-          <Text style={styles.controlText}>⬆️</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => handleDirectionChange('left')}
-          style={styles.controlBtn}
-        >
-          <Text style={styles.controlText}>⬅️</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => handleDirectionChange('down')}
-          style={styles.controlBtn}
-        >
-          <Text style={styles.controlText}>⬇️</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => handleDirectionChange('right')}
-          style={styles.controlBtn}
-        >
-          <Text style={styles.controlText}>➡️</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Controles Joystick D-PAD */}
+      {renderDpadControls()}
 
-      {/* CORREÇÃO: Textos dentro de <Text> */}
+      {/* Botões Adicionais */}
       <View style={styles.actionButtons}>
-        <TouchableOpacity onPress={togglePause} style={styles.button}>
-          <Text style={styles.buttonText}>
-            {paused ? 'Continuar' : 'Pausar'}
-          </Text>
-        </TouchableOpacity>
         <TouchableOpacity
           onPress={goMenu}
           style={[styles.button, styles.secondaryButton]}
         >
-          <Text style={styles.buttonText}>Menu</Text>
+          <Text style={styles.buttonText}>🏠 Menu</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: '#f5f5f5',
     alignItems: 'center',
-    justifyContent: 'flex-start',
-    paddingTop: 60,
+    paddingTop: 40,
     paddingHorizontal: 20,
   },
   scoreContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
+    justifyContent: 'space-between',
     width: '100%',
+    marginBottom: 15,
   },
   scoreLabel: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
   },
   score: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#4CAF50',
     marginLeft: 10,
   },
-  controls: {
-    flexDirection: 'row',
-    marginTop: 20,
+  highScoreLabel: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FF9800',
   },
-  controlBtn: {
-    width: 60,
-    height: 60,
-    backgroundColor: '#ddd',
+  dpadContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 15,
+  },
+  dpadRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginVertical: 2,
+  },
+  dpadBtn: {
+    width: 70,
+    height: 70,
+    backgroundColor: '#3F51B5',
+    borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 5,
-    borderRadius: 10,
+    marginHorizontal: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
   },
-  controlText: {
-    fontSize: 32,
+  dpadUp: { backgroundColor: '#3F51B5' },
+  dpadDown: { backgroundColor: '#3F51B5' },
+  dpadLeft: { backgroundColor: '#3F51B5' },
+  dpadRight: { backgroundColor: '#3F51B5' },
+  dpadCenter: {
+    backgroundColor: '#FF9800',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+  },
+  dpadArrow: {
+    fontSize: 28,
+    color: 'white',
   },
   actionButtons: {
-    flexDirection: 'row',
-    marginTop: 20,
+    marginTop: 15,
   },
   button: {
     backgroundColor: '#4CAF50',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
     borderRadius: 8,
-    marginHorizontal: 5,
   },
   secondaryButton: {
     backgroundColor: '#FF9800',
@@ -323,5 +378,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
+    fontSize: 16,
   },
 });

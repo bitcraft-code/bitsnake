@@ -1,11 +1,16 @@
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useSnakeGame } from '../hooks/useSnakeGame';
 
-export const GameBoard = () => {
-  const { snake, food, boardSize = 20 } = useSnakeGame();
+export const GameBoard = ({ snake, food, boardSize }) => {
+  const cellSize = Math.min(200 / boardSize, 15);
 
   return (
-    <View style={styles.board}>
+    <View
+      style={[
+        styles.board,
+        { width: boardSize * cellSize, height: boardSize * cellSize },
+      ]}
+    >
       {Array.from({ length: boardSize * boardSize }).map((_, index) => {
         const row = Math.floor(index / boardSize);
         const col = index % boardSize;
@@ -28,9 +33,34 @@ export const GameBoard = () => {
 };
 
 const styles = StyleSheet.create({
-  board: { flexDirection: 'row', flexWrap: 'wrap' },
-  cell: { width: 20, height: 20, borderWidth: 1, borderColor: '#333' },
-  snakeHead: { backgroundColor: '#4CAF50' },
-  snakeBody: { backgroundColor: '#8BC34A' },
-  food: { backgroundColor: '#F44336' },
+  board: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    backgroundColor: '#333',
+    borderWidth: 2,
+    borderColor: '#000',
+    marginBottom: 20,
+    alignItems: 'flex-start',
+  },
+  cell: {
+    width: 15,
+    height: 15,
+    backgroundColor: '#fff',
+    borderWidth: 0.5,
+    borderColor: '#ddd',
+  },
+  snakeHead: {
+    backgroundColor: '#4CAF50',
+    borderRadius: 3,
+  },
+  snakeBody: {
+    backgroundColor: '#8BC34A',
+    borderRadius: 2,
+  },
+  food: {
+    backgroundColor: '#FF5252',
+    borderRadius: 7.5,
+  },
 });
+
+export default GameBoard;
