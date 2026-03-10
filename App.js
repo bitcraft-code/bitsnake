@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   ScrollView,
   Dimensions,
   Modal,
@@ -261,66 +260,67 @@ export default function App() {
           <Text style={styles.highScoreLabel}>{t('game.record')}</Text>
           <Text style={styles.highScoreValue}>{highScore}</Text>
         </View>
-        <TouchableOpacity
+        <Pressable
           onPress={openOptions}
-          style={styles.optionsButton}
-          activeOpacity={0.7}
+          style={({ pressed }) => [styles.optionsButton, pressed && styles.btnPressed]}
         >
           <Text style={styles.optionsButtonText}>⚙</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       <GameBoard snake={snake} food={food} boardSize={boardSize} wallMode={wallMode} />
 
-      <TouchableOpacity
+      <Pressable
         onPress={togglePause}
-        style={[styles.playPauseButton, paused && styles.playPauseButtonPaused]}
-        activeOpacity={0.7}
+        style={({ pressed }) => [
+          styles.playPauseButton,
+          paused && styles.playPauseButtonPaused,
+          pressed && styles.btnPressed,
+        ]}
       >
         <Text style={[styles.playPauseButtonText, paused && styles.playPauseButtonTextPaused]}>
           {paused ? t('game.play') : t('game.pause')}
         </Text>
-      </TouchableOpacity>
+      </Pressable>
 
       <View style={styles.dpadContainer}>
-        <TouchableOpacity
+        <Pressable
           onPress={() => handleDirectionChange('up')}
-          activeOpacity={0.7}
-          style={styles.dpadBtn}
+          style={({ pressed }) => [styles.dpadBtn, pressed && styles.dpadBtnPressed]}
         >
           <Text style={styles.arrow}>▲</Text>
-        </TouchableOpacity>
+        </Pressable>
 
         <View style={styles.middleRow}>
-          <TouchableOpacity
+          <Pressable
             onPress={() => handleDirectionChange('left')}
-            activeOpacity={0.7}
-            style={styles.dpadBtn}
+            style={({ pressed }) => [styles.dpadBtn, pressed && styles.dpadBtnPressed]}
           >
             <Text style={styles.arrow}>◀</Text>
-          </TouchableOpacity>
+          </Pressable>
           <View style={styles.dpadSpacer} />
-          <TouchableOpacity
+          <Pressable
             onPress={() => handleDirectionChange('right')}
-            activeOpacity={0.7}
-            style={styles.dpadBtn}
+            style={({ pressed }) => [styles.dpadBtn, pressed && styles.dpadBtnPressed]}
           >
             <Text style={styles.arrow}>▶</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
-        <TouchableOpacity
+        <Pressable
           onPress={() => handleDirectionChange('down')}
-          activeOpacity={0.7}
-          style={styles.dpadBtn}
+          style={({ pressed }) => [styles.dpadBtn, pressed && styles.dpadBtnPressed]}
         >
           <Text style={styles.arrow}>▼</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
-      <TouchableOpacity onPress={goMenu} style={styles.menuButton} activeOpacity={0.7}>
+      <Pressable
+        onPress={goMenu}
+        style={({ pressed }) => [styles.menuButton, pressed && styles.btnPressed]}
+      >
         <Text style={styles.menuButtonText}>{t('game.mainMenu')}</Text>
-      </TouchableOpacity>
+      </Pressable>
 
       <Modal
         visible={optionsOpen}
@@ -333,13 +333,13 @@ export default function App() {
           <View style={styles.drawerPanel}>
             <View style={styles.drawerHeader}>
               <Text style={styles.drawerTitle}>{t('game.options')}</Text>
-              <TouchableOpacity
+              <Pressable
                 onPress={closeOptions}
-                style={styles.drawerCloseBtn}
+                style={({ pressed }) => [styles.drawerCloseBtn, pressed && styles.btnPressed]}
                 hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
               >
                 <Text style={styles.drawerCloseText}>✕</Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
             <ScrollView style={styles.drawerContent}>
               <View style={styles.optionRow}>
@@ -388,6 +388,12 @@ const styles = StyleSheet.create({
     padding: SPACING,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  btnPressed: {
+    transform: [{ translateY: 2 }],
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1,
   },
   optionsButtonText: {
     fontSize: 22,
@@ -545,6 +551,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 6,
     elevation: 3,
+  },
+  dpadBtnPressed: {
+    transform: [{ translateY: 2 }],
+    backgroundColor: '#061008',
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
+    elevation: 1,
   },
   arrow: {
     fontSize: 24,
