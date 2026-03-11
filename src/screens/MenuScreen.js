@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#0d1419',
     borderLeftWidth: 1,
     borderLeftColor: '#1a3322',
-    paddingTop: SPACING * 4,
+    paddingTop: SPACING * 6,
   },
   modalHeader: {
     flexDirection: 'row',
