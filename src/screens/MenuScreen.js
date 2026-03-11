@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalPanel: {
-    width: Math.min(SCREEN_WIDTH * 0.85, 320),
+    width: SCREEN_WIDTH,
     alignSelf: 'stretch',
     backgroundColor: '#0d1419',
     borderLeftWidth: 1,
