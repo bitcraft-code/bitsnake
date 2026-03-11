@@ -110,6 +110,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   backButtonText: {
     color: '#00ff41',

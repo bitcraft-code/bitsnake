@@ -209,6 +209,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 10,
     elevation: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   leaderboardButton: {
     borderWidth: 1,
@@ -218,6 +220,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 4,
     marginBottom: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   leaderboardButtonText: {
     color: '#00aa33',
@@ -237,6 +241,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 10,
     elevation: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   buttonText: {
     color: '#00ff41',
