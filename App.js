@@ -256,6 +256,7 @@ export default function App() {
     setScore(0);
     setElapsedSeconds(0);
     setMoveCount(0);
+    setSpeedLevel(1);
     setDirection('right');
     setNextDirection('right');
     nextDirectionRef.current = 'right';
