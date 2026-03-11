@@ -724,7 +724,7 @@ export default function App() {
             countdown && styles.buttonDisabled,
           ]}
         >
-          <RetroText style={styles.optionsButtonText}>⚙</RetroText>
+          <RetroText style={styles.optionsButtonText}>⚙︎</RetroText>
         </Pressable>
       </View>
 
@@ -1103,7 +1103,7 @@ const styles = StyleSheet.create({
   },
   optionsButtonText: {
     fontFamily: FONT_FAMILY,
-    fontSize: 18,
+    fontSize: 26,
     color: '#ff8800',
   },
   drawerOverlay: {
