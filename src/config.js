@@ -7,12 +7,14 @@
 // Níveis de velocidade: intervalo entre movimentos em ms (quanto menor, mais rápido)
 export const SPEED_LEVEL_MS = {
   1: 250,
-  2: 200,
-  3: 150,
-  4: 100,
-  5: 70,
+  2: 225,
+  3: 200,
+  4: 150,
+  5: 125,
+  6: 100,
+  7: 75,
 };
-export const SPEED_LEVELS = [1, 2, 3, 4, 5];
+export const SPEED_LEVELS = [1, 2, 3, 4, 5, 6, 7];
 
 // Velocidade progressiva: a cada X pontos o jogo sobe um nível de velocidade
 export const POINTS_PER_SPEED_LEVEL = 10;
