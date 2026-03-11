@@ -8,11 +8,13 @@ import {
   Pressable,
   Animated,
   Easing,
+  StatusBar,
 } from 'react-native';
 import { registerRootComponent } from 'expo';
 import { useFonts } from '@expo-google-fonts/press-start-2p/useFonts';
 import { PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import './src/i18n';
 import { loadSavedLanguage, setSavedLanguage, supportedLngs } from './src/i18n';
 import { useTranslation } from 'react-i18next';
@@ -122,10 +124,18 @@ export default function App() {
     try {
       const raw = await AsyncStorage.getItem(GAME_SETTINGS_KEY);
       const data = raw ? JSON.parse(raw) : {};
-      if (data.wallMode === 'wrap' || data.wallMode === 'normal') setWallMode(data.wallMode);
-      if (typeof data.obstaclesEnabled === 'boolean') setObstaclesEnabled(data.obstaclesEnabled);
-      if (typeof data.speedLevel === 'number' && data.speedLevel >= 1 && data.speedLevel <= 5) setSpeedLevel(data.speedLevel);
-      if (data.controlMode === 'dpad' || data.controlMode === 'trackpad') setControlMode(data.controlMode);
+      if (data.wallMode === 'wrap' || data.wallMode === 'normal')
+        setWallMode(data.wallMode);
+      if (typeof data.obstaclesEnabled === 'boolean')
+        setObstaclesEnabled(data.obstaclesEnabled);
+      if (
+        typeof data.speedLevel === 'number' &&
+        data.speedLevel >= 1 &&
+        data.speedLevel <= 5
+      )
+        setSpeedLevel(data.speedLevel);
+      if (data.controlMode === 'dpad' || data.controlMode === 'trackpad')
+        setControlMode(data.controlMode);
     } catch (error) {
       console.error('Failed to load game settings:', error);
     } finally {
@@ -143,7 +153,7 @@ export default function App() {
           obstaclesEnabled,
           speedLevel,
           controlMode,
-        })
+        }),
       );
     } catch (error) {
       console.error('Failed to save game settings:', error);
@@ -290,7 +300,7 @@ export default function App() {
         setPaused(false);
         setFoods((prev) => {
           const next = prev.map((f) =>
-            f.points >= 2 ? { ...f, spawnTime: Date.now() } : f
+            f.points >= 2 ? { ...f, spawnTime: Date.now() } : f,
           );
           foodsRef.current = next;
           return next;
@@ -305,7 +315,7 @@ export default function App() {
     const count = r < 0.6 ? 1 : r < 0.88 ? 2 : 3;
     const result = [];
     const occupied = new Set(
-      (currentSnake || []).map((s) => `${s.row},${s.col}`)
+      (currentSnake || []).map((s) => `${s.row},${s.col}`),
     );
 
     for (let i = 0; i < count; i++) {
@@ -333,17 +343,17 @@ export default function App() {
       OBSTACLE_COUNT_MIN +
       Math.floor(Math.random() * (OBSTACLE_COUNT_MAX - OBSTACLE_COUNT_MIN + 1));
     const head = currentSnake?.[0];
-    const occupied = new Set(
-      [
-        ...(currentSnake || []).map((s) => `${s.row},${s.col}`),
-        ...(currentFoods || []).map((f) => `${f.row},${f.col}`),
-      ]
-    );
+    const occupied = new Set([
+      ...(currentSnake || []).map((s) => `${s.row},${s.col}`),
+      ...(currentFoods || []).map((f) => `${f.row},${f.col}`),
+    ]);
     if (head) {
       const minDist = 5;
       for (let r = 0; r < boardSize; r++) {
         for (let c = 0; c < boardSize; c++) {
-          if (Math.max(Math.abs(r - head.row), Math.abs(c - head.col)) < minDist) {
+          if (
+            Math.max(Math.abs(r - head.row), Math.abs(c - head.col)) < minDist
+          ) {
             occupied.add(`${r},${c}`);
           }
         }
@@ -370,7 +380,7 @@ export default function App() {
     const now = Date.now();
     setFoods((prev) => {
       const next = prev.filter(
-        (f) => !f.spawnTime || now - f.spawnTime < FOOD_EXPIRE_MS
+        (f) => !f.spawnTime || now - f.spawnTime < FOOD_EXPIRE_MS,
       );
       foodsRef.current = next;
       return next;
@@ -417,7 +427,7 @@ export default function App() {
 
       const currentObstacles = obstaclesRef.current || [];
       const hitObstacle = currentObstacles.some(
-        (o) => o.row === head.row && o.col === head.col
+        (o) => o.row === head.row && o.col === head.col,
       );
       if (hitObstacle) {
         handleGameOver();
@@ -426,7 +436,7 @@ export default function App() {
 
       const currentFoods = foodsRef.current || [];
       const eaten = currentFoods.find(
-        (f) => f.row === head.row && f.col === head.col
+        (f) => f.row === head.row && f.col === head.col,
       );
       if (eaten) {
         const moves = moveCountRef.current;
@@ -482,9 +492,10 @@ export default function App() {
 
     const effectiveLevel = Math.min(
       speedLevel + Math.floor(score / POINTS_PER_SPEED_LEVEL),
-      SPEED_LEVEL_MAX
+      SPEED_LEVEL_MAX,
     );
-    const intervalMs = SPEED_LEVEL_MS[effectiveLevel] ?? SPEED_LEVEL_MS[SPEED_LEVEL_MAX];
+    const intervalMs =
+      SPEED_LEVEL_MS[effectiveLevel] ?? SPEED_LEVEL_MS[SPEED_LEVEL_MAX];
 
     const tick = () => {
       moveSnake();
@@ -501,7 +512,7 @@ export default function App() {
     if (!hasExpirable) return;
     const blinkInterval = setInterval(
       () => setBlinkTick((t) => t + 1),
-      FOOD_BLINK_INTERVAL_MS
+      FOOD_BLINK_INTERVAL_MS,
     );
     return () => clearInterval(blinkInterval);
   }, [gameState, paused, foods]);
@@ -524,7 +535,7 @@ export default function App() {
       if (s < OBSTACLE_MIN_SCORE && t < OBSTACLE_MIN_TIME_SEC) return;
       const newObstacles = generateObstacles(
         snakeRef.current,
-        foodsRef.current || []
+        foodsRef.current || [],
       );
       setObstacles(newObstacles);
       obstaclesRef.current = newObstacles;
@@ -611,9 +622,16 @@ export default function App() {
 
   if (!fontsLoaded && !fontError) return null;
 
+  const wrapWithSafeArea = (children) => (
+    <SafeAreaProvider>
+      <StatusBar barStyle="light-content" backgroundColor="#0a0e1a" translucent={false} />
+      <SafeAreaView style={[styles.safeAreaWrapper, { flex: 1 }]}>{children}</SafeAreaView>
+    </SafeAreaProvider>
+  );
+
   // RENDERIZAÇÃO CONDICIONAL BASEADA NO ESTADO DO JOGO
   if (gameState === 'menu') {
-    return (
+    return wrapWithSafeArea(
       <MenuScreen
         onStart={initGame}
         wallMode={wallMode}
@@ -642,13 +660,11 @@ export default function App() {
   }
 
   if (gameState === 'instructions') {
-    return (
-      <InstructionsScreen onBack={goBackFromInstructions} />
-    );
+    return wrapWithSafeArea(<InstructionsScreen onBack={goBackFromInstructions} />);
   }
 
   if (gameState === 'leaderboard') {
-    return (
+    return wrapWithSafeArea(
       <LeaderboardScreen
         entries={leaderboardEntries}
         onBack={goBackFromLeaderboard}
@@ -657,7 +673,7 @@ export default function App() {
   }
 
   if (gameState === 'gameOver') {
-    return (
+    return wrapWithSafeArea(
       <GameOverScreen
         score={score}
         highScore={highScore}
@@ -676,7 +692,7 @@ export default function App() {
   const gameBoardWidth = gameBoardCellSize * boardSize + 4;
 
   // Layout responsivo para mobile - estado 'playing'
-  return (
+  return wrapWithSafeArea(
     <ScrollView contentContainerStyle={styles.container}>
       <View style={[styles.header, { width: gameBoardWidth }]}>
         <View style={styles.headerBlock}>
@@ -686,7 +702,8 @@ export default function App() {
         <View style={styles.headerBlock}>
           <RetroText style={styles.timeLabel}>{t('game.time')}</RetroText>
           <RetroText style={styles.timeValue}>
-            {Math.floor(elapsedSeconds / 60)}:{(elapsedSeconds % 60).toString().padStart(2, '0')}
+            {Math.floor(elapsedSeconds / 60)}:
+            {(elapsedSeconds % 60).toString().padStart(2, '0')}
           </RetroText>
         </View>
         <View style={styles.headerBlock}>
@@ -694,7 +711,9 @@ export default function App() {
           <RetroText style={styles.movesValue}>{moveCount}</RetroText>
         </View>
         <View style={styles.headerBlock}>
-          <RetroText style={styles.highScoreLabel}>{t('game.record')}</RetroText>
+          <RetroText style={styles.highScoreLabel}>
+            {t('game.record')}
+          </RetroText>
           <RetroText style={styles.highScoreValue}>{highScore}</RetroText>
         </View>
         <Pressable
@@ -709,7 +728,12 @@ export default function App() {
         </Pressable>
       </View>
 
-      <View style={[styles.gameBoardWrapper, { width: gameBoardWidth, height: gameBoardWidth }]}>
+      <View
+        style={[
+          styles.gameBoardWrapper,
+          { width: gameBoardWidth, height: gameBoardWidth },
+        ]}
+      >
         <GameBoard
           snake={snake}
           foods={foods}
@@ -740,11 +764,17 @@ export default function App() {
           countdown && styles.buttonDisabled,
         ]}
       >
-        <RetroText style={[
-          styles.playPauseButtonText,
-          paused && !countdown && styles.playPauseButtonTextPaused,
-        ]}>
-          {countdown ? t('game.pause') : (paused ? t('game.play') : t('game.pause'))}
+        <RetroText
+          style={[
+            styles.playPauseButtonText,
+            paused && !countdown && styles.playPauseButtonTextPaused,
+          ]}
+        >
+          {countdown
+            ? t('game.pause')
+            : paused
+              ? t('game.play')
+              : t('game.pause')}
         </RetroText>
       </Pressable>
 
@@ -752,7 +782,10 @@ export default function App() {
         <View style={styles.dpadContainer}>
           <Pressable
             onPress={() => handleDirectionChange('up')}
-            style={({ pressed }) => [styles.dpadBtn, pressed && styles.dpadBtnPressed]}
+            style={({ pressed }) => [
+              styles.dpadBtn,
+              pressed && styles.dpadBtnPressed,
+            ]}
           >
             <RetroText style={styles.arrow}>▲</RetroText>
           </Pressable>
@@ -760,14 +793,20 @@ export default function App() {
           <View style={styles.middleRow}>
             <Pressable
               onPress={() => handleDirectionChange('left')}
-              style={({ pressed }) => [styles.dpadBtn, pressed && styles.dpadBtnPressed]}
+              style={({ pressed }) => [
+                styles.dpadBtn,
+                pressed && styles.dpadBtnPressed,
+              ]}
             >
               <RetroText style={styles.arrow}>◀</RetroText>
             </Pressable>
             <View style={styles.dpadSpacer} />
             <Pressable
               onPress={() => handleDirectionChange('right')}
-              style={({ pressed }) => [styles.dpadBtn, pressed && styles.dpadBtnPressed]}
+              style={({ pressed }) => [
+                styles.dpadBtn,
+                pressed && styles.dpadBtnPressed,
+              ]}
             >
               <RetroText style={styles.arrow}>▶</RetroText>
             </Pressable>
@@ -775,7 +814,10 @@ export default function App() {
 
           <Pressable
             onPress={() => handleDirectionChange('down')}
-            style={({ pressed }) => [styles.dpadBtn, pressed && styles.dpadBtnPressed]}
+            style={({ pressed }) => [
+              styles.dpadBtn,
+              pressed && styles.dpadBtnPressed,
+            ]}
           >
             <RetroText style={styles.arrow}>▼</RetroText>
           </Pressable>
@@ -792,12 +834,22 @@ export default function App() {
       >
         <View style={styles.drawerOverlay}>
           <Pressable style={styles.drawerBackdrop} onPress={closeOptions} />
-          <Animated.View style={[styles.drawerPanel, { transform: [{ translateX: drawerSlideAnim }] }]}>
+          <Animated.View
+            style={[
+              styles.drawerPanel,
+              { transform: [{ translateX: drawerSlideAnim }] },
+            ]}
+          >
             <View style={styles.drawerHeader}>
-              <RetroText style={styles.drawerTitle}>{t('game.options')}</RetroText>
+              <RetroText style={styles.drawerTitle}>
+                {t('game.options')}
+              </RetroText>
               <Pressable
                 onPress={closeOptions}
-                style={({ pressed }) => [styles.drawerCloseBtn, pressed && styles.btnPressed]}
+                style={({ pressed }) => [
+                  styles.drawerCloseBtn,
+                  pressed && styles.btnPressed,
+                ]}
                 hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
               >
                 <RetroText style={styles.drawerCloseText}>✕</RetroText>
@@ -805,14 +857,20 @@ export default function App() {
             </View>
             <ScrollView style={styles.drawerContent}>
               <View style={styles.optionRow}>
-                <RetroText style={styles.optionLabel}>{t('game.optionGhostWalls')}</RetroText>
+                <RetroText style={styles.optionLabel}>
+                  {t('game.optionGhostWalls')}
+                </RetroText>
                 <OptionCheckbox
                   value={wallMode === 'wrap'}
-                  onValueChange={(value) => setWallMode(value ? 'wrap' : 'normal')}
+                  onValueChange={(value) =>
+                    setWallMode(value ? 'wrap' : 'normal')
+                  }
                 />
               </View>
               <View style={styles.optionRow}>
-                <RetroText style={styles.optionLabel}>{t('game.optionObstacles')}</RetroText>
+                <RetroText style={styles.optionLabel}>
+                  {t('game.optionObstacles')}
+                </RetroText>
                 <OptionCheckbox
                   value={obstaclesEnabled}
                   onValueChange={(value) => {
@@ -820,7 +878,7 @@ export default function App() {
                     if (value) {
                       const next = generateObstacles(
                         snakeRef.current,
-                        foodsRef.current || []
+                        foodsRef.current || [],
                       );
                       setObstacles(next);
                       obstaclesRef.current = next;
@@ -832,7 +890,11 @@ export default function App() {
                 />
               </View>
               <View style={styles.optionRow}>
-                <RetroText style={[styles.optionLabel, styles.optionLabelNoFlex]}>{t('game.optionSpeed')}</RetroText>
+                <RetroText
+                  style={[styles.optionLabel, styles.optionLabelNoFlex]}
+                >
+                  {t('game.optionSpeed')}
+                </RetroText>
                 <View style={styles.languageButtonsRow}>
                   {SPEED_LEVELS.map((level) => (
                     <Pressable
@@ -844,7 +906,12 @@ export default function App() {
                         pressed && styles.btnPressed,
                       ]}
                     >
-                      <RetroText style={[styles.langBtnText, speedLevel === level && styles.langBtnTextActive]}>
+                      <RetroText
+                        style={[
+                          styles.langBtnText,
+                          speedLevel === level && styles.langBtnTextActive,
+                        ]}
+                      >
                         {level}
                       </RetroText>
                     </Pressable>
@@ -852,7 +919,11 @@ export default function App() {
                 </View>
               </View>
               <View style={styles.optionRow}>
-                <RetroText style={[styles.optionLabel, styles.optionLabelNoFlex]}>{t('game.optionControls')}</RetroText>
+                <RetroText
+                  style={[styles.optionLabel, styles.optionLabelNoFlex]}
+                >
+                  {t('game.optionControls')}
+                </RetroText>
                 <View style={styles.languageButtonsRow}>
                   <Pressable
                     onPress={() => setControlMode('dpad')}
@@ -862,7 +933,12 @@ export default function App() {
                       pressed && styles.btnPressed,
                     ]}
                   >
-                    <RetroText style={[styles.langBtnText, controlMode === 'dpad' && styles.langBtnTextActive]}>
+                    <RetroText
+                      style={[
+                        styles.langBtnText,
+                        controlMode === 'dpad' && styles.langBtnTextActive,
+                      ]}
+                    >
                       {t('game.controlDpad')}
                     </RetroText>
                   </Pressable>
@@ -874,14 +950,23 @@ export default function App() {
                       pressed && styles.btnPressed,
                     ]}
                   >
-                    <RetroText style={[styles.langBtnText, controlMode === 'trackpad' && styles.langBtnTextActive]}>
+                    <RetroText
+                      style={[
+                        styles.langBtnText,
+                        controlMode === 'trackpad' && styles.langBtnTextActive,
+                      ]}
+                    >
                       {t('game.controlTrackpad')}
                     </RetroText>
                   </Pressable>
                 </View>
               </View>
               <View style={styles.optionRow}>
-                <RetroText style={[styles.optionLabel, styles.optionLabelNoFlex]}>{t('menu.language')}</RetroText>
+                <RetroText
+                  style={[styles.optionLabel, styles.optionLabelNoFlex]}
+                >
+                  {t('menu.language')}
+                </RetroText>
                 <View style={styles.languageButtonsRow}>
                   {supportedLngs.map((lng) => (
                     <Pressable
@@ -893,7 +978,12 @@ export default function App() {
                         pressed && styles.btnPressed,
                       ]}
                     >
-                      <RetroText style={[styles.langBtnText, i18n.language === lng && styles.langBtnTextActive]}>
+                      <RetroText
+                        style={[
+                          styles.langBtnText,
+                          i18n.language === lng && styles.langBtnTextActive,
+                        ]}
+                      >
                         {languageLabels[lng]}
                       </RetroText>
                     </Pressable>
@@ -902,9 +992,15 @@ export default function App() {
               </View>
               <Pressable
                 onPress={goInstructions}
-                style={({ pressed }) => [styles.optionRow, styles.optionRowPressable, pressed && styles.btnPressed]}
+                style={({ pressed }) => [
+                  styles.optionRow,
+                  styles.optionRowPressable,
+                  pressed && styles.btnPressed,
+                ]}
               >
-                <RetroText style={styles.optionLabel}>{t('menu.instructions')}</RetroText>
+                <RetroText style={styles.optionLabel}>
+                  {t('menu.instructions')}
+                </RetroText>
                 <RetroText style={styles.optionRowArrow}>›</RetroText>
               </Pressable>
               <Pressable
@@ -912,9 +1008,15 @@ export default function App() {
                   closeOptions();
                   goLeaderboard();
                 }}
-                style={({ pressed }) => [styles.optionRow, styles.optionRowPressable, pressed && styles.btnPressed]}
+                style={({ pressed }) => [
+                  styles.optionRow,
+                  styles.optionRowPressable,
+                  pressed && styles.btnPressed,
+                ]}
               >
-                <RetroText style={styles.optionLabel}>{t('menu.leaderboard')}</RetroText>
+                <RetroText style={styles.optionLabel}>
+                  {t('menu.leaderboard')}
+                </RetroText>
                 <RetroText style={styles.optionRowArrow}>›</RetroText>
               </Pressable>
             </ScrollView>
@@ -924,9 +1026,14 @@ export default function App() {
                   closeOptions();
                   goMenu();
                 }}
-                style={({ pressed }) => [styles.menuButton, pressed && styles.btnPressed]}
+                style={({ pressed }) => [
+                  styles.menuButton,
+                  pressed && styles.btnPressed,
+                ]}
               >
-                <RetroText style={styles.menuButtonText}>{t('game.mainMenu')}</RetroText>
+                <RetroText style={styles.menuButtonText}>
+                  {t('game.mainMenu')}
+                </RetroText>
               </Pressable>
             </View>
           </Animated.View>
@@ -934,9 +1041,12 @@ export default function App() {
       </Modal>
     </ScrollView>
   );
-}
+  }
 
 const styles = StyleSheet.create({
+  safeAreaWrapper: {
+    backgroundColor: '#0a0e1a',
+  },
   container: {
     flexGrow: 1,
     backgroundColor: '#0a0e1a',
