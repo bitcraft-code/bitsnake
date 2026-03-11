@@ -658,8 +658,12 @@ export default function App() {
           <RetroText style={styles.highScoreValue}>{highScore}</RetroText>
         </View>
         <Pressable
-          onPress={openOptions}
-          style={({ pressed }) => [styles.optionsButton, pressed && styles.btnPressed]}
+          onPress={countdown ? undefined : openOptions}
+          style={({ pressed }) => [
+            styles.optionsButton,
+            pressed && !countdown && styles.btnPressed,
+            countdown && styles.buttonDisabled,
+          ]}
         >
           <RetroText style={styles.optionsButtonText}>⚙</RetroText>
         </Pressable>
@@ -688,15 +692,19 @@ export default function App() {
       </View>
 
       <Pressable
-        onPress={togglePause}
+        onPress={countdown ? undefined : togglePause}
         style={({ pressed }) => [
           styles.playPauseButton,
-          paused && styles.playPauseButtonPaused,
-          pressed && styles.btnPressed,
+          paused && !countdown && styles.playPauseButtonPaused,
+          pressed && !countdown && styles.btnPressed,
+          countdown && styles.buttonDisabled,
         ]}
       >
-        <RetroText style={[styles.playPauseButtonText, paused && styles.playPauseButtonTextPaused]}>
-          {paused ? t('game.play') : t('game.pause')}
+        <RetroText style={[
+          styles.playPauseButtonText,
+          paused && !countdown && styles.playPauseButtonTextPaused,
+        ]}>
+          {countdown ? t('game.pause') : (paused ? t('game.play') : t('game.pause'))}
         </RetroText>
       </Pressable>
 
@@ -939,6 +947,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 1,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
   },
   optionsButtonText: {
     fontFamily: FONT_FAMILY,
