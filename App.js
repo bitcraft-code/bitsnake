@@ -46,6 +46,7 @@ import {
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const LEADERBOARD_KEY = 'snakeLeaderboard';
 const LEADERBOARD_MAX = 10;
+const GAME_SETTINGS_KEY = 'snakeGameSettings';
 
 const difficultySettings = {
   easy: { speed: 200, size: 15 },
@@ -109,11 +110,49 @@ export default function App() {
   const moveCountRef = useRef(0);
   const instructionsReturnToRef = useRef('playing');
   const drawerSlideAnim = useRef(new Animated.Value(SCREEN_WIDTH)).current;
+  const gameSettingsLoadedRef = useRef(false);
 
   useEffect(() => {
     loadHighScore();
     loadSavedLanguage();
+    loadGameSettings();
   }, []);
+
+  const loadGameSettings = async () => {
+    try {
+      const raw = await AsyncStorage.getItem(GAME_SETTINGS_KEY);
+      const data = raw ? JSON.parse(raw) : {};
+      if (data.wallMode === 'wrap' || data.wallMode === 'normal') setWallMode(data.wallMode);
+      if (typeof data.obstaclesEnabled === 'boolean') setObstaclesEnabled(data.obstaclesEnabled);
+      if (typeof data.speedLevel === 'number' && data.speedLevel >= 1 && data.speedLevel <= 5) setSpeedLevel(data.speedLevel);
+      if (data.controlMode === 'dpad' || data.controlMode === 'trackpad') setControlMode(data.controlMode);
+    } catch (error) {
+      console.error('Failed to load game settings:', error);
+    } finally {
+      gameSettingsLoadedRef.current = true;
+    }
+  };
+
+  const saveGameSettings = async () => {
+    if (!gameSettingsLoadedRef.current) return;
+    try {
+      await AsyncStorage.setItem(
+        GAME_SETTINGS_KEY,
+        JSON.stringify({
+          wallMode,
+          obstaclesEnabled,
+          speedLevel,
+          controlMode,
+        })
+      );
+    } catch (error) {
+      console.error('Failed to save game settings:', error);
+    }
+  };
+
+  useEffect(() => {
+    saveGameSettings();
+  }, [wallMode, obstaclesEnabled, speedLevel, controlMode]);
 
   useEffect(() => {
     foodsRef.current = foods;
