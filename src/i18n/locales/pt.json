@@ -24,8 +24,10 @@
     "variations": "Variações do jogo",
     "walls": "• Paredes: normais (bater = game over) ou fantasmas (atravessa e reaparece do outro lado).",
     "obstacles": "• Obstáculos: blocos fixos no tabuleiro que você deve evitar.",
-    "speed": "• Velocidade: de 1 (mais lento) a 5 (mais rápido).",
+    "speed": "• Velocidade: de 1 (mais lento) a 7 (mais rápido); o jogo também acelera conforme você pontua.",
     "controls": "• Controles: botões direcionais ou trackpad (deslize o dedo).",
+    "theme": "• Tema: escuro, claro ou sistema (segue o dispositivo).",
+    "zoom": "• Zoom visual: com a pontuação, comidas e obstáculos são desenhados menores (a cobra continua contínua); a área jogável mantém o mesmo tamanho.",
     "back": "← Voltar"
   },
   "game": {

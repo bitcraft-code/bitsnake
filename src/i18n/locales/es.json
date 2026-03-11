@@ -24,8 +24,10 @@
     "variations": "Variantes del juego",
     "walls": "• Paredes: normales (tocar = game over) o fantasmas (atraviesas y reapareces al otro lado).",
     "obstacles": "• Obstáculos: bloques fijos en el tablero que debes evitar.",
-    "speed": "• Velocidad: de 1 (más lento) a 5 (más rápido).",
+    "speed": "• Velocidad: de 1 (más lento) a 7 (más rápido); el juego también acelera al sumar puntos.",
     "controls": "• Controles: botones direccionales o trackpad (desliza el dedo).",
+    "theme": "• Tema: oscuro, claro o sistema (sigue el dispositivo).",
+    "zoom": "• Zoom visual: al subir la puntuación, la comida y los obstáculos se dibujan más pequeños (la serpiente sigue continua); el área de juego mantiene el mismo tamaño.",
     "back": "← Volver"
   },
   "game": {

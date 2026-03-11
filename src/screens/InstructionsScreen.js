@@ -25,7 +25,7 @@ const InstructionsScreen = ({ theme = 'dark', onBack }) => {
         ]}
       />
 
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} scrollEnabled={false} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={true}>
         <View
           style={[
             styles.section,
@@ -98,6 +98,12 @@ const InstructionsScreen = ({ theme = 'dark', onBack }) => {
           </RetroText>
           <RetroText style={[styles.paragraph, { color: themeColors.textMuted2 }]}>
             {t('instructions.controls')}
+          </RetroText>
+          <RetroText style={[styles.paragraph, { color: themeColors.textMuted2 }]}>
+            {t('instructions.theme')}
+          </RetroText>
+          <RetroText style={[styles.paragraph, { color: themeColors.textMuted2 }]}>
+            {t('instructions.zoom')}
           </RetroText>
         </View>
       </ScrollView>

@@ -24,8 +24,10 @@
     "variations": "Spielvarianten",
     "walls": "• Wände: normal (Berührung = Game Over) oder Geister (durchqueren und auf der anderen Seite erscheinen).",
     "obstacles": "• Hindernisse: feste Blöcke auf dem Spielfeld, die du vermeiden musst.",
-    "speed": "• Geschwindigkeit: von 1 (langsam) bis 5 (schnell).",
+    "speed": "• Geschwindigkeit: von 1 (langsam) bis 7 (schnell); das Spiel wird mit der Punktzahl schneller.",
     "controls": "• Steuerung: Richtungstasten oder Trackpad (mit dem Finger wischen).",
+    "theme": "• Thema: dunkel, hell oder System (folgt dem Gerät).",
+    "zoom": "• Visueller Zoom: mit steigender Punktzahl werden Futter und Hindernisse kleiner gezeichnet (die Schlange bleibt durchgehend); die Spielfläche bleibt gleich groß.",
     "back": "← Zurück"
   },
   "game": {

@@ -24,8 +24,10 @@
     "variations": "Game variations",
     "walls": "• Walls: normal (hit = game over) or ghost (pass through and reappear on the other side).",
     "obstacles": "• Obstacles: fixed blocks on the board that you must avoid.",
-    "speed": "• Speed: from 1 (slowest) to 5 (fastest).",
+    "speed": "• Speed: from 1 (slowest) to 7 (fastest); game also speeds up as you score.",
     "controls": "• Controls: directional buttons or trackpad (slide your finger).",
+    "theme": "• Theme: dark, light, or system (follow device).",
+    "zoom": "• Visual zoom: as your score increases, food and obstacles are drawn smaller (snake stays continuous); the playable area stays the same size.",
     "back": "← Back"
   },
   "game": {

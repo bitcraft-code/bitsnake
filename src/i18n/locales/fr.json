@@ -24,8 +24,10 @@
     "variations": "Variantes du jeu",
     "walls": "• Murs : normaux (toucher = game over) ou fantômes (traverser et réapparaître de l'autre côté).",
     "obstacles": "• Obstacles : blocs fixes sur le plateau à éviter.",
-    "speed": "• Vitesse : de 1 (lent) à 5 (rapide).",
+    "speed": "• Vitesse : de 1 (lent) à 7 (rapide) ; le jeu accélère aussi avec les points.",
     "controls": "• Contrôles : boutons directionnels ou trackpad (glisser le doigt).",
+    "theme": "• Thème : sombre, clair ou système (suit l’appareil).",
+    "zoom": "• Zoom visuel : avec le score, la nourriture et les obstacles sont affichés plus petits (le serpent reste continu) ; la zone de jeu garde la même taille.",
     "back": "← Retour"
   },
   "game": {
