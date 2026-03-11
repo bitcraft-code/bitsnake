@@ -893,7 +893,7 @@ const styles = StyleSheet.create({
   },
   score: {
     fontFamily: FONT_FAMILY,
-    fontSize: 22,
+    fontSize: 18,
     color: '#00ff41',
     textShadowColor: '#00ff41',
     textShadowOffset: { width: 0, height: 0 },
@@ -908,7 +908,7 @@ const styles = StyleSheet.create({
   },
   timeValue: {
     fontFamily: FONT_FAMILY,
-    fontSize: 22,
+    fontSize: 18,
     color: '#4488ff',
     textShadowColor: '#4488ff',
     textShadowOffset: { width: 0, height: 0 },
@@ -923,7 +923,7 @@ const styles = StyleSheet.create({
   },
   movesValue: {
     fontFamily: FONT_FAMILY,
-    fontSize: 22,
+    fontSize: 18,
     color: '#00ff41',
     textShadowColor: '#00ff41',
     textShadowOffset: { width: 0, height: 0 },
@@ -938,7 +938,7 @@ const styles = StyleSheet.create({
   },
   highScoreValue: {
     fontFamily: FONT_FAMILY,
-    fontSize: 22,
+    fontSize: 18,
     color: '#ff8800',
     textShadowColor: '#ff8800',
     textShadowOffset: { width: 0, height: 0 },
