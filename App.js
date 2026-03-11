@@ -1022,6 +1022,17 @@ export default function App() {
             </ScrollView>
             <View style={styles.drawerFooter}>
               <Pressable
+                onPress={closeOptions}
+                style={({ pressed }) => [
+                  styles.menuButtonGreen,
+                  pressed && styles.btnPressed,
+                ]}
+              >
+                <RetroText style={styles.menuButtonTextGreen}>
+                  {t('game.backToGame')}
+                </RetroText>
+              </Pressable>
+              <Pressable
                 onPress={() => {
                   closeOptions();
                   goMenu();
@@ -1153,6 +1164,8 @@ const styles = StyleSheet.create({
   },
   drawerFooter: {
     marginTop: 'auto',
+    flexDirection: 'column',
+    gap: SPACING,
     paddingHorizontal: SPACING,
     paddingTop: SPACING,
     paddingBottom: SPACING * 4,
@@ -1394,6 +1407,29 @@ const styles = StyleSheet.create({
   menuButtonText: {
     fontFamily: FONT_FAMILY,
     color: '#ff3333',
+    fontSize: 11,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+  },
+  menuButtonGreen: {
+    borderWidth: 1,
+    borderColor: '#00ff41',
+    backgroundColor: 'transparent',
+    paddingVertical: SPACING,
+    paddingHorizontal: SPACING * 3,
+    borderRadius: 4,
+    marginTop: SPACING,
+    shadowColor: '#00ff41',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  menuButtonTextGreen: {
+    fontFamily: FONT_FAMILY,
+    color: '#00ff41',
     fontSize: 11,
     letterSpacing: 2,
     textTransform: 'uppercase',

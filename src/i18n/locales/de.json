@@ -34,6 +34,7 @@
     "moves": "Züge:",
     "record": "Rekord:",
     "mainMenu": "← Hauptmenü",
+    "backToGame": "▶ Weiter",
     "options": "Optionen",
     "optionGhostWalls": "Geisterwände",
     "optionObstacles": "Hindernisse",
