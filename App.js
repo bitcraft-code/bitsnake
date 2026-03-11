@@ -617,13 +617,6 @@ export default function App() {
         <Trackpad onDirectionChange={handleDirectionChange} />
       )}
 
-      <Pressable
-        onPress={goMenu}
-        style={({ pressed }) => [styles.menuButton, pressed && styles.btnPressed]}
-      >
-        <RetroText style={styles.menuButtonText}>{t('game.mainMenu')}</RetroText>
-      </Pressable>
-
       <Modal
         visible={optionsOpen}
         transparent
@@ -751,6 +744,17 @@ export default function App() {
                 <RetroText style={styles.optionRowArrow}>›</RetroText>
               </Pressable>
             </ScrollView>
+            <View style={styles.drawerFooter}>
+              <Pressable
+                onPress={() => {
+                  closeOptions();
+                  goMenu();
+                }}
+                style={({ pressed }) => [styles.menuButton, pressed && styles.btnPressed]}
+              >
+                <RetroText style={styles.menuButtonText}>{t('game.mainMenu')}</RetroText>
+              </Pressable>
+            </View>
           </View>
         </View>
       </Modal>
@@ -842,6 +846,14 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: SPACING,
     paddingTop: SPACING,
+  },
+  drawerFooter: {
+    marginTop: 'auto',
+    paddingHorizontal: SPACING,
+    paddingTop: SPACING,
+    paddingBottom: SPACING * 4,
+    borderTopWidth: 1,
+    borderTopColor: '#1a3322',
   },
   optionRow: {
     flexDirection: 'row',
