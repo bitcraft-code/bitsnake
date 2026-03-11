@@ -35,6 +35,7 @@ const LeaderboardScreen = ({ entries = [], onBack }) => {
         <RetroText style={[styles.th, styles.thRank]}>#</RetroText>
         <RetroText style={[styles.th, styles.thScore]}>{t('leaderboard.score')}</RetroText>
         <RetroText style={[styles.th, styles.thTime]}>{t('leaderboard.time')}</RetroText>
+        <RetroText style={[styles.th, styles.thMoves]}>{t('leaderboard.moves')}</RetroText>
         <RetroText style={[styles.th, styles.thDate]}>{t('leaderboard.date')}</RetroText>
       </View>
 
@@ -47,6 +48,7 @@ const LeaderboardScreen = ({ entries = [], onBack }) => {
               <RetroText style={[styles.cell, styles.cellRank]}>{index + 1}</RetroText>
               <RetroText style={[styles.cell, styles.cellScore]}>{entry.score}</RetroText>
               <RetroText style={[styles.cell, styles.cellTime]}>{formatTime(entry.timeSeconds)}</RetroText>
+              <RetroText style={[styles.cell, styles.cellMoves]}>{entry.moveCount ?? '—'}</RetroText>
               <RetroText style={[styles.cell, styles.cellDate]}>{formatDate(entry.date, locale)}</RetroText>
             </View>
           ))
@@ -99,10 +101,11 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     textTransform: 'uppercase',
   },
-  thRank: { width: '10%' },
-  thScore: { width: '22%' },
-  thTime: { width: '23%' },
-  thDate: { width: '45%' },
+  thRank: { width: '8%' },
+  thScore: { width: '16%' },
+  thTime: { width: '16%' },
+  thMoves: { width: '16%' },
+  thDate: { width: '44%' },
   list: {
     flex: 1,
     width: '100%',
@@ -123,10 +126,11 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#00ff41',
   },
-  cellRank: { width: '10%', color: '#5a7a5a' },
-  cellScore: { width: '22%' },
-  cellTime: { width: '23%' },
-  cellDate: { width: '45%', color: '#5a7a5a', fontSize: 10 },
+  cellRank: { width: '8%', color: '#5a7a5a' },
+  cellScore: { width: '16%' },
+  cellTime: { width: '16%' },
+  cellMoves: { width: '16%' },
+  cellDate: { width: '44%', color: '#5a7a5a', fontSize: 10 },
   empty: {
     fontSize: 12,
     color: '#4a6a4a',

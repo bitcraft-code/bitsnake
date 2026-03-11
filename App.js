@@ -170,7 +170,7 @@ export default function App() {
     }
   };
 
-  const saveToLeaderboard = async (finalScore, timeSeconds) => {
+  const saveToLeaderboard = async (finalScore, timeSeconds, moveCount = 0) => {
     if (finalScore == null || finalScore < 0) return;
     try {
       const raw = await AsyncStorage.getItem(LEADERBOARD_KEY);
@@ -179,6 +179,7 @@ export default function App() {
       const newEntry = {
         score: finalScore,
         timeSeconds: timeSeconds ?? 0,
+        moveCount: moveCount ?? 0,
         date: new Date().toISOString(),
       };
       const next = [...entries, newEntry]
@@ -427,7 +428,7 @@ export default function App() {
       saveHighScore();
     }
 
-    saveToLeaderboard(finalScore, finalTime);
+    saveToLeaderboard(finalScore, finalTime, moveCountRef.current);
     setGameState('gameOver');
   };
 
