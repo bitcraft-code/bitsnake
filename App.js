@@ -764,18 +764,25 @@ export default function App() {
           countdown && styles.buttonDisabled,
         ]}
       >
-        <RetroText
-          style={[
-            styles.playPauseButtonText,
-            paused && !countdown && styles.playPauseButtonTextPaused,
-          ]}
-        >
-          {countdown
-            ? t('game.pause')
-            : paused
-              ? t('game.play')
-              : t('game.pause')}
-        </RetroText>
+        <View style={styles.playPauseButtonContent}>
+          <RetroText
+            style={[
+              styles.playPauseButtonText,
+              styles.playPauseButtonIcon,
+              paused && !countdown && styles.playPauseButtonTextPaused,
+            ]}
+          >
+            {countdown ? '⏸︎' : paused ? '▶︎' : '⏸︎'}
+          </RetroText>
+          <RetroText
+            style={[
+              styles.playPauseButtonText,
+              paused && !countdown && styles.playPauseButtonTextPaused,
+            ]}
+          >
+            {countdown ? t('game.pause') : paused ? t('game.play') : t('game.pause')}
+          </RetroText>
+        </View>
       </Pressable>
 
       {controlMode === 'dpad' ? (
@@ -1335,12 +1342,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#0a1a0a',
     shadowColor: '#00ff41',
   },
+  playPauseButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   playPauseButtonText: {
     fontFamily: FONT_FAMILY,
     fontSize: 13,
     color: '#ff8800',
     letterSpacing: 2,
     textTransform: 'uppercase',
+  },
+  playPauseButtonIcon: {
+    fontSize: 18,
   },
   playPauseButtonTextPaused: {
     fontFamily: FONT_FAMILY,
