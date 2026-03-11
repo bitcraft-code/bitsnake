@@ -205,7 +205,7 @@ export default function App() {
     ];
 
     setSnake(initialSnake);
-    const initialFoods = generateFoods(initialSnake);
+    const initialFoods = generateFoods(initialSnake, false);
     setFoods(initialFoods);
     foodsRef.current = initialFoods;
     if (obstaclesEnabled) {
@@ -250,12 +250,19 @@ export default function App() {
       else if (countdown === 'go') {
         setCountdown(null);
         setPaused(false);
+        setFoods((prev) => {
+          const next = prev.map((f) =>
+            f.points >= 2 ? { ...f, spawnTime: Date.now() } : f
+          );
+          foodsRef.current = next;
+          return next;
+        });
       }
     }, t);
     return () => clearTimeout(timer);
   }, [countdown]);
 
-  const generateFoods = (currentSnake) => {
+  const generateFoods = (currentSnake, startTimer = true) => {
     const r = Math.random();
     const count = r < 0.6 ? 1 : r < 0.88 ? 2 : 3;
     const result = [];
@@ -276,7 +283,7 @@ export default function App() {
       occupied.add(`${row},${col}`);
       const points = 1 + Math.floor(Math.random() * 3);
       const item = { row, col, points };
-      if (points >= 2) item.spawnTime = Date.now();
+      if (points >= 2 && startTimer) item.spawnTime = Date.now();
       result.push(item);
     }
 
