@@ -1,0 +1,122 @@
+import React from 'react';
+import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import RetroText from '../components/RetroText';
+
+const InstructionsScreen = ({ onBack }) => {
+  const { t } = useTranslation();
+
+  return (
+    <View style={styles.container}>
+      <RetroText style={styles.title}>{t('instructions.title')}</RetroText>
+      <View style={styles.titleLine} />
+
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <View style={styles.section}>
+          <RetroText style={styles.sectionTitle}>{t('instructions.howToPlay')}</RetroText>
+          <RetroText style={styles.paragraph}>{t('menu.instruction1')}</RetroText>
+          <RetroText style={styles.paragraph}>{t('menu.instruction2')}</RetroText>
+          <RetroText style={styles.paragraph}>{t('menu.instruction3')}</RetroText>
+        </View>
+
+        <View style={styles.section}>
+          <RetroText style={styles.sectionTitle}>{t('instructions.rewards')}</RetroText>
+          <RetroText style={styles.paragraph}>{t('instructions.rewardsIntro')}</RetroText>
+          <RetroText style={styles.paragraph}>{t('instructions.rewards1')}</RetroText>
+          <RetroText style={styles.paragraph}>{t('instructions.rewards2')}</RetroText>
+          <RetroText style={styles.paragraph}>{t('instructions.rewards3')}</RetroText>
+        </View>
+
+        <View style={styles.section}>
+          <RetroText style={styles.sectionTitle}>{t('instructions.variations')}</RetroText>
+          <RetroText style={styles.paragraph}>{t('instructions.walls')}</RetroText>
+          <RetroText style={styles.paragraph}>{t('instructions.obstacles')}</RetroText>
+          <RetroText style={styles.paragraph}>{t('instructions.speed')}</RetroText>
+          <RetroText style={styles.paragraph}>{t('instructions.controls')}</RetroText>
+        </View>
+      </ScrollView>
+
+      <TouchableOpacity onPress={onBack} style={styles.backButton} activeOpacity={0.7}>
+        <RetroText style={styles.backButtonText}>{t('instructions.back')}</RetroText>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#0a0e1a',
+    alignItems: 'center',
+    paddingTop: 24,
+    paddingHorizontal: 16,
+  },
+  title: {
+    fontSize: 22,
+    color: '#00ff41',
+    letterSpacing: 4,
+    textShadowColor: '#00ff41',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 12,
+  },
+  titleLine: {
+    width: 140,
+    height: 2,
+    backgroundColor: '#00ff41',
+    borderRadius: 1,
+    marginTop: 6,
+    marginBottom: 16,
+  },
+  scroll: {
+    flex: 1,
+    width: '100%',
+  },
+  scrollContent: {
+    paddingBottom: 24,
+  },
+  section: {
+    marginBottom: 20,
+    padding: 16,
+    backgroundColor: '#111a2a',
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#1a3322',
+    width: '100%',
+  },
+  sectionTitle: {
+    fontSize: 11,
+    color: '#00ff41',
+    marginBottom: 12,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+  },
+  paragraph: {
+    fontSize: 11,
+    color: '#5a7a5a',
+    lineHeight: 20,
+    marginBottom: 8,
+  },
+  backButton: {
+    borderWidth: 2,
+    borderColor: '#00ff41',
+    backgroundColor: 'transparent',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    marginTop: 16,
+    marginBottom: 24,
+    shadowColor: '#00ff41',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  backButtonText: {
+    color: '#00ff41',
+    fontSize: 12,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+  },
+});
+
+export default InstructionsScreen;

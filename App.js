@@ -21,6 +21,7 @@ import Trackpad from './src/components/Trackpad';
 import MenuScreen from './src/screens/MenuScreen';
 import GameOverScreen from './src/screens/GameOverScreen';
 import LeaderboardScreen from './src/screens/LeaderboardScreen';
+import InstructionsScreen from './src/screens/InstructionsScreen';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const LEADERBOARD_KEY = 'snakeLeaderboard';
@@ -478,6 +479,15 @@ export default function App() {
     setGameState('leaderboard');
   };
 
+  const goInstructions = () => {
+    closeOptions();
+    setGameState('instructions');
+  };
+
+  const goBackFromInstructions = () => {
+    setGameState('playing');
+  };
+
   const goBackFromLeaderboard = () => {
     setGameState('menu');
   };
@@ -497,6 +507,12 @@ export default function App() {
   // RENDERIZAÇÃO CONDICIONAL BASEADA NO ESTADO DO JOGO
   if (gameState === 'menu') {
     return <MenuScreen onStart={initGame} />;
+  }
+
+  if (gameState === 'instructions') {
+    return (
+      <InstructionsScreen onBack={goBackFromInstructions} />
+    );
   }
 
   if (gameState === 'leaderboard') {
@@ -733,6 +749,13 @@ export default function App() {
                   ))}
                 </View>
               </View>
+              <Pressable
+                onPress={goInstructions}
+                style={({ pressed }) => [styles.optionRow, styles.optionRowPressable, pressed && styles.btnPressed]}
+              >
+                <RetroText style={styles.optionLabel}>{t('menu.instructions')}</RetroText>
+                <RetroText style={styles.optionRowArrow}>›</RetroText>
+              </Pressable>
               <Pressable
                 onPress={() => {
                   closeOptions();

@@ -8,7 +8,23 @@
     "instruction2": "• Iss das rote Futter, um zu wachsen",
     "instruction3": "• Vermeide es, deinen Schwanz oder die Wände zu treffen",
     "language": "Sprache",
-    "leaderboard": "Bestenliste"
+    "leaderboard": "Bestenliste",
+    "instructions": "Anleitung"
+  },
+  "instructions": {
+    "title": "Anleitung",
+    "howToPlay": "So spielst du",
+    "rewards": "Belohnungen",
+    "rewardsIntro": "Es können mehrere Belohnungen gleichzeitig auf dem Spielfeld erscheinen. Jede gibt 1, 2 oder 3 Punkte.",
+    "rewards1": "• 1 Punkt: immer sichtbar (zarterer Ton).",
+    "rewards2": "• 2 Punkte: mehr wert; nach 4 s blinkt sie und verschwindet nach 8 s, wenn du sie nicht rechtzeitig einsammelst.",
+    "rewards3": "• 3 Punkte: noch mehr wert; blinkt ebenfalls und verschwindet nach 8 s. Höherwertige Belohnungen können verschwinden, bevor du ankommst!",
+    "variations": "Spielvarianten",
+    "walls": "• Wände: normal (Berührung = Game Over) oder Geister (durchqueren und auf der anderen Seite erscheinen).",
+    "obstacles": "• Hindernisse: feste Blöcke auf dem Spielfeld, die du vermeiden musst.",
+    "speed": "• Geschwindigkeit: von 1 (langsam) bis 5 (schnell).",
+    "controls": "• Steuerung: Richtungstasten oder Trackpad (mit dem Finger wischen).",
+    "back": "← Zurück"
   },
   "game": {
     "score": "Punkte:",

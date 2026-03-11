@@ -8,7 +8,23 @@
     "instruction2": "• Eat the red food to grow",
     "instruction3": "• Avoid hitting your tail or the walls",
     "language": "Language",
-    "leaderboard": "Leaderboard"
+    "leaderboard": "Leaderboard",
+    "instructions": "Instructions"
+  },
+  "instructions": {
+    "title": "Instructions",
+    "howToPlay": "How to play",
+    "rewards": "Rewards",
+    "rewardsIntro": "Several rewards can appear on the board at once. Each is worth 1, 2, or 3 points.",
+    "rewards1": "• 1 point: always visible (lighter shade).",
+    "rewards2": "• 2 points: worth more; after 4 s it starts blinking and disappears in 8 s if you don't get it in time.",
+    "rewards3": "• 3 points: worth even more; also blinks and disappears in 8 s. Higher-value rewards can vanish before you reach them!",
+    "variations": "Game variations",
+    "walls": "• Walls: normal (hit = game over) or ghost (pass through and reappear on the other side).",
+    "obstacles": "• Obstacles: fixed blocks on the board that you must avoid.",
+    "speed": "• Speed: from 1 (slowest) to 5 (fastest).",
+    "controls": "• Controls: directional buttons or trackpad (slide your finger).",
+    "back": "← Back"
   },
   "game": {
     "score": "Score:",

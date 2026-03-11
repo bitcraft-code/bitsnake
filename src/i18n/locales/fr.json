@@ -8,7 +8,23 @@
     "instruction2": "• Mange la nourriture rouge pour grandir",
     "instruction3": "• Évite de te mordre la queue ou de toucher les murs",
     "language": "Langue",
-    "leaderboard": "Classement"
+    "leaderboard": "Classement",
+    "instructions": "Instructions"
+  },
+  "instructions": {
+    "title": "Instructions",
+    "howToPlay": "Comment jouer",
+    "rewards": "Récompenses",
+    "rewardsIntro": "Plusieurs récompenses peuvent apparaître en même temps sur le plateau. Chacune vaut 1, 2 ou 3 points.",
+    "rewards1": "• 1 point : toujours visible (teinte plus douce).",
+    "rewards2": "• 2 points : plus précieuse ; après 4 s elle clignote et disparaît en 8 s si tu ne la récupères pas à temps.",
+    "rewards3": "• 3 points : encore plus précieuse ; clignote aussi et disparaît en 8 s. Les récompenses de plus grande valeur peuvent disparaître avant que tu arrives !",
+    "variations": "Variantes du jeu",
+    "walls": "• Murs : normaux (toucher = game over) ou fantômes (traverser et réapparaître de l'autre côté).",
+    "obstacles": "• Obstacles : blocs fixes sur le plateau à éviter.",
+    "speed": "• Vitesse : de 1 (lent) à 5 (rapide).",
+    "controls": "• Contrôles : boutons directionnels ou trackpad (glisser le doigt).",
+    "back": "← Retour"
   },
   "game": {
     "score": "Score :",

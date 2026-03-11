@@ -8,7 +8,23 @@
     "instruction2": "• Coma os alimentos vermelhos para crescer",
     "instruction3": "• Evite bater na própria cauda ou nas paredes",
     "language": "Idioma",
-    "leaderboard": "Recordes"
+    "leaderboard": "Recordes",
+    "instructions": "Instruções"
+  },
+  "instructions": {
+    "title": "Instruções",
+    "howToPlay": "Como jogar",
+    "rewards": "Recompensas",
+    "rewardsIntro": "Podem aparecer várias recompensas ao mesmo tempo no tabuleiro. Cada uma vale 1, 2 ou 3 pontos.",
+    "rewards1": "• 1 ponto: sempre visível (tom mais suave).",
+    "rewards2": "• 2 pontos: vale mais; após 4 s começa a piscar e some em 8 s se você não pegar a tempo.",
+    "rewards3": "• 3 pontos: vale ainda mais; também pisca e some em 8 s. As de maior valor podem desaparecer antes de você chegar!",
+    "variations": "Variações do jogo",
+    "walls": "• Paredes: normais (bater = game over) ou fantasmas (atravessa e reaparece do outro lado).",
+    "obstacles": "• Obstáculos: blocos fixos no tabuleiro que você deve evitar.",
+    "speed": "• Velocidade: de 1 (mais lento) a 5 (mais rápido).",
+    "controls": "• Controles: botões direcionais ou trackpad (deslize o dedo).",
+    "back": "← Voltar"
   },
   "game": {
     "score": "Pontuação:",

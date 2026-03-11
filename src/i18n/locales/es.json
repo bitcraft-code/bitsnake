@@ -8,7 +8,23 @@
     "instruction2": "• Come la comida roja para crecer",
     "instruction3": "• Evita chocar con tu cola o las paredes",
     "language": "Idioma",
-    "leaderboard": "Clasificación"
+    "leaderboard": "Clasificación",
+    "instructions": "Instrucciones"
+  },
+  "instructions": {
+    "title": "Instrucciones",
+    "howToPlay": "Cómo jugar",
+    "rewards": "Recompensas",
+    "rewardsIntro": "Pueden aparecer varias recompensas a la vez en el tablero. Cada una vale 1, 2 o 3 puntos.",
+    "rewards1": "• 1 punto: siempre visible (tono más suave).",
+    "rewards2": "• 2 puntos: vale más; a los 4 s empieza a parpadear y desaparece a los 8 s si no la coges a tiempo.",
+    "rewards3": "• 3 puntos: vale aún más; también parpadea y desaparece a los 8 s. ¡Las de mayor valor pueden desaparecer antes de que llegues!",
+    "variations": "Variantes del juego",
+    "walls": "• Paredes: normales (tocar = game over) o fantasmas (atraviesas y reapareces al otro lado).",
+    "obstacles": "• Obstáculos: bloques fijos en el tablero que debes evitar.",
+    "speed": "• Velocidad: de 1 (más lento) a 5 (más rápido).",
+    "controls": "• Controles: botones direccionales o trackpad (desliza el dedo).",
+    "back": "← Volver"
   },
   "game": {
     "score": "Puntuación:",
