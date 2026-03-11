@@ -2,7 +2,7 @@
   "menu": {
     "title": "🐍 Bitsnake",
     "subtitle": "Un jeu de serpent rétro",
-    "startGame": "▶️ Démarrer la partie",
+    "startGame": "▶ Démarrer la partie",
     "howToPlay": "Comment jouer :",
     "instruction1": "• Utilise les boutons directionnels pour déplacer le serpent",
     "instruction2": "• Mange la nourriture rouge pour grandir",
@@ -10,6 +10,7 @@
     "language": "Langue",
     "leaderboard": "Classement",
     "instructions": "Instructions",
+    "gameOptionsIcon": "⚙︎",
     "gameOptions": "Options du jeu"
   },
   "instructions": {

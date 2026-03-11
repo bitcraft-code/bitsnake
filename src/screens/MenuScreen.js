@@ -74,7 +74,12 @@ const MenuScreen = ({
             style={styles.optionsButton}
             activeOpacity={0.7}
           >
-            <RetroText style={styles.optionsButtonText}>{t('menu.gameOptions')}</RetroText>
+            <View style={styles.optionsButtonContent}>
+              {t('menu.gameOptionsIcon') ? (
+                <RetroText style={[styles.optionsButtonText, styles.optionsButtonIcon]}>{t('menu.gameOptionsIcon')}</RetroText>
+              ) : null}
+              <RetroText style={styles.optionsButtonText}>{t('menu.gameOptions')}</RetroText>
+            </View>
           </TouchableOpacity>
         </View>
 
@@ -226,11 +231,13 @@ const styles = StyleSheet.create({
   },
   contentBack: {
     backgroundColor: '#0a0e1a',
-    // alignSelf: 'stretch',
+    alignSelf: 'stretch',
+    alignItems: 'center',
   },
   titleBox: {
     marginBottom: 4,
     alignItems: 'center',
+    maxWidth: SCREEN_WIDTH - 48,
   },
   title: {
     fontSize: 40,
@@ -239,6 +246,7 @@ const styles = StyleSheet.create({
     textShadowColor: '#00ff41',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 20,
+    textAlign: 'center',
   },
   titleGlow: {
     width: 220,
@@ -259,8 +267,11 @@ const styles = StyleSheet.create({
     marginTop: 8,
     letterSpacing: 2,
     textTransform: 'uppercase',
+    textAlign: 'center',
+    maxWidth: SCREEN_WIDTH - 48,
   },
   startButton: {
+    alignSelf: 'center',
     backgroundColor: 'transparent',
     borderWidth: 2,
     borderColor: '#00ff41',
@@ -275,6 +286,7 @@ const styles = StyleSheet.create({
     elevation: 8,
     justifyContent: 'center',
     alignItems: 'center',
+    width: '100%',
   },
   buttonText: {
     color: '#00ff41',
@@ -283,6 +295,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   optionsButton: {
+    alignSelf: 'center',
     backgroundColor: 'transparent',
     borderWidth: 2,
     borderColor: '#ff8800',
@@ -296,6 +309,12 @@ const styles = StyleSheet.create({
     elevation: 4,
     justifyContent: 'center',
     alignItems: 'center',
+    width: '100%',
+  },
+  optionsButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   optionsButtonText: {
     color: '#ff8800',
@@ -303,6 +322,10 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     textTransform: 'uppercase',
     fontFamily: FONT_FAMILY,
+  },
+  optionsButtonIcon: {
+    fontSize: 22,
+    transform: [{ translateY: -2 }],
   },
   footerSpacer: {
     flex: 1,

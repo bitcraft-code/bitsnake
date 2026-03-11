@@ -2,7 +2,7 @@
   "menu": {
     "title": "🐍 Bitsnake",
     "subtitle": "Ein Retro-Schlangenspiel",
-    "startGame": "▶️ Spiel starten",
+    "startGame": "▶ Spiel starten",
     "howToPlay": "So spielst du:",
     "instruction1": "• Nutze die Richtungstasten, um die Schlange zu bewegen",
     "instruction2": "• Iss das rote Futter, um zu wachsen",
@@ -10,6 +10,7 @@
     "language": "Sprache",
     "leaderboard": "Bestenliste",
     "instructions": "Anleitung",
+    "gameOptionsIcon": "⚙︎",
     "gameOptions": "Spieloptionen"
   },
   "instructions": {

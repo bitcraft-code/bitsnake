@@ -2,7 +2,7 @@
   "menu": {
     "title": "🐍 Bitsnake",
     "subtitle": "Un juego de la serpiente retro",
-    "startGame": "▶️ Iniciar juego",
+    "startGame": "▶ Iniciar juego",
     "howToPlay": "Cómo jugar:",
     "instruction1": "• Usa los botones direccionales para mover la serpiente",
     "instruction2": "• Come la comida roja para crecer",
@@ -10,6 +10,7 @@
     "language": "Idioma",
     "leaderboard": "Clasificación",
     "instructions": "Instrucciones",
+    "gameOptionsIcon": "⚙︎",
     "gameOptions": "Opciones del juego"
   },
   "instructions": {
