@@ -712,10 +712,12 @@ export default function App() {
     );
   }
 
-  // Largura do grid (mesma fórmula do GameBoard) para alinhar o header
+  // Área jogável: quadro SEMPRE no tamanho máximo (nunca diminui); só o conteúdo (cobra, comidas, obstáculos) encolhe
   const gameBoardMaxWidth = Math.min(SCREEN_WIDTH - 30, 380);
-  const gameBoardCellSize = Math.floor((gameBoardMaxWidth - 4) / boardSize);
-  const gameBoardWidth = gameBoardCellSize * boardSize + 4;
+  const baseCellSize = Math.floor((gameBoardMaxWidth - 4) / boardSize);
+  const baseFixedBoardWidth = baseCellSize * boardSize + 4;
+  const gameBoardWidth = gameBoardMaxWidth;
+  const fixedBoardWidth = baseFixedBoardWidth;
 
   // Layout responsivo para mobile - estado 'playing'
   return wrapWithSafeArea(
@@ -780,6 +782,9 @@ export default function App() {
           blinkTick={blinkTick}
           blinkStartMs={FOOD_BLINK_START_MS}
           blinkIntervalMs={FOOD_BLINK_INTERVAL_MS}
+          fixedBoardWidth={fixedBoardWidth}
+          score={score}
+          displayBoardWidth={gameBoardWidth}
         />
         {countdown !== null && (
           <View style={[styles.countdownOverlay, { backgroundColor: themeColors.background }]} pointerEvents="none">

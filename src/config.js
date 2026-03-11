@@ -36,6 +36,13 @@ export const OBSTACLE_COUNT_MAX = 7;
 export const OBSTACLE_MIN_SCORE = 100;
 export const OBSTACLE_MIN_TIME_SEC = 60;
 
+// —— Zoom visual (cobra, comidas, obstáculos) —————————————————————————————————
+// O quadro da área jogável mantém sempre o mesmo tamanho.
+// A cada SHRINK_POINTS_THRESHOLD pontos, o conteúdo (espaço de deslocamento, cobra, comidas, obstáculos)
+// é desenhado SHRINK_PERCENT % menor (efeito zoom out); acumula a cada threshold.
+export const SHRINK_POINTS_THRESHOLD = 25;
+export const SHRINK_PERCENT = 10;
+
 // —— Bônus no game over (cálculo da pontuação) ——————————————————————————————
 export const MOVES_REF = 80;
 export const TIME_REF_SEC = 90;
