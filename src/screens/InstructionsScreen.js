@@ -2,42 +2,120 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import RetroText from '../components/RetroText';
+import { THEMES } from '../theme';
 
-const InstructionsScreen = ({ onBack }) => {
+const InstructionsScreen = ({ theme = 'dark', onBack }) => {
   const { t } = useTranslation();
+  const themeColors = THEMES[theme] || THEMES.dark;
 
   return (
-    <View style={styles.container}>
-      <RetroText style={styles.title}>{t('instructions.title')}</RetroText>
-      <View style={styles.titleLine} />
+    <View style={[styles.container, { backgroundColor: themeColors.background }]}>
+      <RetroText
+        style={[
+          styles.title,
+          { color: themeColors.primary, textShadowColor: themeColors.primary },
+        ]}
+      >
+        {t('instructions.title')}
+      </RetroText>
+      <View
+        style={[
+          styles.titleLine,
+          { backgroundColor: themeColors.primary },
+        ]}
+      />
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} scrollEnabled={false} showsVerticalScrollIndicator={false}>
-        <View style={styles.section}>
-          <RetroText style={styles.sectionTitle}>{t('instructions.howToPlay')}</RetroText>
-          <RetroText style={styles.paragraph}>{t('menu.instruction1')}</RetroText>
-          <RetroText style={styles.paragraph}>{t('menu.instruction2')}</RetroText>
-          <RetroText style={styles.paragraph}>{t('menu.instruction3')}</RetroText>
+        <View
+          style={[
+            styles.section,
+            {
+              backgroundColor: themeColors.surface,
+              borderColor: themeColors.border,
+            },
+          ]}
+        >
+          <RetroText style={[styles.sectionTitle, { color: themeColors.primary }]}>
+            {t('instructions.howToPlay')}
+          </RetroText>
+          <RetroText style={[styles.paragraph, { color: themeColors.textMuted2 }]}>
+            {t('menu.instruction1')}
+          </RetroText>
+          <RetroText style={[styles.paragraph, { color: themeColors.textMuted2 }]}>
+            {t('menu.instruction2')}
+          </RetroText>
+          <RetroText style={[styles.paragraph, { color: themeColors.textMuted2 }]}>
+            {t('menu.instruction3')}
+          </RetroText>
         </View>
 
-        <View style={styles.section}>
-          <RetroText style={styles.sectionTitle}>{t('instructions.rewards')}</RetroText>
-          <RetroText style={styles.paragraph}>{t('instructions.rewardsIntro')}</RetroText>
-          <RetroText style={styles.paragraph}>{t('instructions.rewards1')}</RetroText>
-          <RetroText style={styles.paragraph}>{t('instructions.rewards2')}</RetroText>
-          <RetroText style={styles.paragraph}>{t('instructions.rewards3')}</RetroText>
+        <View
+          style={[
+            styles.section,
+            {
+              backgroundColor: themeColors.surface,
+              borderColor: themeColors.border,
+            },
+          ]}
+        >
+          <RetroText style={[styles.sectionTitle, { color: themeColors.primary }]}>
+            {t('instructions.rewards')}
+          </RetroText>
+          <RetroText style={[styles.paragraph, { color: themeColors.textMuted2 }]}>
+            {t('instructions.rewardsIntro')}
+          </RetroText>
+          <RetroText style={[styles.paragraph, { color: themeColors.textMuted2 }]}>
+            {t('instructions.rewards1')}
+          </RetroText>
+          <RetroText style={[styles.paragraph, { color: themeColors.textMuted2 }]}>
+            {t('instructions.rewards2')}
+          </RetroText>
+          <RetroText style={[styles.paragraph, { color: themeColors.textMuted2 }]}>
+            {t('instructions.rewards3')}
+          </RetroText>
         </View>
 
-        <View style={styles.section}>
-          <RetroText style={styles.sectionTitle}>{t('instructions.variations')}</RetroText>
-          <RetroText style={styles.paragraph}>{t('instructions.walls')}</RetroText>
-          <RetroText style={styles.paragraph}>{t('instructions.obstacles')}</RetroText>
-          <RetroText style={styles.paragraph}>{t('instructions.speed')}</RetroText>
-          <RetroText style={styles.paragraph}>{t('instructions.controls')}</RetroText>
+        <View
+          style={[
+            styles.section,
+            {
+              backgroundColor: themeColors.surface,
+              borderColor: themeColors.border,
+            },
+          ]}
+        >
+          <RetroText style={[styles.sectionTitle, { color: themeColors.primary }]}>
+            {t('instructions.variations')}
+          </RetroText>
+          <RetroText style={[styles.paragraph, { color: themeColors.textMuted2 }]}>
+            {t('instructions.walls')}
+          </RetroText>
+          <RetroText style={[styles.paragraph, { color: themeColors.textMuted2 }]}>
+            {t('instructions.obstacles')}
+          </RetroText>
+          <RetroText style={[styles.paragraph, { color: themeColors.textMuted2 }]}>
+            {t('instructions.speed')}
+          </RetroText>
+          <RetroText style={[styles.paragraph, { color: themeColors.textMuted2 }]}>
+            {t('instructions.controls')}
+          </RetroText>
         </View>
       </ScrollView>
 
-      <TouchableOpacity onPress={onBack} style={styles.backButton} activeOpacity={0.7}>
-        <RetroText style={styles.backButtonText}>{t('instructions.back')}</RetroText>
+      <TouchableOpacity
+        onPress={onBack}
+        style={[
+          styles.backButton,
+          {
+            borderColor: themeColors.primary,
+            shadowColor: themeColors.primary,
+          },
+        ]}
+        activeOpacity={0.7}
+      >
+        <RetroText style={[styles.backButtonText, { color: themeColors.primary }]}>
+          {t('instructions.back')}
+        </RetroText>
       </TouchableOpacity>
     </View>
   );

@@ -2,13 +2,24 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import RetroText from '../components/RetroText';
+import { THEMES } from '../theme';
 
 const MOVES_REF = 80;
 const TIME_REF_SEC = 90;
 const BONUS_MAX = 0.5;
 
-const GameOverScreen = ({ score, highScore, moveCount = 0, elapsedSeconds = 0, onRestart, onMenu, onLeaderboard }) => {
+const GameOverScreen = ({
+  theme = 'dark',
+  score,
+  highScore,
+  moveCount = 0,
+  elapsedSeconds = 0,
+  onRestart,
+  onMenu,
+  onLeaderboard,
+}) => {
   const { t } = useTranslation();
+  const themeColors = THEMES[theme] || THEMES.dark;
 
   const moveBonus = BONUS_MAX * Math.max(0, 1 - moveCount / MOVES_REF);
   const timeBonus = BONUS_MAX * Math.max(0, 1 - elapsedSeconds / TIME_REF_SEC);
@@ -18,49 +29,163 @@ const GameOverScreen = ({ score, highScore, moveCount = 0, elapsedSeconds = 0, o
   const timeStr = `${Math.floor(elapsedSeconds / 60)}:${(elapsedSeconds % 60).toString().padStart(2, '0')}`;
 
   return (
-    <ScrollView contentContainerStyle={styles.container} scrollEnabled={false} showsVerticalScrollIndicator={false}>
-      <RetroText style={styles.title}>GAME OVER</RetroText>
-      <View style={styles.titleLine} />
+    <ScrollView
+      contentContainerStyle={[styles.container, { backgroundColor: themeColors.background }]}
+      scrollEnabled={false}
+      showsVerticalScrollIndicator={false}
+    >
+      <RetroText
+        style={[
+          styles.title,
+          { color: themeColors.danger, textShadowColor: themeColors.danger },
+        ]}
+      >
+        GAME OVER
+      </RetroText>
+      <View
+        style={[
+          styles.titleLine,
+          {
+            backgroundColor: themeColors.danger,
+            shadowColor: themeColors.danger,
+          },
+        ]}
+      />
 
-      <View style={styles.scoreCard}>
-        <RetroText style={styles.scoreLabel}>{t('gameOver.yourScore')}</RetroText>
-        <RetroText style={styles.scoreValue}>{score}</RetroText>
+      <View
+        style={[
+          styles.scoreCard,
+          {
+            backgroundColor: themeColors.surface,
+            borderColor: themeColors.border,
+          },
+        ]}
+      >
+        <RetroText style={[styles.scoreLabel, { color: themeColors.textMuted }]}>
+          {t('gameOver.yourScore')}
+        </RetroText>
+        <RetroText
+          style={[
+            styles.scoreValue,
+            { color: themeColors.primary, textShadowColor: themeColors.primary },
+          ]}
+        >
+          {score}
+        </RetroText>
 
         {score >= highScore && score > 0 && (
-          <View style={styles.newRecordBadge}>
-            <RetroText style={styles.newRecordText}>{t('gameOver.newRecord')}</RetroText>
+          <View
+            style={[
+              styles.newRecordBadge,
+              {
+                borderColor: themeColors.secondary,
+                shadowColor: themeColors.secondary,
+              },
+            ]}
+          >
+            <RetroText style={[styles.newRecordText, { color: themeColors.secondary }]}>
+              {t('gameOver.newRecord')}
+            </RetroText>
           </View>
         )}
       </View>
 
-      <View style={styles.calcCard}>
-        <RetroText style={styles.calcTitle}>{t('gameOver.calcTitle')}</RetroText>
-        <RetroText style={styles.calcLine}>{t('gameOver.calcMoves', { count: moveCount })}</RetroText>
-        <RetroText style={styles.calcLine}>{t('gameOver.calcTime', { time: timeStr })}</RetroText>
-        <RetroText style={styles.calcLine}>{t('gameOver.calcBonusMoves', { pct: moveBonusPct })}</RetroText>
-        <RetroText style={styles.calcLine}>{t('gameOver.calcBonusTime', { pct: timeBonusPct })}</RetroText>
-        <RetroText style={styles.calcFormula}>
+      <View
+        style={[
+          styles.calcCard,
+          {
+            backgroundColor: themeColors.surfaceAlt,
+            borderColor: themeColors.border,
+          },
+        ]}
+      >
+        <RetroText style={[styles.calcTitle, { color: themeColors.textMuted }]}>
+          {t('gameOver.calcTitle')}
+        </RetroText>
+        <RetroText style={[styles.calcLine, { color: themeColors.textMuted2 }]}>
+          {t('gameOver.calcMoves', { count: moveCount })}
+        </RetroText>
+        <RetroText style={[styles.calcLine, { color: themeColors.textMuted2 }]}>
+          {t('gameOver.calcTime', { time: timeStr })}
+        </RetroText>
+        <RetroText style={[styles.calcLine, { color: themeColors.textMuted2 }]}>
+          {t('gameOver.calcBonusMoves', { pct: moveBonusPct })}
+        </RetroText>
+        <RetroText style={[styles.calcLine, { color: themeColors.textMuted2 }]}>
+          {t('gameOver.calcBonusTime', { pct: timeBonusPct })}
+        </RetroText>
+        <RetroText style={[styles.calcFormula, { color: themeColors.primary }]}>
           {t('gameOver.calcMultiplier', { move: moveBonusPct, time: timeBonusPct, total: multiplier.toFixed(2) })}
         </RetroText>
       </View>
 
-      <View style={styles.highScoreCard}>
-        <RetroText style={styles.highScoreLabel}>{t('gameOver.highScore')}</RetroText>
-        <RetroText style={styles.highScoreValue}>{highScore}</RetroText>
+      <View
+        style={[
+          styles.highScoreCard,
+          {
+            backgroundColor: themeColors.surface,
+            borderColor: themeColors.border,
+          },
+        ]}
+      >
+        <RetroText style={[styles.highScoreLabel, { color: themeColors.textMuted }]}>
+          {t('gameOver.highScore')}
+        </RetroText>
+        <RetroText
+          style={[
+            styles.highScoreValue,
+            { color: themeColors.secondary, textShadowColor: themeColors.secondary },
+          ]}
+        >
+          {highScore}
+        </RetroText>
       </View>
 
-      <TouchableOpacity onPress={onRestart} style={styles.restartButton} activeOpacity={0.7}>
-        <RetroText style={styles.buttonText}>{t('gameOver.playAgain')}</RetroText>
+      <TouchableOpacity
+        onPress={onRestart}
+        style={[
+          styles.restartButton,
+          {
+            borderColor: themeColors.primary,
+            shadowColor: themeColors.primary,
+          },
+        ]}
+        activeOpacity={0.7}
+      >
+        <RetroText style={[styles.buttonText, { color: themeColors.primary }]}>
+          {t('gameOver.playAgain')}
+        </RetroText>
       </TouchableOpacity>
 
       {onLeaderboard ? (
-        <TouchableOpacity onPress={onLeaderboard} style={styles.leaderboardButton} activeOpacity={0.7}>
-          <RetroText style={styles.leaderboardButtonText}>{t('gameOver.leaderboard')}</RetroText>
+        <TouchableOpacity
+          onPress={onLeaderboard}
+          style={[
+            styles.leaderboardButton,
+            { borderColor: themeColors.footer },
+          ]}
+          activeOpacity={0.7}
+        >
+          <RetroText style={[styles.leaderboardButtonText, { color: themeColors.footer }]}>
+            {t('gameOver.leaderboard')}
+          </RetroText>
         </TouchableOpacity>
       ) : null}
 
-      <TouchableOpacity onPress={onMenu} style={styles.menuButton} activeOpacity={0.7}>
-        <RetroText style={styles.buttonTextSecondary}>{t('gameOver.backToMenu')}</RetroText>
+      <TouchableOpacity
+        onPress={onMenu}
+        style={[
+          styles.menuButton,
+          {
+            borderColor: themeColors.danger,
+            shadowColor: themeColors.danger,
+          },
+        ]}
+        activeOpacity={0.7}
+      >
+        <RetroText style={[styles.buttonTextSecondary, { color: themeColors.danger }]}>
+          {t('gameOver.backToMenu')}
+        </RetroText>
       </TouchableOpacity>
     </ScrollView>
   );

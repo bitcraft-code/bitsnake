@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
+import { THEMES } from '../theme';
 
 const BOARD_BORDER = 2;
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -7,6 +8,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 const FOOD_OPACITY = { 1: 0.4, 2: 0.7, 3: 1 };
 
 export const GameBoard = ({
+  theme = 'dark',
   snake,
   foods = [],
   obstacles = [],
@@ -16,6 +18,7 @@ export const GameBoard = ({
   blinkStartMs = 4000,
   blinkIntervalMs = 200,
 }) => {
+  const colors = THEMES[theme] || THEMES.dark;
   const maxWidth = Math.min(SCREEN_WIDTH - 30, 380);
   const cellSize = Math.floor((maxWidth - BOARD_BORDER * 2) / boardSize);
   const boardWidth = cellSize * boardSize + BOARD_BORDER * 2;
@@ -35,23 +38,28 @@ export const GameBoard = ({
   };
 
   const getCellStyle = (r, c) => {
-    if (isSnakeHead(r, c)) return styles.snakeHead;
-    if (isSnakeBody(r, c)) return styles.snakeBody;
-    if (isObstacle(r, c)) return styles.obstacle;
+    if (isSnakeHead(r, c)) return { backgroundColor: colors.snakeHead };
+    if (isSnakeBody(r, c)) return { backgroundColor: colors.snakeBody };
+    if (isObstacle(r, c)) return { backgroundColor: colors.obstacle, borderWidth: 1, borderColor: colors.obstacleBorder };
     const food = getFoodAt(r, c);
     if (food) {
-      if (!isFoodVisible(food)) return styles.emptyCell;
+      if (!isFoodVisible(food)) return { backgroundColor: colors.gameBoardCell };
       const opacity = FOOD_OPACITY[food.points] ?? 1;
-      return { ...styles.food, backgroundColor: `rgba(255, 51, 51, ${opacity})` };
+      return { backgroundColor: `rgba(${colors.foodRgb}, ${opacity})` };
     }
-    return styles.emptyCell;
+    return { backgroundColor: colors.gameBoardCell };
   };
 
   return (
     <View
       style={[
         styles.board,
-        { width: boardWidth },
+        {
+          width: boardWidth,
+          backgroundColor: colors.gameBoardBg,
+          borderColor: colors.gameBoardBorder,
+          shadowColor: colors.gameBoardBorder,
+        },
         ghostWalls && styles.boardGhost,
       ]}
     >
@@ -71,11 +79,8 @@ export const GameBoard = ({
 
 const styles = StyleSheet.create({
   board: {
-    backgroundColor: '#080c14',
     borderWidth: BOARD_BORDER,
-    borderColor: '#00ff41',
     marginBottom: 20,
-    shadowColor: '#00ff41',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.3,
     shadowRadius: 12,
@@ -84,29 +89,11 @@ const styles = StyleSheet.create({
   },
   boardGhost: {
     borderStyle: 'dotted',
-    borderColor: 'rgba(0, 255, 65, 0.55)',
     shadowOpacity: 0.15,
     shadowRadius: 6,
   },
   row: {
     flexDirection: 'row',
-  },
-  emptyCell: {
-    backgroundColor: '#0a1210',
-  },
-  obstacle: {
-    backgroundColor: '#2a2a2a',
-    borderWidth: 1,
-    borderColor: '#3a3a3a',
-  },
-  snakeHead: {
-    backgroundColor: '#00ff41',
-  },
-  snakeBody: {
-    backgroundColor: '#00cc33',
-  },
-  food: {
-    backgroundColor: '#ff3333',
   },
 });
 

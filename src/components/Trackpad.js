@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
+import { THEMES } from '../theme';
 
 const TRACKPAD_HEIGHT = 196;
 const SWIPE_THRESHOLD = 20;
@@ -17,7 +18,8 @@ function getDirectionFromDelta(dx, dy) {
  * define para onde a cobra vai (cima, baixo, esquerda, direita).
  * Usa onTouch* para evitar que PanResponder ou gestos do sistema capturem o swipe esquerda.
  */
-export default function Trackpad({ onDirectionChange, style }) {
+export default function Trackpad({ theme = 'dark', onDirectionChange, style }) {
+  const colors = THEMES[theme] || THEMES.dark;
   const firedRef = useRef(false);
   const startRef = useRef({ x: 0, y: 0 });
 
@@ -60,7 +62,15 @@ export default function Trackpad({ onDirectionChange, style }) {
 
   return (
     <View
-      style={[styles.trackpad, style]}
+      style={[
+        styles.trackpad,
+        {
+          backgroundColor: colors.trackpadBg,
+          borderColor: colors.trackpadBorder,
+          shadowColor: colors.trackpadBorder,
+        },
+        style,
+      ]}
       onStartShouldSetResponder={() => true}
       onStartShouldSetResponderCapture={() => true}
       onMoveShouldSetResponder={() => true}
@@ -78,12 +88,9 @@ const styles = StyleSheet.create({
   trackpad: {
     width: '92%',
     height: TRACKPAD_HEIGHT,
-    backgroundColor: '#0d1a14',
     borderWidth: 1,
-    borderColor: '#00ff41',
     borderRadius: 8,
     marginVertical: 12,
-    shadowColor: '#00ff41',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.25,
     shadowRadius: 6,

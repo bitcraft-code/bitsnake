@@ -9,6 +9,7 @@ import {
   Animated,
   Easing,
   StatusBar,
+  useColorScheme,
 } from 'react-native';
 import { registerRootComponent } from 'expo';
 import { useFonts } from '@expo-google-fonts/press-start-2p/useFonts';
@@ -18,7 +19,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import './src/i18n';
 import { loadSavedLanguage, setSavedLanguage, supportedLngs } from './src/i18n';
 import { useTranslation } from 'react-i18next';
-import { FONT_FAMILY } from './src/theme';
+import { FONT_FAMILY, THEMES } from './src/theme';
 import GameBoard from './src/components/GameBoard';
 import RetroText from './src/components/RetroText';
 import Trackpad from './src/components/Trackpad';
@@ -61,17 +62,23 @@ const SPACING = 12;
 
 const languageLabels = { en: 'EN', de: 'DE', fr: 'FR', es: 'ES', pt: 'PT' };
 
-const OptionCheckbox = ({ value, onValueChange, style }) => (
+const OptionCheckbox = ({ value, onValueChange, style, themeColors }) => (
   <Pressable
     onPress={() => onValueChange(!value)}
     style={({ pressed }) => [
       styles.optionCheckbox,
-      value && styles.optionCheckboxChecked,
+      value && (themeColors
+        ? { backgroundColor: themeColors.checkboxActiveBg, borderColor: themeColors.checkboxColor, shadowColor: themeColors.checkboxColor }
+        : styles.optionCheckboxChecked),
       pressed && styles.btnPressed,
       style,
     ]}
   >
-    {value ? <RetroText style={styles.optionCheckboxMark}>✓</RetroText> : null}
+    {value ? (
+      <RetroText style={[styles.optionCheckboxMark, themeColors && { color: themeColors.checkboxColor }]}>
+        ✓
+      </RetroText>
+    ) : null}
   </Pressable>
 );
 
@@ -98,6 +105,7 @@ export default function App() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [moveCount, setMoveCount] = useState(0);
   const [controlMode, setControlMode] = useState('dpad'); // 'dpad' | 'trackpad'
+  const [theme, setTheme] = useState('system'); // 'system' | 'dark' | 'light'
   const [leaderboardEntries, setLeaderboardEntries] = useState([]);
   const [countdown, setCountdown] = useState(null); // 3 | 2 | 1 | 'go' | null
   const countdownScale = useRef(new Animated.Value(0.3)).current;
@@ -113,6 +121,7 @@ export default function App() {
   const instructionsReturnToRef = useRef('playing');
   const drawerSlideAnim = useRef(new Animated.Value(SCREEN_WIDTH)).current;
   const gameSettingsLoadedRef = useRef(false);
+  const systemColorScheme = useColorScheme();
 
   useEffect(() => {
     loadHighScore();
@@ -136,6 +145,7 @@ export default function App() {
         setSpeedLevel(data.speedLevel);
       if (data.controlMode === 'dpad' || data.controlMode === 'trackpad')
         setControlMode(data.controlMode);
+      if (data.theme === 'light' || data.theme === 'dark' || data.theme === 'system') setTheme(data.theme);
     } catch (error) {
       console.error('Failed to load game settings:', error);
     } finally {
@@ -153,6 +163,7 @@ export default function App() {
           obstaclesEnabled,
           speedLevel,
           controlMode,
+          theme,
         }),
       );
     } catch (error) {
@@ -162,7 +173,7 @@ export default function App() {
 
   useEffect(() => {
     saveGameSettings();
-  }, [wallMode, obstaclesEnabled, speedLevel, controlMode]);
+  }, [wallMode, obstaclesEnabled, speedLevel, controlMode, theme]);
 
   useEffect(() => {
     foodsRef.current = foods;
@@ -622,10 +633,20 @@ export default function App() {
 
   if (!fontsLoaded && !fontError) return null;
 
+  const effectiveTheme = theme === 'system'
+    ? (systemColorScheme === 'dark' ? 'dark' : 'light')
+    : theme;
+  const themeColors = THEMES[effectiveTheme];
   const wrapWithSafeArea = (children) => (
     <SafeAreaProvider>
-      <StatusBar barStyle="light-content" backgroundColor="#0a0e1a" translucent={false} />
-      <SafeAreaView style={[styles.safeAreaWrapper, { flex: 1 }]}>{children}</SafeAreaView>
+      <StatusBar
+        barStyle={effectiveTheme === 'dark' ? 'light-content' : 'dark-content'}
+        backgroundColor={themeColors.background}
+        translucent={false}
+      />
+      <SafeAreaView style={[styles.safeAreaWrapper, { flex: 1, backgroundColor: themeColors.background }]}>
+        {children}
+      </SafeAreaView>
     </SafeAreaProvider>
   );
 
@@ -633,6 +654,9 @@ export default function App() {
   if (gameState === 'menu') {
     return wrapWithSafeArea(
       <MenuScreen
+        theme={theme}
+        effectiveTheme={effectiveTheme}
+        setTheme={setTheme}
         onStart={initGame}
         wallMode={wallMode}
         setWallMode={setWallMode}
@@ -660,12 +684,13 @@ export default function App() {
   }
 
   if (gameState === 'instructions') {
-    return wrapWithSafeArea(<InstructionsScreen onBack={goBackFromInstructions} />);
+    return wrapWithSafeArea(<InstructionsScreen theme={effectiveTheme} onBack={goBackFromInstructions} />);
   }
 
   if (gameState === 'leaderboard') {
     return wrapWithSafeArea(
       <LeaderboardScreen
+        theme={effectiveTheme}
         entries={leaderboardEntries}
         onBack={goBackFromLeaderboard}
       />
@@ -675,6 +700,7 @@ export default function App() {
   if (gameState === 'gameOver') {
     return wrapWithSafeArea(
       <GameOverScreen
+        theme={effectiveTheme}
         score={score}
         highScore={highScore}
         moveCount={moveCount}
@@ -693,38 +719,48 @@ export default function App() {
 
   // Layout responsivo para mobile - estado 'playing'
   return wrapWithSafeArea(
-    <ScrollView contentContainerStyle={styles.container} scrollEnabled={false} showsVerticalScrollIndicator={false}>
-      <View style={[styles.header, { width: gameBoardWidth }]}>
+    <ScrollView
+      contentContainerStyle={[styles.container, { backgroundColor: themeColors.background }]}
+      scrollEnabled={false}
+      showsVerticalScrollIndicator={false}
+    >
+      <View
+        style={[
+          styles.header,
+          { width: gameBoardWidth, backgroundColor: themeColors.surface, borderColor: themeColors.border },
+        ]}
+      >
         <View style={styles.headerBlock}>
-          <RetroText style={styles.scoreLabel}>{t('game.score')}</RetroText>
-          <RetroText style={styles.score}>{score}</RetroText>
+          <RetroText style={[styles.scoreLabel, { color: themeColors.textMuted }]}>{t('game.score')}</RetroText>
+          <RetroText style={[styles.score, { color: themeColors.primary }]}>{score}</RetroText>
         </View>
         <View style={styles.headerBlock}>
-          <RetroText style={styles.timeLabel}>{t('game.time')}</RetroText>
-          <RetroText style={styles.timeValue}>
+          <RetroText style={[styles.timeLabel, { color: themeColors.textMuted }]}>{t('game.time')}</RetroText>
+          <RetroText style={[styles.timeValue, { color: themeColors.primary }]}>
             {Math.floor(elapsedSeconds / 60)}:
             {(elapsedSeconds % 60).toString().padStart(2, '0')}
           </RetroText>
         </View>
         <View style={styles.headerBlock}>
-          <RetroText style={styles.movesLabel}>{t('game.moves')}</RetroText>
-          <RetroText style={styles.movesValue}>{moveCount}</RetroText>
+          <RetroText style={[styles.movesLabel, { color: themeColors.textMuted }]}>{t('game.moves')}</RetroText>
+          <RetroText style={[styles.movesValue, { color: themeColors.primary }]}>{moveCount}</RetroText>
         </View>
         <View style={styles.headerBlock}>
-          <RetroText style={styles.highScoreLabel}>
+          <RetroText style={[styles.highScoreLabel, { color: themeColors.textMuted }]}>
             {t('game.record')}
           </RetroText>
-          <RetroText style={styles.highScoreValue}>{highScore}</RetroText>
+          <RetroText style={[styles.highScoreValue, { color: themeColors.primary }]}>{highScore}</RetroText>
         </View>
         <Pressable
           onPress={countdown ? undefined : openOptions}
           style={({ pressed }) => [
             styles.optionsButton,
+            { borderColor: themeColors.secondary, shadowColor: themeColors.secondary },
             pressed && !countdown && styles.btnPressed,
             countdown && styles.buttonDisabled,
           ]}
         >
-          <RetroText style={styles.optionsButtonText}>⚙︎</RetroText>
+          <RetroText style={[styles.optionsButtonText, { color: themeColors.secondary }]}>⚙︎</RetroText>
         </Pressable>
       </View>
 
@@ -735,6 +771,7 @@ export default function App() {
         ]}
       >
         <GameBoard
+          theme={effectiveTheme}
           snake={snake}
           foods={foods}
           obstacles={obstacles}
@@ -745,9 +782,14 @@ export default function App() {
           blinkIntervalMs={FOOD_BLINK_INTERVAL_MS}
         />
         {countdown !== null && (
-          <View style={styles.countdownOverlay} pointerEvents="none">
+          <View style={[styles.countdownOverlay, { backgroundColor: themeColors.background }]} pointerEvents="none">
             <Animated.View style={{ transform: [{ scale: countdownScale }] }}>
-              <RetroText style={styles.countdownText}>
+              <RetroText
+                style={[
+                  styles.countdownText,
+                  { color: themeColors.primary, textShadowColor: themeColors.primary },
+                ]}
+              >
                 {countdown === 'go' ? 'GO!' : countdown}
               </RetroText>
             </Animated.View>
@@ -759,7 +801,16 @@ export default function App() {
         onPress={countdown ? undefined : togglePause}
         style={({ pressed }) => [
           styles.playPauseButton,
-          paused && !countdown && styles.playPauseButtonPaused,
+          {
+            backgroundColor: themeColors.buttonOrangeBg,
+            borderColor: themeColors.secondary,
+            shadowColor: themeColors.secondary,
+          },
+          paused && !countdown && {
+            borderColor: themeColors.primary,
+            backgroundColor: themeColors.buttonGreenBg,
+            shadowColor: themeColors.primary,
+          },
           pressed && !countdown && styles.btnPressed,
           countdown && styles.buttonDisabled,
         ]}
@@ -769,7 +820,8 @@ export default function App() {
             style={[
               styles.playPauseButtonText,
               styles.playPauseButtonIcon,
-              paused && !countdown && styles.playPauseButtonTextPaused,
+              { color: themeColors.secondary },
+              paused && !countdown && { color: themeColors.primary },
             ]}
           >
             {countdown ? '⏸︎' : paused ? '▶︎' : '⏸︎'}
@@ -777,7 +829,8 @@ export default function App() {
           <RetroText
             style={[
               styles.playPauseButtonText,
-              paused && !countdown && styles.playPauseButtonTextPaused,
+              { color: themeColors.secondary },
+              paused && !countdown && { color: themeColors.primary },
             ]}
           >
             {countdown ? t('game.pause') : paused ? t('game.play') : t('game.pause')}
@@ -794,7 +847,7 @@ export default function App() {
               pressed && styles.dpadBtnPressed,
             ]}
           >
-            <RetroText style={styles.arrow}>▲</RetroText>
+            <RetroText style={[styles.arrow, { color: themeColors.primary }]}>▲</RetroText>
           </Pressable>
 
           <View style={styles.middleRow}>
@@ -805,7 +858,7 @@ export default function App() {
                 pressed && styles.dpadBtnPressed,
               ]}
             >
-              <RetroText style={styles.arrow}>◀</RetroText>
+              <RetroText style={[styles.arrow, { color: themeColors.primary }]}>◀</RetroText>
             </Pressable>
             <View style={styles.dpadSpacer} />
             <Pressable
@@ -815,7 +868,7 @@ export default function App() {
                 pressed && styles.dpadBtnPressed,
               ]}
             >
-              <RetroText style={styles.arrow}>▶</RetroText>
+              <RetroText style={[styles.arrow, { color: themeColors.primary }]}>▶</RetroText>
             </Pressable>
           </View>
 
@@ -826,11 +879,11 @@ export default function App() {
               pressed && styles.dpadBtnPressed,
             ]}
           >
-            <RetroText style={styles.arrow}>▼</RetroText>
+            <RetroText style={[styles.arrow, { color: themeColors.primary }]}>▼</RetroText>
           </Pressable>
         </View>
       ) : (
-        <Trackpad onDirectionChange={handleDirectionChange} />
+        <Trackpad theme={effectiveTheme} onDirectionChange={handleDirectionChange} />
       )}
 
       <Modal
@@ -840,15 +893,19 @@ export default function App() {
         onRequestClose={closeOptions}
       >
         <View style={styles.drawerOverlay}>
-          <Pressable style={styles.drawerBackdrop} onPress={closeOptions} />
+          <Pressable style={[styles.drawerBackdrop, { backgroundColor: themeColors.overlay }]} onPress={closeOptions} />
           <Animated.View
             style={[
               styles.drawerPanel,
-              { transform: [{ translateX: drawerSlideAnim }] },
+              {
+                transform: [{ translateX: drawerSlideAnim }],
+                backgroundColor: themeColors.surfaceAlt,
+                borderLeftColor: themeColors.border,
+              },
             ]}
           >
-            <View style={styles.drawerHeader}>
-              <RetroText style={styles.drawerTitle}>
+            <View style={[styles.drawerHeader, { borderBottomColor: themeColors.border }]}>
+              <RetroText style={[styles.drawerTitle, { color: themeColors.primary }]}>
                 {t('game.options')}
               </RetroText>
               <Pressable
@@ -859,12 +916,12 @@ export default function App() {
                 ]}
                 hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
               >
-                <RetroText style={styles.drawerCloseText}>✕</RetroText>
+                <RetroText style={[styles.drawerCloseText, { color: themeColors.secondary }]}>✕</RetroText>
               </Pressable>
             </View>
             <ScrollView style={styles.drawerContent} scrollEnabled={false} showsVerticalScrollIndicator={false}>
-              <View style={styles.optionRow}>
-                <RetroText style={styles.optionLabel}>
+              <View style={[styles.optionRow, { borderBottomColor: themeColors.border }]}>
+                <RetroText style={[styles.optionLabel, { color: themeColors.text }]}>
                   {t('game.optionGhostWalls')}
                 </RetroText>
                 <OptionCheckbox
@@ -872,10 +929,11 @@ export default function App() {
                   onValueChange={(value) =>
                     setWallMode(value ? 'wrap' : 'normal')
                   }
+                  themeColors={themeColors}
                 />
               </View>
-              <View style={styles.optionRow}>
-                <RetroText style={styles.optionLabel}>
+              <View style={[styles.optionRow, { borderBottomColor: themeColors.border }]}>
+                <RetroText style={[styles.optionLabel, { color: themeColors.text }]}>
                   {t('game.optionObstacles')}
                 </RetroText>
                 <OptionCheckbox
@@ -894,11 +952,12 @@ export default function App() {
                       obstaclesRef.current = [];
                     }
                   }}
+                  themeColors={themeColors}
                 />
               </View>
-              <View style={styles.optionRow}>
+              <View style={[styles.optionRow, { borderBottomColor: themeColors.border }]}>
                 <RetroText
-                  style={[styles.optionLabel, styles.optionLabelNoFlex]}
+                  style={[styles.optionLabel, styles.optionLabelNoFlex, { color: themeColors.text }]}
                 >
                   {t('game.optionSpeed')}
                 </RetroText>
@@ -909,14 +968,17 @@ export default function App() {
                       onPress={() => setSpeedLevel(level)}
                       style={({ pressed }) => [
                         styles.langBtn,
-                        speedLevel === level && styles.langBtnActive,
+                        speedLevel === level && {
+                          backgroundColor: themeColors.langBtnActiveBg,
+                          borderColor: themeColors.langBtnActiveBorder,
+                        },
                         pressed && styles.btnPressed,
                       ]}
                     >
                       <RetroText
                         style={[
                           styles.langBtnText,
-                          speedLevel === level && styles.langBtnTextActive,
+                          speedLevel === level && { color: themeColors.primary },
                         ]}
                       >
                         {level}
@@ -925,9 +987,9 @@ export default function App() {
                   ))}
                 </View>
               </View>
-              <View style={styles.optionRow}>
+              <View style={[styles.optionRow, { borderBottomColor: themeColors.border }]}>
                 <RetroText
-                  style={[styles.optionLabel, styles.optionLabelNoFlex]}
+                  style={[styles.optionLabel, styles.optionLabelNoFlex, { color: themeColors.text }]}
                 >
                   {t('game.optionControls')}
                 </RetroText>
@@ -936,14 +998,17 @@ export default function App() {
                     onPress={() => setControlMode('dpad')}
                     style={({ pressed }) => [
                       styles.langBtn,
-                      controlMode === 'dpad' && styles.langBtnActive,
+                      controlMode === 'dpad' && {
+                        backgroundColor: themeColors.langBtnActiveBg,
+                        borderColor: themeColors.langBtnActiveBorder,
+                      },
                       pressed && styles.btnPressed,
                     ]}
                   >
                     <RetroText
                       style={[
                         styles.langBtnText,
-                        controlMode === 'dpad' && styles.langBtnTextActive,
+                        controlMode === 'dpad' && { color: themeColors.primary },
                       ]}
                     >
                       {t('game.controlDpad')}
@@ -953,14 +1018,17 @@ export default function App() {
                     onPress={() => setControlMode('trackpad')}
                     style={({ pressed }) => [
                       styles.langBtn,
-                      controlMode === 'trackpad' && styles.langBtnActive,
+                      controlMode === 'trackpad' && {
+                        backgroundColor: themeColors.langBtnActiveBg,
+                        borderColor: themeColors.langBtnActiveBorder,
+                      },
                       pressed && styles.btnPressed,
                     ]}
                   >
                     <RetroText
                       style={[
                         styles.langBtnText,
-                        controlMode === 'trackpad' && styles.langBtnTextActive,
+                        controlMode === 'trackpad' && { color: themeColors.primary },
                       ]}
                     >
                       {t('game.controlTrackpad')}
@@ -968,9 +1036,9 @@ export default function App() {
                   </Pressable>
                 </View>
               </View>
-              <View style={styles.optionRow}>
+              <View style={[styles.optionRow, { borderBottomColor: themeColors.border }]}>
                 <RetroText
-                  style={[styles.optionLabel, styles.optionLabelNoFlex]}
+                  style={[styles.optionLabel, styles.optionLabelNoFlex, { color: themeColors.text }]}
                 >
                   {t('menu.language')}
                 </RetroText>
@@ -981,14 +1049,17 @@ export default function App() {
                       onPress={() => setSavedLanguage(lng)}
                       style={({ pressed }) => [
                         styles.langBtn,
-                        i18n.language === lng && styles.langBtnActive,
+                        i18n.language === lng && {
+                          backgroundColor: themeColors.langBtnActiveBg,
+                          borderColor: themeColors.langBtnActiveBorder,
+                        },
                         pressed && styles.btnPressed,
                       ]}
                     >
                       <RetroText
                         style={[
                           styles.langBtnText,
-                          i18n.language === lng && styles.langBtnTextActive,
+                          i18n.language === lng && { color: themeColors.primary },
                         ]}
                       >
                         {languageLabels[lng]}
@@ -997,18 +1068,77 @@ export default function App() {
                   ))}
                 </View>
               </View>
+              <View style={[styles.optionRow, { borderBottomColor: themeColors.border }]}>
+                <RetroText style={[styles.optionLabel, { color: themeColors.text }]}>
+                  {t('game.optionTheme')}
+                </RetroText>
+                <View style={styles.languageButtonsRow}>
+                  <Pressable
+                    onPress={() => setTheme('system')}
+                    style={({ pressed }) => [
+                      styles.langBtn,
+                      theme === 'system' && {
+                        backgroundColor: themeColors.langBtnActiveBg,
+                        borderColor: themeColors.langBtnActiveBorder,
+                      },
+                      pressed && styles.btnPressed,
+                    ]}
+                  >
+                    <RetroText
+                      style={[styles.langBtnText, theme === 'system' && { color: themeColors.primary }]}
+                    >
+                      {t('game.themeSystem')}
+                    </RetroText>
+                  </Pressable>
+                  <Pressable
+                    onPress={() => setTheme('dark')}
+                    style={({ pressed }) => [
+                      styles.langBtn,
+                      theme === 'dark' && {
+                        backgroundColor: themeColors.langBtnActiveBg,
+                        borderColor: themeColors.langBtnActiveBorder,
+                      },
+                      pressed && styles.btnPressed,
+                    ]}
+                  >
+                    <RetroText
+                      style={[styles.langBtnText, theme === 'dark' && { color: themeColors.primary }]}
+                    >
+                      {t('game.themeDark')}
+                    </RetroText>
+                  </Pressable>
+                  <Pressable
+                    onPress={() => setTheme('light')}
+                    style={({ pressed }) => [
+                      styles.langBtn,
+                      theme === 'light' && {
+                        backgroundColor: themeColors.langBtnActiveBg,
+                        borderColor: themeColors.langBtnActiveBorder,
+                      },
+                      pressed && styles.btnPressed,
+                    ]}
+                  >
+                    <RetroText
+                      style={[styles.langBtnText, theme === 'light' && { color: themeColors.primary }]}
+                    >
+                      {t('game.themeLight')}
+                    </RetroText>
+                  </Pressable>
+                </View>
+              </View>
               <Pressable
                 onPress={goInstructions}
                 style={({ pressed }) => [
                   styles.optionRow,
                   styles.optionRowPressable,
+                  { borderBottomColor: themeColors.border },
                   pressed && styles.btnPressed,
                 ]}
               >
-                <RetroText style={styles.optionLabel}>
+                <RetroText style={[styles.optionLabel, { color: themeColors.text }]}>
                   {t('menu.instructions')}
                 </RetroText>
-                <RetroText style={styles.optionRowArrow}>›</RetroText>
+                <RetroText style={[styles.optionRowArrow, { color: themeColors.primary }]}>›</RetroText>
               </Pressable>
               <Pressable
                 onPress={() => {
@@ -1018,24 +1148,29 @@ export default function App() {
                 style={({ pressed }) => [
                   styles.optionRow,
                   styles.optionRowPressable,
+                  { borderBottomColor: themeColors.border },
                   pressed && styles.btnPressed,
                 ]}
               >
-                <RetroText style={styles.optionLabel}>
+                <RetroText style={[styles.optionLabel, { color: themeColors.text }]}>
                   {t('menu.leaderboard')}
                 </RetroText>
-                <RetroText style={styles.optionRowArrow}>›</RetroText>
+                <RetroText style={[styles.optionRowArrow, { color: themeColors.primary }]}>›</RetroText>
               </Pressable>
             </ScrollView>
-            <View style={styles.drawerFooter}>
+            <View style={[styles.drawerFooter, { borderTopColor: themeColors.border }]}>
               <Pressable
                 onPress={closeOptions}
                 style={({ pressed }) => [
                   styles.menuButtonGreen,
+                  {
+                    borderColor: themeColors.primary,
+                    shadowColor: themeColors.primary,
+                  },
                   pressed && styles.btnPressed,
                 ]}
               >
-                <RetroText style={styles.menuButtonTextGreen}>
+                <RetroText style={[styles.menuButtonTextGreen, { color: themeColors.primary }]}>
                   {t('game.backToGame')}
                 </RetroText>
               </Pressable>
@@ -1046,10 +1181,14 @@ export default function App() {
                 }}
                 style={({ pressed }) => [
                   styles.menuButton,
+                  {
+                    borderColor: themeColors.danger,
+                    shadowColor: themeColors.danger,
+                  },
                   pressed && styles.btnPressed,
                 ]}
               >
-                <RetroText style={styles.menuButtonText}>
+                <RetroText style={[styles.menuButtonText, { color: themeColors.danger }]}>
                   {t('game.mainMenu')}
                 </RetroText>
               </Pressable>

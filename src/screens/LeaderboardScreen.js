@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import RetroText from '../components/RetroText';
+import { THEMES } from '../theme';
 
 const formatTime = (seconds) => {
   const m = Math.floor(seconds / 60);
@@ -22,44 +23,89 @@ const formatDate = (dateISO, locale) => {
   }
 };
 
-const LeaderboardScreen = ({ entries = [], onBack }) => {
+const LeaderboardScreen = ({ theme = 'dark', entries = [], onBack }) => {
   const { t, i18n } = useTranslation();
   const locale = i18n.language === 'pt' ? 'pt-BR' : i18n.language;
+  const themeColors = THEMES[theme] || THEMES.dark;
 
   return (
-    <View style={styles.container}>
-      <RetroText style={styles.title}>{t('leaderboard.title')}</RetroText>
-      <View style={styles.titleLine} />
+    <View style={[styles.container, { backgroundColor: themeColors.background }]}>
+      <RetroText
+        style={[
+          styles.title,
+          { color: themeColors.primary, textShadowColor: themeColors.primary },
+        ]}
+      >
+        {t('leaderboard.title')}
+      </RetroText>
+      <View style={[styles.titleLine, { backgroundColor: themeColors.primary }]} />
 
-      <View style={styles.tableHeader}>
-        <RetroText style={[styles.th, styles.thRank]}>#</RetroText>
-        <RetroText style={[styles.th, styles.thScore]}>{t('leaderboard.score')}</RetroText>
-        <RetroText style={[styles.th, styles.thTime]}>{t('leaderboard.time')}</RetroText>
-        <RetroText style={[styles.th, styles.thMoves]}>{t('leaderboard.moves')}</RetroText>
-        <RetroText style={[styles.th, styles.thDate]}>{t('leaderboard.date')}</RetroText>
+      <View style={[styles.tableHeader, { borderBottomColor: themeColors.border }]}>
+        <RetroText style={[styles.th, styles.thRank, { color: themeColors.textMuted }]}>#</RetroText>
+        <RetroText style={[styles.th, styles.thScore, { color: themeColors.textMuted }]}>
+          {t('leaderboard.score')}
+        </RetroText>
+        <RetroText style={[styles.th, styles.thTime, { color: themeColors.textMuted }]}>
+          {t('leaderboard.time')}
+        </RetroText>
+        <RetroText style={[styles.th, styles.thMoves, { color: themeColors.textMuted }]}>
+          {t('leaderboard.moves')}
+        </RetroText>
+        <RetroText style={[styles.th, styles.thDate, { color: themeColors.textMuted }]}>
+          {t('leaderboard.date')}
+        </RetroText>
       </View>
 
       <ScrollView style={styles.list} contentContainerStyle={styles.listContent} scrollEnabled={false} showsVerticalScrollIndicator={false}>
         {entries.length === 0 ? (
           <View style={styles.emptyBlock}>
-            <RetroText style={styles.empty}>{t('leaderboard.empty')}</RetroText>
-            <RetroText style={styles.emptyEncourage}>{t('leaderboard.emptyEncourage')}</RetroText>
+            <RetroText style={[styles.empty, { color: themeColors.textMuted }]}>
+              {t('leaderboard.empty')}
+            </RetroText>
+            <RetroText style={[styles.emptyEncourage, { color: themeColors.primary }]}>
+              {t('leaderboard.emptyEncourage')}
+            </RetroText>
           </View>
         ) : (
           entries.map((entry, index) => (
-            <View key={`${entry.date}-${index}`} style={styles.row}>
-              <RetroText style={[styles.cell, styles.cellRank]}>{index + 1}</RetroText>
-              <RetroText style={[styles.cell, styles.cellScore]}>{entry.score}</RetroText>
-              <RetroText style={[styles.cell, styles.cellTime]}>{formatTime(entry.timeSeconds)}</RetroText>
-              <RetroText style={[styles.cell, styles.cellMoves]}>{entry.moveCount ?? '—'}</RetroText>
-              <RetroText style={[styles.cell, styles.cellDate]}>{formatDate(entry.date, locale)}</RetroText>
+            <View
+              key={`${entry.date}-${index}`}
+              style={[styles.row, { borderBottomColor: themeColors.border }]}
+            >
+              <RetroText style={[styles.cell, styles.cellRank, { color: themeColors.textMuted2 }]}>
+                {index + 1}
+              </RetroText>
+              <RetroText style={[styles.cell, styles.cellScore, { color: themeColors.primary }]}>
+                {entry.score}
+              </RetroText>
+              <RetroText style={[styles.cell, styles.cellTime, { color: themeColors.primary }]}>
+                {formatTime(entry.timeSeconds)}
+              </RetroText>
+              <RetroText style={[styles.cell, styles.cellMoves, { color: themeColors.primary }]}>
+                {entry.moveCount ?? '—'}
+              </RetroText>
+              <RetroText style={[styles.cell, styles.cellDate, { color: themeColors.textMuted2 }]}>
+                {formatDate(entry.date, locale)}
+              </RetroText>
             </View>
           ))
         )}
       </ScrollView>
 
-      <TouchableOpacity onPress={onBack} style={styles.backButton} activeOpacity={0.7}>
-        <RetroText style={styles.backButtonText}>{t('leaderboard.back')}</RetroText>
+      <TouchableOpacity
+        onPress={onBack}
+        style={[
+          styles.backButton,
+          {
+            borderColor: themeColors.primary,
+            shadowColor: themeColors.primary,
+          },
+        ]}
+        activeOpacity={0.7}
+      >
+        <RetroText style={[styles.backButtonText, { color: themeColors.primary }]}>
+          {t('leaderboard.back')}
+        </RetroText>
       </TouchableOpacity>
     </View>
   );
