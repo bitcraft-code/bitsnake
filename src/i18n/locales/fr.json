@@ -20,6 +20,9 @@
     "optionGhostWalls": "Murs fantômes",
     "optionObstacles": "Obstacles",
     "optionSpeed": "Vitesse",
+    "optionControls": "Contrôles",
+    "controlDpad": "Boutons",
+    "controlTrackpad": "Trackpad",
     "play": "Continuer",
     "pause": "Pause"
   },

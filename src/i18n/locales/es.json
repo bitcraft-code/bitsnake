@@ -20,6 +20,9 @@
     "optionGhostWalls": "Paredes fantasmas",
     "optionObstacles": "Obstáculos",
     "optionSpeed": "Velocidad",
+    "optionControls": "Controles",
+    "controlDpad": "Botones",
+    "controlTrackpad": "Trackpad",
     "play": "Continuar",
     "pause": "Pausar"
   },

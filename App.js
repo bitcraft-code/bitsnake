@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { FONT_FAMILY } from './src/theme';
 import GameBoard from './src/components/GameBoard';
 import RetroText from './src/components/RetroText';
+import Trackpad from './src/components/Trackpad';
 import MenuScreen from './src/screens/MenuScreen';
 import GameOverScreen from './src/screens/GameOverScreen';
 import LeaderboardScreen from './src/screens/LeaderboardScreen';
@@ -94,6 +95,7 @@ export default function App() {
   const [obstacles, setObstacles] = useState([]);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [moveCount, setMoveCount] = useState(0);
+  const [controlMode, setControlMode] = useState('dpad'); // 'dpad' | 'trackpad'
   const [leaderboardEntries, setLeaderboardEntries] = useState([]);
 
   const gameLoopRef = useRef(null);
@@ -579,37 +581,41 @@ export default function App() {
         </RetroText>
       </Pressable>
 
-      <View style={styles.dpadContainer}>
-        <Pressable
-          onPress={() => handleDirectionChange('up')}
-          style={({ pressed }) => [styles.dpadBtn, pressed && styles.dpadBtnPressed]}
-        >
-          <RetroText style={styles.arrow}>▲</RetroText>
-        </Pressable>
-
-        <View style={styles.middleRow}>
+      {controlMode === 'dpad' ? (
+        <View style={styles.dpadContainer}>
           <Pressable
-            onPress={() => handleDirectionChange('left')}
+            onPress={() => handleDirectionChange('up')}
             style={({ pressed }) => [styles.dpadBtn, pressed && styles.dpadBtnPressed]}
           >
-            <RetroText style={styles.arrow}>◀</RetroText>
+            <RetroText style={styles.arrow}>▲</RetroText>
           </Pressable>
-          <View style={styles.dpadSpacer} />
+
+          <View style={styles.middleRow}>
+            <Pressable
+              onPress={() => handleDirectionChange('left')}
+              style={({ pressed }) => [styles.dpadBtn, pressed && styles.dpadBtnPressed]}
+            >
+              <RetroText style={styles.arrow}>◀</RetroText>
+            </Pressable>
+            <View style={styles.dpadSpacer} />
+            <Pressable
+              onPress={() => handleDirectionChange('right')}
+              style={({ pressed }) => [styles.dpadBtn, pressed && styles.dpadBtnPressed]}
+            >
+              <RetroText style={styles.arrow}>▶</RetroText>
+            </Pressable>
+          </View>
+
           <Pressable
-            onPress={() => handleDirectionChange('right')}
+            onPress={() => handleDirectionChange('down')}
             style={({ pressed }) => [styles.dpadBtn, pressed && styles.dpadBtnPressed]}
           >
-            <RetroText style={styles.arrow}>▶</RetroText>
+            <RetroText style={styles.arrow}>▼</RetroText>
           </Pressable>
         </View>
-
-        <Pressable
-          onPress={() => handleDirectionChange('down')}
-          style={({ pressed }) => [styles.dpadBtn, pressed && styles.dpadBtnPressed]}
-        >
-          <RetroText style={styles.arrow}>▼</RetroText>
-        </Pressable>
-      </View>
+      ) : (
+        <Trackpad onDirectionChange={handleDirectionChange} />
+      )}
 
       <Pressable
         onPress={goMenu}
@@ -683,6 +689,35 @@ export default function App() {
                       </RetroText>
                     </Pressable>
                   ))}
+                </View>
+              </View>
+              <View style={styles.optionRow}>
+                <RetroText style={[styles.optionLabel, styles.optionLabelNoFlex]}>{t('game.optionControls')}</RetroText>
+                <View style={styles.languageButtonsRow}>
+                  <Pressable
+                    onPress={() => setControlMode('dpad')}
+                    style={({ pressed }) => [
+                      styles.langBtn,
+                      controlMode === 'dpad' && styles.langBtnActive,
+                      pressed && styles.btnPressed,
+                    ]}
+                  >
+                    <RetroText style={[styles.langBtnText, controlMode === 'dpad' && styles.langBtnTextActive]}>
+                      {t('game.controlDpad')}
+                    </RetroText>
+                  </Pressable>
+                  <Pressable
+                    onPress={() => setControlMode('trackpad')}
+                    style={({ pressed }) => [
+                      styles.langBtn,
+                      controlMode === 'trackpad' && styles.langBtnActive,
+                      pressed && styles.btnPressed,
+                    ]}
+                  >
+                    <RetroText style={[styles.langBtnText, controlMode === 'trackpad' && styles.langBtnTextActive]}>
+                      {t('game.controlTrackpad')}
+                    </RetroText>
+                  </Pressable>
                 </View>
               </View>
               <View style={styles.optionRow}>

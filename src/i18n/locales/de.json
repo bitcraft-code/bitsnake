@@ -20,6 +20,9 @@
     "optionGhostWalls": "Geisterwände",
     "optionObstacles": "Hindernisse",
     "optionSpeed": "Geschwindigkeit",
+    "optionControls": "Steuerung",
+    "controlDpad": "Tasten",
+    "controlTrackpad": "Trackpad",
     "play": "Weiter",
     "pause": "Pause"
   },

@@ -20,6 +20,9 @@
     "optionGhostWalls": "Ghost walls",
     "optionObstacles": "Obstacles",
     "optionSpeed": "Speed",
+    "optionControls": "Controls",
+    "controlDpad": "Buttons",
+    "controlTrackpad": "Trackpad",
     "play": "Continue",
     "pause": "Pause"
   },
