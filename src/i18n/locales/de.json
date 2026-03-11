@@ -13,6 +13,7 @@
   "game": {
     "score": "Punkte:",
     "time": "Zeit:",
+    "moves": "Züge:",
     "record": "Rekord:",
     "mainMenu": "← Hauptmenü",
     "options": "Optionen",
@@ -29,7 +30,13 @@
     "highScore": "Rekord:",
     "playAgain": "► Nochmal spielen",
     "backToMenu": "← Zum Menü",
-    "leaderboard": "Bestenliste"
+    "leaderboard": "Bestenliste",
+    "calcTitle": "So wurde deine Punktzahl berechnet",
+    "calcMoves": "Züge: {{count}}",
+    "calcTime": "Zeit: {{time}}",
+    "calcBonusMoves": "Bonus (wenige Züge): +{{pct}}%",
+    "calcBonusTime": "Bonus (wenig Zeit): +{{pct}}%",
+    "calcMultiplier": "1 + {{move}}% + {{time}}% = {{total}}"
   },
   "leaderboard": {
     "title": "Bestenliste",

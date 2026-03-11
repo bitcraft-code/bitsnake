@@ -67,6 +67,11 @@ const OBSTACLE_CHANGE_MS = 8000;
 const OBSTACLE_COUNT_MIN = 3;
 const OBSTACLE_COUNT_MAX = 7;
 
+// Multiplicador: referências para bônus por poucos movimentos e pouco tempo
+const MOVES_REF = 80;
+const TIME_REF_SEC = 90;
+const BONUS_MAX = 0.5;
+
 export default function App() {
   const [fontsLoaded, fontError] = useFonts({ PressStart2P_400Regular });
   const { t, i18n } = useTranslation();
@@ -88,6 +93,7 @@ export default function App() {
   const [obstaclesEnabled, setObstaclesEnabled] = useState(false);
   const [obstacles, setObstacles] = useState([]);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [moveCount, setMoveCount] = useState(0);
   const [leaderboardEntries, setLeaderboardEntries] = useState([]);
 
   const gameLoopRef = useRef(null);
@@ -97,6 +103,7 @@ export default function App() {
   const obstaclesRef = useRef([]);
   const scoreRef = useRef(0);
   const elapsedSecondsRef = useRef(0);
+  const moveCountRef = useRef(0);
 
   useEffect(() => {
     loadHighScore();
@@ -122,6 +129,10 @@ export default function App() {
   useEffect(() => {
     elapsedSecondsRef.current = elapsedSeconds;
   }, [elapsedSeconds]);
+
+  useEffect(() => {
+    moveCountRef.current = moveCount;
+  }, [moveCount]);
 
   const loadHighScore = async () => {
     try {
@@ -199,9 +210,11 @@ export default function App() {
     }
     setScore(0);
     setElapsedSeconds(0);
+    setMoveCount(0);
     setDirection('right');
     setNextDirection('right');
     nextDirectionRef.current = 'right';
+    moveCountRef.current = 0;
     setPaused(true);
     setOptionsOpen(false);
     setGameState('playing');
@@ -336,7 +349,13 @@ export default function App() {
         (f) => f.row === head.row && f.col === head.col
       );
       if (eaten) {
-        setScore((s) => s + eaten.points);
+        const moves = moveCountRef.current;
+        const secs = elapsedSecondsRef.current;
+        const moveBonus = BONUS_MAX * Math.max(0, 1 - moves / MOVES_REF);
+        const timeBonus = BONUS_MAX * Math.max(0, 1 - secs / TIME_REF_SEC);
+        const multiplier = 1 + moveBonus + timeBonus;
+        const points = Math.max(1, Math.round(eaten.points * multiplier));
+        setScore((s) => s + points);
         const newSnake = [head, ...prevSnake];
         const nextFoods = generateFoods(newSnake);
         foodsRef.current = nextFoods;
@@ -436,6 +455,7 @@ export default function App() {
     if (direction !== opposites[newDir]) {
       nextDirectionRef.current = newDir;
       setNextDirection(newDir);
+      setMoveCount((m) => m + 1);
     }
   };
 
@@ -491,6 +511,8 @@ export default function App() {
       <GameOverScreen
         score={score}
         highScore={highScore}
+        moveCount={moveCount}
+        elapsedSeconds={elapsedSeconds}
         onRestart={restartGame}
         onMenu={goMenu}
         onLeaderboard={goLeaderboard}
@@ -511,6 +533,10 @@ export default function App() {
           <RetroText style={styles.timeValue}>
             {Math.floor(elapsedSeconds / 60)}:{(elapsedSeconds % 60).toString().padStart(2, '0')}
           </RetroText>
+        </View>
+        <View style={styles.headerBlock}>
+          <RetroText style={styles.movesLabel}>{t('game.moves')}</RetroText>
+          <RetroText style={styles.movesValue}>{moveCount}</RetroText>
         </View>
         <View style={styles.headerBlock}>
           <RetroText style={styles.highScoreLabel}>{t('game.record')}</RetroText>
@@ -868,6 +894,21 @@ const styles = StyleSheet.create({
     textShadowColor: '#4488ff',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 8,
+  },
+  movesLabel: {
+    fontFamily: FONT_FAMILY,
+    fontSize: 9,
+    color: '#4a6a4a',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+  },
+  movesValue: {
+    fontFamily: FONT_FAMILY,
+    fontSize: 22,
+    color: '#00ff41',
+    textShadowColor: '#00ff41',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 6,
   },
   highScoreLabel: {
     fontFamily: FONT_FAMILY,

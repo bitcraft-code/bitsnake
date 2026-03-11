@@ -13,6 +13,7 @@
   "game": {
     "score": "Puntuación:",
     "time": "Tiempo:",
+    "moves": "Movimientos:",
     "record": "Récord:",
     "mainMenu": "← Menú principal",
     "options": "Opciones",
@@ -29,7 +30,13 @@
     "highScore": "Récord:",
     "playAgain": "► Jugar de nuevo",
     "backToMenu": "← Volver al menú",
-    "leaderboard": "Clasificación"
+    "leaderboard": "Clasificación",
+    "calcTitle": "Cómo se calculó tu puntuación",
+    "calcMoves": "Movimientos: {{count}}",
+    "calcTime": "Tiempo: {{time}}",
+    "calcBonusMoves": "Bonus (pocos movimientos): +{{pct}}%",
+    "calcBonusTime": "Bonus (poco tiempo): +{{pct}}%",
+    "calcMultiplier": "1 + {{move}}% + {{time}}% = {{total}}"
   },
   "leaderboard": {
     "title": "Clasificación",

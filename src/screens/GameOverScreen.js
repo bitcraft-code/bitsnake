@@ -1,13 +1,24 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import RetroText from '../components/RetroText';
 
-const GameOverScreen = ({ score, highScore, onRestart, onMenu, onLeaderboard }) => {
+const MOVES_REF = 80;
+const TIME_REF_SEC = 90;
+const BONUS_MAX = 0.5;
+
+const GameOverScreen = ({ score, highScore, moveCount = 0, elapsedSeconds = 0, onRestart, onMenu, onLeaderboard }) => {
   const { t } = useTranslation();
 
+  const moveBonus = BONUS_MAX * Math.max(0, 1 - moveCount / MOVES_REF);
+  const timeBonus = BONUS_MAX * Math.max(0, 1 - elapsedSeconds / TIME_REF_SEC);
+  const multiplier = 1 + moveBonus + timeBonus;
+  const moveBonusPct = Math.round(moveBonus * 100);
+  const timeBonusPct = Math.round(timeBonus * 100);
+  const timeStr = `${Math.floor(elapsedSeconds / 60)}:${(elapsedSeconds % 60).toString().padStart(2, '0')}`;
+
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <RetroText style={styles.title}>GAME OVER</RetroText>
       <View style={styles.titleLine} />
 
@@ -20,6 +31,17 @@ const GameOverScreen = ({ score, highScore, onRestart, onMenu, onLeaderboard }) 
             <RetroText style={styles.newRecordText}>{t('gameOver.newRecord')}</RetroText>
           </View>
         )}
+      </View>
+
+      <View style={styles.calcCard}>
+        <RetroText style={styles.calcTitle}>{t('gameOver.calcTitle')}</RetroText>
+        <RetroText style={styles.calcLine}>{t('gameOver.calcMoves', { count: moveCount })}</RetroText>
+        <RetroText style={styles.calcLine}>{t('gameOver.calcTime', { time: timeStr })}</RetroText>
+        <RetroText style={styles.calcLine}>{t('gameOver.calcBonusMoves', { pct: moveBonusPct })}</RetroText>
+        <RetroText style={styles.calcLine}>{t('gameOver.calcBonusTime', { pct: timeBonusPct })}</RetroText>
+        <RetroText style={styles.calcFormula}>
+          {t('gameOver.calcMultiplier', { move: moveBonusPct, time: timeBonusPct, total: multiplier.toFixed(2) })}
+        </RetroText>
       </View>
 
       <View style={styles.highScoreCard}>
@@ -40,17 +62,17 @@ const GameOverScreen = ({ score, highScore, onRestart, onMenu, onLeaderboard }) 
       <TouchableOpacity onPress={onMenu} style={styles.menuButton} activeOpacity={0.7}>
         <RetroText style={styles.buttonTextSecondary}>{t('gameOver.backToMenu')}</RetroText>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: '#0a0e1a',
     alignItems: 'center',
-    justifyContent: 'center',
     padding: 24,
+    paddingBottom: 32,
   },
   title: {
     fontSize: 34,
@@ -116,6 +138,40 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     textTransform: 'uppercase',
   },
+  calcCard: {
+    backgroundColor: '#0d1419',
+    padding: 14,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#1a3322',
+    width: '85%',
+    marginBottom: 14,
+    alignItems: 'center',
+  },
+  calcTitle: {
+    fontSize: 9,
+    color: '#4a6a4a',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+    marginBottom: 10,
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+  calcLine: {
+    fontSize: 10,
+    color: '#5a7a5a',
+    marginBottom: 6,
+    lineHeight: 22,
+    textAlign: 'center',
+  },
+  calcFormula: {
+    fontSize: 10,
+    color: '#00ff41',
+    marginTop: 12,
+    letterSpacing: 1,
+    lineHeight: 22,
+    textAlign: 'center',
+  },
   highScoreCard: {
     backgroundColor: '#111a2a',
     padding: 16,
@@ -147,7 +203,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 44,
     borderRadius: 4,
-    marginBottom: 10,
+    marginBottom: 18,
     shadowColor: '#00ff41',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.4,
@@ -161,7 +217,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 32,
     borderRadius: 4,
-    marginBottom: 10,
+    marginBottom: 18,
   },
   leaderboardButtonText: {
     color: '#00aa33',

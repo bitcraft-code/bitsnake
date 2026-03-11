@@ -13,6 +13,7 @@
   "game": {
     "score": "Score:",
     "time": "Time:",
+    "moves": "Moves:",
     "record": "Record:",
     "mainMenu": "← Main Menu",
     "options": "Options",
@@ -29,7 +30,13 @@
     "highScore": "Record:",
     "playAgain": "► Play Again",
     "backToMenu": "← Back to Menu",
-    "leaderboard": "Leaderboard"
+    "leaderboard": "Leaderboard",
+    "calcTitle": "How your score was calculated",
+    "calcMoves": "Moves: {{count}}",
+    "calcTime": "Time: {{time}}",
+    "calcBonusMoves": "Bonus (few moves): +{{pct}}%",
+    "calcBonusTime": "Bonus (low time): +{{pct}}%",
+    "calcMultiplier": "1 + {{move}}% + {{time}}% = {{total}}"
   },
   "leaderboard": {
     "title": "Leaderboard",

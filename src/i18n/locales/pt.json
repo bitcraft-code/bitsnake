@@ -13,6 +13,7 @@
   "game": {
     "score": "Pontuação:",
     "time": "Tempo:",
+    "moves": "Movimentos:",
     "record": "Recorde:",
     "mainMenu": "← Menu Principal",
     "options": "Opções",
@@ -29,7 +30,13 @@
     "highScore": "Recorde:",
     "playAgain": "► Jogar Novamente",
     "backToMenu": "← Voltar ao Menu",
-    "leaderboard": "Recordes"
+    "leaderboard": "Recordes",
+    "calcTitle": "Como a pontuação foi calculada",
+    "calcMoves": "Movimentos: {{count}}",
+    "calcTime": "Tempo: {{time}}",
+    "calcBonusMoves": "Bônus (poucos movimentos): +{{pct}}%",
+    "calcBonusTime": "Bônus (pouco tempo): +{{pct}}%",
+    "calcMultiplier": "1 + {{move}}% + {{time}}% = {{total}}"
   },
   "leaderboard": {
     "title": "Recordes",
