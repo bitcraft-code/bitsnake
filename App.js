@@ -108,6 +108,7 @@ export default function App() {
   const elapsedSecondsRef = useRef(0);
   const moveCountRef = useRef(0);
   const instructionsReturnToRef = useRef('playing');
+  const drawerSlideAnim = useRef(new Animated.Value(SCREEN_WIDTH)).current;
 
   useEffect(() => {
     loadHighScore();
@@ -544,9 +545,29 @@ export default function App() {
   };
 
   const closeOptions = () => {
-    setOptionsOpen(false);
-    // Jogo permanece em pausa; o usuário retoma pelo botão ▶/❚❚ do D-pad
+    Animated.timing(drawerSlideAnim, {
+      toValue: SCREEN_WIDTH,
+      duration: 250,
+      useNativeDriver: true,
+      easing: Easing.out(Easing.cubic),
+    }).start(({ finished }) => {
+      if (finished) {
+        setOptionsOpen(false);
+        drawerSlideAnim.setValue(SCREEN_WIDTH);
+      }
+    });
   };
+
+  useEffect(() => {
+    if (!optionsOpen) return;
+    drawerSlideAnim.setValue(SCREEN_WIDTH);
+    Animated.timing(drawerSlideAnim, {
+      toValue: 0,
+      duration: 250,
+      useNativeDriver: true,
+      easing: Easing.out(Easing.cubic),
+    }).start();
+  }, [optionsOpen, drawerSlideAnim]);
 
   if (!fontsLoaded && !fontError) return null;
 
@@ -718,12 +739,12 @@ export default function App() {
       <Modal
         visible={optionsOpen}
         transparent
-        animationType="slide"
+        animationType="none"
         onRequestClose={closeOptions}
       >
         <View style={styles.drawerOverlay}>
           <Pressable style={styles.drawerBackdrop} onPress={closeOptions} />
-          <View style={styles.drawerPanel}>
+          <Animated.View style={[styles.drawerPanel, { transform: [{ translateX: drawerSlideAnim }] }]}>
             <View style={styles.drawerHeader}>
               <RetroText style={styles.drawerTitle}>{t('game.options')}</RetroText>
               <Pressable
@@ -860,7 +881,7 @@ export default function App() {
                 <RetroText style={styles.menuButtonText}>{t('game.mainMenu')}</RetroText>
               </Pressable>
             </View>
-          </View>
+          </Animated.View>
         </View>
       </Modal>
     </ScrollView>
