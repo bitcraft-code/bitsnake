@@ -66,6 +66,7 @@
   },
   "leaderboard": {
     "title": "Clasificación",
+    "position": "Posición",
     "score": "Puntos",
     "time": "Tiempo",
     "moves": "Mov.",

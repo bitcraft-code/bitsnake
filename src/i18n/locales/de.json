@@ -66,6 +66,7 @@
   },
   "leaderboard": {
     "title": "Bestenliste",
+    "position": "Platz",
     "score": "Punkte",
     "time": "Zeit",
     "moves": "Züge",
