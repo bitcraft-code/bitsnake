@@ -24,6 +24,24 @@ import MenuScreen from './src/screens/MenuScreen';
 import GameOverScreen from './src/screens/GameOverScreen';
 import LeaderboardScreen from './src/screens/LeaderboardScreen';
 import InstructionsScreen from './src/screens/InstructionsScreen';
+import {
+  SPEED_LEVEL_MS,
+  SPEED_LEVELS,
+  POINTS_PER_SPEED_LEVEL,
+  SPEED_LEVEL_MAX,
+  FOOD_BLINK_START_MS,
+  FOOD_EXPIRE_MS,
+  FOOD_BLINK_INTERVAL_MS,
+  NO_FOOD_SPAWN_MS,
+  OBSTACLE_CHANGE_MS,
+  OBSTACLE_COUNT_MIN,
+  OBSTACLE_COUNT_MAX,
+  OBSTACLE_MIN_SCORE,
+  OBSTACLE_MIN_TIME_SEC,
+  MOVES_REF,
+  TIME_REF_SEC,
+  BONUS_MAX,
+} from './src/config';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const LEADERBOARD_KEY = 'snakeLeaderboard';
@@ -53,28 +71,6 @@ const OptionCheckbox = ({ value, onValueChange, style }) => (
     {value ? <RetroText style={styles.optionCheckboxMark}>✓</RetroText> : null}
   </Pressable>
 );
-
-// Velocidade premium: 1 = mais lento, 5 = mais rápido (intervalo em ms)
-const SPEED_LEVEL_MS = { 1: 250, 2: 200, 3: 150, 4: 100, 5: 70 };
-const SPEED_LEVELS = [1, 2, 3, 4, 5];
-
-// Comidas 2 e 3 pontos: piscam após X s e expiram após Y s
-const FOOD_BLINK_START_MS = 4000;
-const FOOD_EXPIRE_MS = 8000;
-const FOOD_BLINK_INTERVAL_MS = 200;
-
-// Se ficar X s sem nenhuma comida visível, gera novas (sem pontuar)
-const NO_FOOD_SPAWN_MS = 5000;
-
-// Obstáculos: renovam a cada X s; quantidade aleatória entre min e max
-const OBSTACLE_CHANGE_MS = 8000;
-const OBSTACLE_COUNT_MIN = 3;
-const OBSTACLE_COUNT_MAX = 7;
-
-// Multiplicador: referências para bônus por poucos movimentos e pouco tempo
-const MOVES_REF = 80;
-const TIME_REF_SEC = 90;
-const BONUS_MAX = 0.5;
 
 export default function App() {
   const [fontsLoaded, fontError] = useFonts({ PressStart2P_400Regular });
@@ -111,6 +107,7 @@ export default function App() {
   const scoreRef = useRef(0);
   const elapsedSecondsRef = useRef(0);
   const moveCountRef = useRef(0);
+  const instructionsReturnToRef = useRef('playing');
 
   useEffect(() => {
     loadHighScore();
@@ -442,14 +439,20 @@ export default function App() {
   useEffect(() => {
     if (gameState !== 'playing' || paused || countdown !== null) return;
 
+    const effectiveLevel = Math.min(
+      speedLevel + Math.floor(score / POINTS_PER_SPEED_LEVEL),
+      SPEED_LEVEL_MAX
+    );
+    const intervalMs = SPEED_LEVEL_MS[effectiveLevel] ?? SPEED_LEVEL_MS[SPEED_LEVEL_MAX];
+
     const tick = () => {
       moveSnake();
       removeExpiredFoods();
     };
-    gameLoopRef.current = setInterval(tick, SPEED_LEVEL_MS[speedLevel]);
+    gameLoopRef.current = setInterval(tick, intervalMs);
 
     return () => clearInterval(gameLoopRef.current);
-  }, [gameState, paused, speedLevel, countdown]);
+  }, [gameState, paused, speedLevel, countdown, score]);
 
   useEffect(() => {
     if (gameState !== 'playing' || paused || countdown !== null) return;
@@ -475,6 +478,9 @@ export default function App() {
   useEffect(() => {
     if (gameState !== 'playing' || paused || !obstaclesEnabled) return;
     const interval = setInterval(() => {
+      const s = scoreRef.current;
+      const t = elapsedSecondsRef.current;
+      if (s < OBSTACLE_MIN_SCORE && t < OBSTACLE_MIN_TIME_SEC) return;
       const newObstacles = generateObstacles(
         snakeRef.current,
         foodsRef.current || []
@@ -519,12 +525,13 @@ export default function App() {
   };
 
   const goInstructions = () => {
+    instructionsReturnToRef.current = 'playing';
     closeOptions();
     setGameState('instructions');
   };
 
   const goBackFromInstructions = () => {
-    setGameState('playing');
+    setGameState(instructionsReturnToRef.current);
   };
 
   const goBackFromLeaderboard = () => {
@@ -545,7 +552,32 @@ export default function App() {
 
   // RENDERIZAÇÃO CONDICIONAL BASEADA NO ESTADO DO JOGO
   if (gameState === 'menu') {
-    return <MenuScreen onStart={initGame} />;
+    return (
+      <MenuScreen
+        onStart={initGame}
+        wallMode={wallMode}
+        setWallMode={setWallMode}
+        obstaclesEnabled={obstaclesEnabled}
+        setObstaclesEnabled={setObstaclesEnabled}
+        speedLevel={speedLevel}
+        setSpeedLevel={setSpeedLevel}
+        controlMode={controlMode}
+        setControlMode={setControlMode}
+        setSavedLanguage={setSavedLanguage}
+        i18n={i18n}
+        supportedLngs={supportedLngs}
+        languageLabels={languageLabels}
+        speedLevels={SPEED_LEVELS}
+        onOpenInstructions={() => {
+          instructionsReturnToRef.current = 'menu';
+          setGameState('instructions');
+        }}
+        onOpenLeaderboard={async () => {
+          await loadLeaderboard();
+          setGameState('leaderboard');
+        }}
+      />
+    );
   }
 
   if (gameState === 'instructions') {

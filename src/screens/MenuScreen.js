@@ -1,35 +1,188 @@
-import React from 'react';
-import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Modal,
+  Pressable,
+  Dimensions,
+} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import RetroText from '../components/RetroText';
+import { FONT_FAMILY } from '../theme';
 
-const MenuScreen = ({ onStart }) => {
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const SPACING = 12;
+
+const OptionCheckbox = ({ value, onValueChange }) => (
+  <Pressable
+    onPress={() => onValueChange(!value)}
+    style={[styles.optionCheckbox, value && styles.optionCheckboxChecked]}
+  >
+    {value ? <RetroText style={styles.optionCheckboxMark}>✓</RetroText> : null}
+  </Pressable>
+);
+
+const MenuScreen = ({
+  onStart,
+  wallMode,
+  setWallMode,
+  obstaclesEnabled,
+  setObstaclesEnabled,
+  speedLevel,
+  setSpeedLevel,
+  controlMode,
+  setControlMode,
+  setSavedLanguage,
+  i18n,
+  supportedLngs,
+  languageLabels,
+  speedLevels,
+  onOpenInstructions,
+  onOpenLeaderboard,
+}) => {
   const { t } = useTranslation();
+  const [optionsOpen, setOptionsOpen] = useState(false);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.titleBox}>
-        <RetroText style={styles.title}>BITSNAKE</RetroText>
-        <View style={styles.titleGlow} />
-      </View>
-      <RetroText style={styles.subtitle}>{t('menu.subtitle')}</RetroText>
+    <>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.titleBox}>
+          <RetroText style={styles.title}>BITSNAKE</RetroText>
+          <View style={styles.titleGlow} />
+        </View>
+        <RetroText style={styles.subtitle}>{t('menu.subtitle')}</RetroText>
 
-      <TouchableOpacity onPress={onStart} style={styles.startButton} activeOpacity={0.7}>
-        <RetroText style={styles.buttonText}>{t('menu.startGame')}</RetroText>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={onStart} style={styles.startButton} activeOpacity={0.7}>
+          <RetroText style={styles.buttonText}>{t('menu.startGame')}</RetroText>
+        </TouchableOpacity>
 
-      <View style={styles.instructions}>
-        <RetroText style={styles.instructionTitle}>{t('menu.howToPlay')}</RetroText>
-        <RetroText style={styles.instructionsText}>
-          {t('menu.instruction1')}{'\n'}
-          {t('menu.instruction2')}{'\n'}
-          {t('menu.instruction3')}
-        </RetroText>
-      </View>
+        <TouchableOpacity
+          onPress={() => setOptionsOpen(true)}
+          style={styles.optionsButton}
+          activeOpacity={0.7}
+        >
+          <RetroText style={styles.optionsButtonText}>{t('menu.gameOptions')}</RetroText>
+        </TouchableOpacity>
 
-      <View style={styles.footerSpacer} />
-      <RetroText style={styles.footer}>BitCraft Team®</RetroText>
-    </ScrollView>
+        <View style={styles.footerSpacer} />
+        <RetroText style={styles.footer}>BitCraft Team®</RetroText>
+      </ScrollView>
+
+      <Modal
+        visible={optionsOpen}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setOptionsOpen(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <Pressable style={styles.modalBackdrop} onPress={() => setOptionsOpen(false)} />
+          <View style={styles.modalPanel}>
+            <View style={styles.modalHeader}>
+              <RetroText style={styles.modalTitle}>{t('game.options')}</RetroText>
+              <Pressable
+                onPress={() => setOptionsOpen(false)}
+                style={styles.modalCloseBtn}
+                hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+              >
+                <RetroText style={styles.modalCloseText}>✕</RetroText>
+              </Pressable>
+            </View>
+            <ScrollView style={styles.modalContent}>
+              <View style={styles.optionRow}>
+                <RetroText style={styles.optionLabel}>{t('game.optionGhostWalls')}</RetroText>
+                <OptionCheckbox
+                  value={wallMode === 'wrap'}
+                  onValueChange={(v) => setWallMode(v ? 'wrap' : 'normal')}
+                />
+              </View>
+              <View style={styles.optionRow}>
+                <RetroText style={styles.optionLabel}>{t('game.optionObstacles')}</RetroText>
+                <OptionCheckbox value={obstaclesEnabled} onValueChange={setObstaclesEnabled} />
+              </View>
+              <View style={styles.optionRow}>
+                <RetroText style={[styles.optionLabel, styles.optionLabelNoFlex]}>{t('game.optionSpeed')}</RetroText>
+                <View style={styles.buttonsRow}>
+                  {(speedLevels || [1, 2, 3, 4, 5]).map((level) => (
+                    <Pressable
+                      key={level}
+                      onPress={() => setSpeedLevel(level)}
+                      style={[styles.langBtn, speedLevel === level && styles.langBtnActive]}
+                    >
+                      <RetroText style={[styles.langBtnText, speedLevel === level && styles.langBtnTextActive]}>
+                        {level}
+                      </RetroText>
+                    </Pressable>
+                  ))}
+                </View>
+              </View>
+              <View style={styles.optionRow}>
+                <RetroText style={[styles.optionLabel, styles.optionLabelNoFlex]}>{t('game.optionControls')}</RetroText>
+                <View style={styles.buttonsRow}>
+                  <Pressable
+                    onPress={() => setControlMode('dpad')}
+                    style={[styles.langBtn, controlMode === 'dpad' && styles.langBtnActive]}
+                  >
+                    <RetroText style={[styles.langBtnText, controlMode === 'dpad' && styles.langBtnTextActive]}>
+                      {t('game.controlDpad')}
+                    </RetroText>
+                  </Pressable>
+                  <Pressable
+                    onPress={() => setControlMode('trackpad')}
+                    style={[styles.langBtn, controlMode === 'trackpad' && styles.langBtnActive]}
+                  >
+                    <RetroText style={[styles.langBtnText, controlMode === 'trackpad' && styles.langBtnTextActive]}>
+                      {t('game.controlTrackpad')}
+                    </RetroText>
+                  </Pressable>
+                </View>
+              </View>
+              <View style={styles.optionRow}>
+                <RetroText style={[styles.optionLabel, styles.optionLabelNoFlex]}>{t('menu.language')}</RetroText>
+                <View style={styles.buttonsRow}>
+                  {(supportedLngs || []).map((lng) => (
+                    <Pressable
+                      key={lng}
+                      onPress={() => setSavedLanguage(lng)}
+                      style={[styles.langBtn, i18n?.language === lng && styles.langBtnActive]}
+                    >
+                      <RetroText style={[styles.langBtnText, i18n?.language === lng && styles.langBtnTextActive]}>
+                        {languageLabels?.[lng] ?? lng}
+                      </RetroText>
+                    </Pressable>
+                  ))}
+                </View>
+              </View>
+              {onOpenInstructions ? (
+                <Pressable
+                  onPress={() => {
+                    setOptionsOpen(false);
+                    onOpenInstructions();
+                  }}
+                  style={({ pressed }) => [styles.optionRow, styles.optionRowPressable, pressed && styles.optionRowPressed]}
+                >
+                  <RetroText style={styles.optionLabel}>{t('menu.instructions')}</RetroText>
+                  <RetroText style={styles.optionRowArrow}>›</RetroText>
+                </Pressable>
+              ) : null}
+              {onOpenLeaderboard ? (
+                <Pressable
+                  onPress={() => {
+                    setOptionsOpen(false);
+                    onOpenLeaderboard();
+                  }}
+                  style={({ pressed }) => [styles.optionRow, styles.optionRowPressable, pressed && styles.optionRowPressed]}
+                >
+                  <RetroText style={styles.optionLabel}>{t('menu.leaderboard')}</RetroText>
+                  <RetroText style={styles.optionRowArrow}>›</RetroText>
+                </Pressable>
+              ) : null}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+    </>
   );
 };
 
@@ -81,6 +234,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 54,
     borderRadius: 4,
+    marginBottom: 18,
     shadowColor: '#00ff41',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
@@ -93,26 +247,25 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     textTransform: 'uppercase',
   },
-  instructions: {
-    marginTop: 32,
-    padding: 20,
-    backgroundColor: '#111a2a',
+  optionsButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: '#ff8800',
+    paddingVertical: 14,
+    paddingHorizontal: 40,
     borderRadius: 4,
-    borderWidth: 1,
-    borderColor: '#1a3322',
-    width: '90%',
+    shadowColor: '#ff8800',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  instructionTitle: {
-    fontSize: 11,
-    color: '#00ff41',
-    marginBottom: 10,
+  optionsButtonText: {
+    color: '#ff8800',
+    fontSize: 12,
     letterSpacing: 2,
     textTransform: 'uppercase',
-  },
-  instructionsText: {
-    fontSize: 11,
-    color: '#5a7a5a',
-    lineHeight: 18,
+    fontFamily: FONT_FAMILY,
   },
   footerSpacer: {
     flex: 1,
@@ -123,6 +276,127 @@ const styles = StyleSheet.create({
     color: '#00aa33',
     letterSpacing: 3,
     textTransform: 'uppercase',
+  },
+  // Modal
+  modalOverlay: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  modalBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalPanel: {
+    width: Math.min(SCREEN_WIDTH * 0.85, 320),
+    alignSelf: 'stretch',
+    backgroundColor: '#0d1419',
+    borderLeftWidth: 1,
+    borderLeftColor: '#1a3322',
+    paddingTop: SPACING * 4,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: SPACING,
+    paddingBottom: SPACING,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1a3322',
+  },
+  modalTitle: {
+    fontFamily: FONT_FAMILY,
+    fontSize: 14,
+    color: '#00ff41',
+    letterSpacing: 2,
+  },
+  modalCloseBtn: {
+    padding: SPACING / 2,
+  },
+  modalCloseText: {
+    fontFamily: FONT_FAMILY,
+    fontSize: 16,
+    color: '#ff8800',
+  },
+  modalContent: {
+    flex: 1,
+    paddingHorizontal: SPACING,
+    paddingTop: SPACING,
+  },
+  optionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: SPACING,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1a3322',
+  },
+  optionLabel: {
+    fontFamily: FONT_FAMILY,
+    fontSize: 11,
+    color: '#e0e0e0',
+    flex: 1,
+    marginRight: SPACING,
+  },
+  optionLabelNoFlex: {
+    flex: 0,
+  },
+  optionRowPressable: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#1a3322',
+  },
+  optionRowPressed: {
+    opacity: 0.8,
+  },
+  optionRowArrow: {
+    fontFamily: FONT_FAMILY,
+    fontSize: 18,
+    color: '#00ff41',
+  },
+  optionCheckbox: {
+    width: 26,
+    height: 26,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: '#00ff41',
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  optionCheckboxChecked: {
+    backgroundColor: 'rgba(0, 255, 65, 0.22)',
+  },
+  optionCheckboxMark: {
+    fontFamily: FONT_FAMILY,
+    color: '#00ff41',
+    fontSize: 12,
+  },
+  buttonsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: SPACING / 2,
+  },
+  langBtn: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: '#1a3322',
+    backgroundColor: '#0d1419',
+  },
+  langBtnActive: {
+    borderColor: '#00ff41',
+    backgroundColor: '#0a2a1a',
+  },
+  langBtnText: {
+    fontFamily: FONT_FAMILY,
+    fontSize: 9,
+    color: '#4a6a4a',
+    letterSpacing: 1,
+  },
+  langBtnTextActive: {
+    fontFamily: FONT_FAMILY,
+    color: '#00ff41',
   },
 });
 
