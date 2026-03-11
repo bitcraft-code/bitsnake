@@ -6,6 +6,8 @@ import {
   Dimensions,
   Modal,
   Pressable,
+  Animated,
+  Easing,
 } from 'react-native';
 import { registerRootComponent } from 'expo';
 import { useFonts } from '@expo-google-fonts/press-start-2p/useFonts';
@@ -98,6 +100,8 @@ export default function App() {
   const [moveCount, setMoveCount] = useState(0);
   const [controlMode, setControlMode] = useState('dpad'); // 'dpad' | 'trackpad'
   const [leaderboardEntries, setLeaderboardEntries] = useState([]);
+  const [countdown, setCountdown] = useState(null); // 3 | 2 | 1 | 'go' | null
+  const countdownScale = useRef(new Animated.Value(0.3)).current;
 
   const gameLoopRef = useRef(null);
   const nextDirectionRef = useRef('right');
@@ -221,7 +225,34 @@ export default function App() {
     setPaused(true);
     setOptionsOpen(false);
     setGameState('playing');
+    setCountdown(3);
   };
+
+  useEffect(() => {
+    if (countdown === null) return;
+    countdownScale.setValue(0.3);
+    Animated.timing(countdownScale, {
+      toValue: 1.2,
+      duration: 700,
+      useNativeDriver: true,
+      easing: Easing.out(Easing.cubic),
+    }).start();
+  }, [countdown, countdownScale]);
+
+  useEffect(() => {
+    if (countdown === null) return;
+    const t = countdown === 'go' ? 500 : 1000;
+    const timer = setTimeout(() => {
+      if (countdown === 3) setCountdown(2);
+      else if (countdown === 2) setCountdown(1);
+      else if (countdown === 1) setCountdown('go');
+      else if (countdown === 'go') {
+        setCountdown(null);
+        setPaused(false);
+      }
+    }, t);
+    return () => clearTimeout(timer);
+  }, [countdown]);
 
   const generateFoods = (currentSnake) => {
     const r = Math.random();
@@ -401,7 +432,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (gameState !== 'playing' || paused) return;
+    if (gameState !== 'playing' || paused || countdown !== null) return;
 
     const tick = () => {
       moveSnake();
@@ -410,10 +441,10 @@ export default function App() {
     gameLoopRef.current = setInterval(tick, SPEED_LEVEL_MS[speedLevel]);
 
     return () => clearInterval(gameLoopRef.current);
-  }, [gameState, paused, speedLevel]);
+  }, [gameState, paused, speedLevel, countdown]);
 
   useEffect(() => {
-    if (gameState !== 'playing' || paused) return;
+    if (gameState !== 'playing' || paused || countdown !== null) return;
     const hasExpirable = foods.some((f) => f.spawnTime != null);
     if (!hasExpirable) return;
     const blinkInterval = setInterval(
@@ -447,7 +478,7 @@ export default function App() {
   }, [gameState, paused, obstaclesEnabled]);
 
   useEffect(() => {
-    if (gameState !== 'playing' || paused) return;
+    if (gameState !== 'playing' || paused || countdown !== null) return;
     const interval = setInterval(() => setElapsedSeconds((s) => s + 1), 1000);
     return () => clearInterval(interval);
   }, [gameState, paused]);
@@ -573,16 +604,27 @@ export default function App() {
         </Pressable>
       </View>
 
-      <GameBoard
-        snake={snake}
-        foods={foods}
-        obstacles={obstacles}
-        boardSize={boardSize}
-        wallMode={wallMode}
-        blinkTick={blinkTick}
-        blinkStartMs={FOOD_BLINK_START_MS}
-        blinkIntervalMs={FOOD_BLINK_INTERVAL_MS}
-      />
+      <View style={[styles.gameBoardWrapper, { width: gameBoardWidth, height: gameBoardWidth }]}>
+        <GameBoard
+          snake={snake}
+          foods={foods}
+          obstacles={obstacles}
+          boardSize={boardSize}
+          wallMode={wallMode}
+          blinkTick={blinkTick}
+          blinkStartMs={FOOD_BLINK_START_MS}
+          blinkIntervalMs={FOOD_BLINK_INTERVAL_MS}
+        />
+        {countdown !== null && (
+          <View style={styles.countdownOverlay} pointerEvents="none">
+            <Animated.View style={{ transform: [{ scale: countdownScale }] }}>
+              <RetroText style={styles.countdownText}>
+                {countdown === 'go' ? 'GO!' : countdown}
+              </RetroText>
+            </Animated.View>
+          </View>
+        )}
+      </View>
 
       <Pressable
         onPress={togglePause}
@@ -808,6 +850,23 @@ const styles = StyleSheet.create({
   },
   headerBlock: {
     alignItems: 'center',
+  },
+  gameBoardWrapper: {
+    position: 'relative',
+  },
+  countdownOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#0a0e1a',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  countdownText: {
+    fontFamily: FONT_FAMILY,
+    fontSize: 72,
+    color: '#00ff41',
+    textShadowColor: '#00ff41',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 16,
   },
   optionsButton: {
     padding: SPACING,
