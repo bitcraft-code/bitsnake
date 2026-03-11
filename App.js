@@ -520,10 +520,15 @@ export default function App() {
     );
   }
 
+  // Largura do grid (mesma fórmula do GameBoard) para alinhar o header
+  const gameBoardMaxWidth = Math.min(SCREEN_WIDTH - 30, 380);
+  const gameBoardCellSize = Math.floor((gameBoardMaxWidth - 4) / boardSize);
+  const gameBoardWidth = gameBoardCellSize * boardSize + 4;
+
   // Layout responsivo para mobile - estado 'playing'
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
+      <View style={[styles.header, { width: gameBoardWidth }]}>
         <View style={styles.headerBlock}>
           <RetroText style={styles.scoreLabel}>{t('game.score')}</RetroText>
           <RetroText style={styles.score}>{score}</RetroText>
@@ -731,7 +736,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '92%',
     marginBottom: SPACING,
     paddingVertical: SPACING,
     paddingHorizontal: SPACING,
