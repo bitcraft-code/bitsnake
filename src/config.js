@@ -45,6 +45,9 @@ export const OBSTACLE_MIN_TIME_SEC = 60;
 export const SHRINK_POINTS_THRESHOLD = 25;
 export const SHRINK_PERCENT = 10;
 
+// —— Leaderboard —————————————————————————————————————————————————————————————
+export const LEADERBOARD_MAX = 10;
+
 // —— Bônus no game over (cálculo da pontuação) ——————————————————————————————
 export const MOVES_REF = 80;
 export const TIME_REF_SEC = 90;

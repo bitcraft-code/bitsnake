@@ -44,11 +44,11 @@ import {
   MOVES_REF,
   TIME_REF_SEC,
   BONUS_MAX,
+  LEADERBOARD_MAX,
 } from './src/config';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const LEADERBOARD_KEY = 'snakeLeaderboard';
-const LEADERBOARD_MAX = 10;
 const GAME_SETTINGS_KEY = 'snakeGameSettings';
 
 const difficultySettings = {
@@ -107,6 +107,7 @@ export default function App() {
   const [controlMode, setControlMode] = useState('dpad'); // 'dpad' | 'trackpad'
   const [theme, setTheme] = useState('system'); // 'system' | 'dark' | 'light'
   const [leaderboardEntries, setLeaderboardEntries] = useState([]);
+  const [lastLeaderboardEntry, setLastLeaderboardEntry] = useState(null);
   const [countdown, setCountdown] = useState(null); // 3 | 2 | 1 | 'go' | null
   const countdownScale = useRef(new Animated.Value(0.3)).current;
 
@@ -229,7 +230,7 @@ export default function App() {
   };
 
   const saveToLeaderboard = async (finalScore, timeSeconds, moveCount = 0) => {
-    if (finalScore == null || finalScore < 0) return;
+    if (finalScore == null || finalScore < 0) return null;
     try {
       const raw = await AsyncStorage.getItem(LEADERBOARD_KEY);
       const list = raw ? JSON.parse(raw) : [];
@@ -247,12 +248,16 @@ export default function App() {
         })
         .slice(0, LEADERBOARD_MAX);
       await AsyncStorage.setItem(LEADERBOARD_KEY, JSON.stringify(next));
+      const madeTop = next.some((e) => e.date === newEntry.date);
+      return madeTop ? newEntry : null;
     } catch (error) {
       console.error('Failed to save leaderboard:', error);
+      return null;
     }
   };
 
   const initGame = () => {
+    setLastLeaderboardEntry(null);
     const startRow = Math.floor(boardSize / 2);
     const startCol = Math.floor(boardSize / 2);
 
@@ -494,7 +499,9 @@ export default function App() {
       saveHighScore();
     }
 
-    saveToLeaderboard(finalScore, finalTime, moveCountRef.current);
+    saveToLeaderboard(finalScore, finalTime, moveCountRef.current).then((entry) => {
+      setLastLeaderboardEntry(entry ?? null);
+    });
     setGameState('gameOver');
   };
 
@@ -692,6 +699,7 @@ export default function App() {
       <LeaderboardScreen
         theme={effectiveTheme}
         entries={leaderboardEntries}
+        lastGameEntry={lastLeaderboardEntry}
         onBack={goBackFromLeaderboard}
       />
     );
