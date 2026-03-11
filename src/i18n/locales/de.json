@@ -7,7 +7,8 @@
     "instruction1": "• Nutze die Richtungstasten, um die Schlange zu bewegen",
     "instruction2": "• Iss das rote Futter, um zu wachsen",
     "instruction3": "• Vermeide es, deinen Schwanz oder die Wände zu treffen",
-    "language": "Sprache"
+    "language": "Sprache",
+    "leaderboard": "Bestenliste"
   },
   "game": {
     "score": "Punkte:",
@@ -27,6 +28,15 @@
     "newRecord": "🏆 Neuer Rekord!",
     "highScore": "Rekord:",
     "playAgain": "► Nochmal spielen",
-    "backToMenu": "← Zum Menü"
+    "backToMenu": "← Zum Menü",
+    "leaderboard": "Bestenliste"
+  },
+  "leaderboard": {
+    "title": "Bestenliste",
+    "score": "Punkte",
+    "time": "Zeit",
+    "date": "Datum",
+    "back": "← Zurück",
+    "empty": "Noch keine Spiele."
   }
 }

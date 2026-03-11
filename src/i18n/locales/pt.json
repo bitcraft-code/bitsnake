@@ -7,7 +7,8 @@
     "instruction1": "• Use os botões direcionais para mover a cobra",
     "instruction2": "• Coma os alimentos vermelhos para crescer",
     "instruction3": "• Evite bater na própria cauda ou nas paredes",
-    "language": "Idioma"
+    "language": "Idioma",
+    "leaderboard": "Recordes"
   },
   "game": {
     "score": "Pontuação:",
@@ -27,6 +28,15 @@
     "newRecord": "🏆 Novo Recorde!",
     "highScore": "Recorde:",
     "playAgain": "► Jogar Novamente",
-    "backToMenu": "← Voltar ao Menu"
+    "backToMenu": "← Voltar ao Menu",
+    "leaderboard": "Recordes"
+  },
+  "leaderboard": {
+    "title": "Recordes",
+    "score": "Pontos",
+    "time": "Tempo",
+    "date": "Data",
+    "back": "← Voltar",
+    "empty": "Nenhuma partida ainda."
   }
 }

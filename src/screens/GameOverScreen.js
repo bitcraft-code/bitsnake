@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import RetroText from '../components/RetroText';
 
-const GameOverScreen = ({ score, highScore, onRestart, onMenu }) => {
+const GameOverScreen = ({ score, highScore, onRestart, onMenu, onLeaderboard }) => {
   const { t } = useTranslation();
 
   return (
@@ -30,6 +30,12 @@ const GameOverScreen = ({ score, highScore, onRestart, onMenu }) => {
       <TouchableOpacity onPress={onRestart} style={styles.restartButton} activeOpacity={0.7}>
         <RetroText style={styles.buttonText}>{t('gameOver.playAgain')}</RetroText>
       </TouchableOpacity>
+
+      {onLeaderboard ? (
+        <TouchableOpacity onPress={onLeaderboard} style={styles.leaderboardButton} activeOpacity={0.7}>
+          <RetroText style={styles.leaderboardButtonText}>{t('gameOver.leaderboard')}</RetroText>
+        </TouchableOpacity>
+      ) : null}
 
       <TouchableOpacity onPress={onMenu} style={styles.menuButton} activeOpacity={0.7}>
         <RetroText style={styles.buttonTextSecondary}>{t('gameOver.backToMenu')}</RetroText>
@@ -141,12 +147,27 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 44,
     borderRadius: 4,
-    marginBottom: 14,
+    marginBottom: 10,
     shadowColor: '#00ff41',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.4,
     shadowRadius: 10,
     elevation: 6,
+  },
+  leaderboardButton: {
+    borderWidth: 1,
+    borderColor: '#00aa33',
+    backgroundColor: 'transparent',
+    paddingVertical: 10,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    marginBottom: 10,
+  },
+  leaderboardButtonText: {
+    color: '#00aa33',
+    fontSize: 12,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
   },
   menuButton: {
     borderWidth: 2,

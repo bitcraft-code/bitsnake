@@ -7,7 +7,8 @@
     "instruction1": "• Utilise les boutons directionnels pour déplacer le serpent",
     "instruction2": "• Mange la nourriture rouge pour grandir",
     "instruction3": "• Évite de te mordre la queue ou de toucher les murs",
-    "language": "Langue"
+    "language": "Langue",
+    "leaderboard": "Classement"
   },
   "game": {
     "score": "Score :",
@@ -27,6 +28,15 @@
     "newRecord": "🏆 Nouveau record !",
     "highScore": "Record :",
     "playAgain": "► Rejouer",
-    "backToMenu": "← Retour au menu"
+    "backToMenu": "← Retour au menu",
+    "leaderboard": "Classement"
+  },
+  "leaderboard": {
+    "title": "Classement",
+    "score": "Score",
+    "time": "Temps",
+    "date": "Date",
+    "back": "← Retour",
+    "empty": "Aucune partie pour l'instant."
   }
 }

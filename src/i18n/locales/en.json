@@ -7,7 +7,8 @@
     "instruction1": "• Use the directional buttons to move the snake",
     "instruction2": "• Eat the red food to grow",
     "instruction3": "• Avoid hitting your tail or the walls",
-    "language": "Language"
+    "language": "Language",
+    "leaderboard": "Leaderboard"
   },
   "game": {
     "score": "Score:",
@@ -27,6 +28,15 @@
     "newRecord": "🏆 New Record!",
     "highScore": "Record:",
     "playAgain": "► Play Again",
-    "backToMenu": "← Back to Menu"
+    "backToMenu": "← Back to Menu",
+    "leaderboard": "Leaderboard"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "score": "Score",
+    "time": "Time",
+    "date": "Date",
+    "back": "← Back",
+    "empty": "No games yet."
   }
 }

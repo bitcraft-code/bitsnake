@@ -19,8 +19,11 @@ import GameBoard from './src/components/GameBoard';
 import RetroText from './src/components/RetroText';
 import MenuScreen from './src/screens/MenuScreen';
 import GameOverScreen from './src/screens/GameOverScreen';
+import LeaderboardScreen from './src/screens/LeaderboardScreen';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const LEADERBOARD_KEY = 'snakeLeaderboard';
+const LEADERBOARD_MAX = 10;
 
 const difficultySettings = {
   easy: { speed: 200, size: 15 },
@@ -85,12 +88,15 @@ export default function App() {
   const [obstaclesEnabled, setObstaclesEnabled] = useState(false);
   const [obstacles, setObstacles] = useState([]);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [leaderboardEntries, setLeaderboardEntries] = useState([]);
 
   const gameLoopRef = useRef(null);
   const nextDirectionRef = useRef('right');
   const foodsRef = useRef([]);
   const snakeRef = useRef([]);
   const obstaclesRef = useRef([]);
+  const scoreRef = useRef(0);
+  const elapsedSecondsRef = useRef(0);
 
   useEffect(() => {
     loadHighScore();
@@ -109,6 +115,14 @@ export default function App() {
     obstaclesRef.current = obstacles;
   }, [obstacles]);
 
+  useEffect(() => {
+    scoreRef.current = score;
+  }, [score]);
+
+  useEffect(() => {
+    elapsedSecondsRef.current = elapsedSeconds;
+  }, [elapsedSeconds]);
+
   const loadHighScore = async () => {
     try {
       const saved = await AsyncStorage.getItem('snakeHighScore');
@@ -124,6 +138,40 @@ export default function App() {
       await AsyncStorage.setItem('snakeHighScore', highScore.toString());
     } catch (error) {
       console.error('Failed to save high score:', error);
+    }
+  };
+
+  const loadLeaderboard = async () => {
+    try {
+      const raw = await AsyncStorage.getItem(LEADERBOARD_KEY);
+      const list = raw ? JSON.parse(raw) : [];
+      setLeaderboardEntries(Array.isArray(list) ? list : []);
+    } catch (error) {
+      console.error('Failed to load leaderboard:', error);
+      setLeaderboardEntries([]);
+    }
+  };
+
+  const saveToLeaderboard = async (finalScore, timeSeconds) => {
+    if (finalScore == null || finalScore < 0) return;
+    try {
+      const raw = await AsyncStorage.getItem(LEADERBOARD_KEY);
+      const list = raw ? JSON.parse(raw) : [];
+      const entries = Array.isArray(list) ? list : [];
+      const newEntry = {
+        score: finalScore,
+        timeSeconds: timeSeconds ?? 0,
+        date: new Date().toISOString(),
+      };
+      const next = [...entries, newEntry]
+        .sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          return (a.timeSeconds ?? 0) - (b.timeSeconds ?? 0);
+        })
+        .slice(0, LEADERBOARD_MAX);
+      await AsyncStorage.setItem(LEADERBOARD_KEY, JSON.stringify(next));
+    } catch (error) {
+      console.error('Failed to save leaderboard:', error);
     }
   };
 
@@ -318,11 +366,15 @@ export default function App() {
   const handleGameOver = () => {
     if (gameLoopRef.current) clearInterval(gameLoopRef.current);
 
-    if (score > highScore) {
-      setHighScore(score);
+    const finalScore = scoreRef.current;
+    const finalTime = elapsedSecondsRef.current;
+
+    if (finalScore > highScore) {
+      setHighScore(finalScore);
       saveHighScore();
     }
 
+    saveToLeaderboard(finalScore, finalTime);
     setGameState('gameOver');
   };
 
@@ -399,6 +451,15 @@ export default function App() {
     setGameState('menu');
   };
 
+  const goLeaderboard = async () => {
+    await loadLeaderboard();
+    setGameState('leaderboard');
+  };
+
+  const goBackFromLeaderboard = () => {
+    setGameState('menu');
+  };
+
   const openOptions = () => {
     setPaused(true);
     setOptionsOpen(true);
@@ -413,7 +474,16 @@ export default function App() {
 
   // RENDERIZAÇÃO CONDICIONAL BASEADA NO ESTADO DO JOGO
   if (gameState === 'menu') {
-    return <MenuScreen onStart={initGame} />;
+    return <MenuScreen onStart={initGame} onLeaderboard={goLeaderboard} />;
+  }
+
+  if (gameState === 'leaderboard') {
+    return (
+      <LeaderboardScreen
+        entries={leaderboardEntries}
+        onBack={goBackFromLeaderboard}
+      />
+    );
   }
 
   if (gameState === 'gameOver') {
@@ -423,6 +493,7 @@ export default function App() {
         highScore={highScore}
         onRestart={restartGame}
         onMenu={goMenu}
+        onLeaderboard={goLeaderboard}
       />
     );
   }
