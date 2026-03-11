@@ -40,3 +40,22 @@ export const OBSTACLE_MIN_TIME_SEC = 60;
 export const MOVES_REF = 80;
 export const TIME_REF_SEC = 90;
 export const BONUS_MAX = 0.5;
+
+// —— Cobrinhas de fundo (tela inicial) ———————————————————————————————————————
+// Quantidade de cobras (sorteada no range ao carregar a tela)
+export const MENU_SNAKES_COUNT_MIN = 10;
+export const MENU_SNAKES_COUNT_MAX = 15;
+// Velocidade: pixels por tick (cada cobra sorteia um valor no range)
+export const MENU_SNAKES_SPEED_MIN = 10;
+export const MENU_SNAKES_SPEED_MAX = 15;
+// Opacidade: 0–1 (cada cobra sorteia um valor no range)
+export const MENU_SNAKES_OPACITY_MIN = 0.2;
+export const MENU_SNAKES_OPACITY_MAX = 0.5;
+// Mudança de rota: ticks entre curvas (menor = mais curvas; cada cobra sorteia no range)
+export const MENU_SNAKES_TURN_TICKS_MIN = 8;
+export const MENU_SNAKES_TURN_TICKS_MAX = 25;
+// Tempo de vida em segundos (cada cobra sorteia no range); ao acabar inicia o fade out
+export const MENU_SNAKES_LIFETIME_MIN = 12;
+export const MENU_SNAKES_LIFETIME_MAX = 28;
+// Duração do fade out em segundos (sumir suavemente antes de renascer na lateral)
+export const MENU_SNAKES_FADEOUT_SEC = 4;

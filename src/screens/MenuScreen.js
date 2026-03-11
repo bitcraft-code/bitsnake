@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import RetroText from '../components/RetroText';
+import MenuBackgroundSnakes from '../components/MenuBackgroundSnakes';
 import { FONT_FAMILY } from '../theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -46,29 +47,39 @@ const MenuScreen = ({
   const [optionsOpen, setOptionsOpen] = useState(false);
 
   return (
-    <>
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.titleBox}>
-          <RetroText style={styles.title}>BITSNAKE</RetroText>
-          <View style={styles.titleGlow} />
+    <View style={styles.root}>
+      <View style={styles.screenWrap}>
+        <View style={styles.backgroundLayer} pointerEvents="none">
+          <MenuBackgroundSnakes />
         </View>
-        <RetroText style={styles.subtitle}>{t('menu.subtitle')}</RetroText>
-
-        <TouchableOpacity onPress={onStart} style={styles.startButton} activeOpacity={0.7}>
-          <RetroText style={styles.buttonText}>{t('menu.startGame')}</RetroText>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => setOptionsOpen(true)}
-          style={styles.optionsButton}
-          activeOpacity={0.7}
+        <ScrollView
+          contentContainerStyle={styles.container}
+          style={styles.scrollFill}
         >
-          <RetroText style={styles.optionsButtonText}>{t('menu.gameOptions')}</RetroText>
-        </TouchableOpacity>
+        <View style={styles.contentBack} pointerEvents="box-none">
+          <View style={styles.titleBox}>
+            <RetroText style={styles.title}>BITSNAKE</RetroText>
+            <View style={styles.titleGlow} />
+          </View>
+          <RetroText style={styles.subtitle}>{t('menu.subtitle')}</RetroText>
+
+          <TouchableOpacity onPress={onStart} style={styles.startButton} activeOpacity={0.7}>
+            <RetroText style={styles.buttonText}>{t('menu.startGame')}</RetroText>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => setOptionsOpen(true)}
+            style={styles.optionsButton}
+            activeOpacity={0.7}
+          >
+            <RetroText style={styles.optionsButtonText}>{t('menu.gameOptions')}</RetroText>
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.footerSpacer} />
         <RetroText style={styles.footer}>BitCraft Team®</RetroText>
       </ScrollView>
+      </View>
 
       <Modal
         visible={optionsOpen}
@@ -182,18 +193,38 @@ const MenuScreen = ({
           </View>
         </View>
       </Modal>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+  screenWrap: {
+    flex: 1,
+    backgroundColor: '#0a0e1a',
+  },
+  backgroundLayer: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 0,
+  },
+  scrollFill: {
+    flex: 1,
+    zIndex: 1,
+    backgroundColor: 'transparent',
+  },
   container: {
     flexGrow: 1,
-    backgroundColor: '#0a0e1a',
+    backgroundColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
     paddingBottom: 32,
+  },
+  contentBack: {
+    backgroundColor: '#0a0e1a',
+    // alignSelf: 'stretch',
   },
   titleBox: {
     marginBottom: 4,
@@ -240,6 +271,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 12,
     elevation: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   buttonText: {
     color: '#00ff41',
@@ -259,6 +292,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 8,
     elevation: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   optionsButtonText: {
     color: '#ff8800',
