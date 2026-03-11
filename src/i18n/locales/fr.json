@@ -65,6 +65,7 @@
     "moves": "Mouv.",
     "date": "Date",
     "back": "← Retour",
-    "empty": "Aucune partie pour l'instant."
+    "empty": "Aucune partie pour l'instant.",
+    "emptyEncourage": "Joue ta première partie et entre dans le classement !"
   }
 }

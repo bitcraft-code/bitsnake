@@ -41,7 +41,10 @@ const LeaderboardScreen = ({ entries = [], onBack }) => {
 
       <ScrollView style={styles.list} contentContainerStyle={styles.listContent}>
         {entries.length === 0 ? (
-          <RetroText style={styles.empty}>{t('leaderboard.empty')}</RetroText>
+          <View style={styles.emptyBlock}>
+            <RetroText style={styles.empty}>{t('leaderboard.empty')}</RetroText>
+            <RetroText style={styles.emptyEncourage}>{t('leaderboard.emptyEncourage')}</RetroText>
+          </View>
         ) : (
           entries.map((entry, index) => (
             <View key={`${entry.date}-${index}`} style={styles.row}>
@@ -131,11 +134,24 @@ const styles = StyleSheet.create({
   cellTime: { width: '16%' },
   cellMoves: { width: '16%' },
   cellDate: { width: '44%', color: '#5a7a5a', fontSize: 10 },
+  emptyBlock: {
+    marginTop: 24,
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   empty: {
     fontSize: 12,
     color: '#4a6a4a',
     textAlign: 'center',
-    marginTop: 24,
+    marginBottom: 12,
+  },
+  emptyEncourage: {
+    fontSize: 11,
+    color: '#00ff41',
+    textAlign: 'center',
+    letterSpacing: 1,
   },
   backButton: {
     borderWidth: 2,

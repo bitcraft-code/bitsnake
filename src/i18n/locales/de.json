@@ -65,6 +65,7 @@
     "moves": "Züge",
     "date": "Datum",
     "back": "← Zurück",
-    "empty": "Noch keine Spiele."
+    "empty": "Noch keine Spiele.",
+    "emptyEncourage": "Spiele dein erstes Spiel und komm in die Bestenliste!"
   }
 }

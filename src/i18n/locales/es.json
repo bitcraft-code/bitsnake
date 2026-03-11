@@ -65,6 +65,7 @@
     "moves": "Mov.",
     "date": "Fecha",
     "back": "← Volver",
-    "empty": "Aún no hay partidas."
+    "empty": "Aún no hay partidas.",
+    "emptyEncourage": "¡Juega tu primera partida y entra en el ranking!"
   }
 }

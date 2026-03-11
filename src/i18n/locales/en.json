@@ -65,6 +65,7 @@
     "moves": "Moves",
     "date": "Date",
     "back": "← Back",
-    "empty": "No games yet."
+    "empty": "No games yet.",
+    "emptyEncourage": "Play your first game and get on the board!"
   }
 }
