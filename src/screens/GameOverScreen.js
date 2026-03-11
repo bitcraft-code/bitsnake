@@ -18,7 +18,7 @@ const GameOverScreen = ({ score, highScore, moveCount = 0, elapsedSeconds = 0, o
   const timeStr = `${Math.floor(elapsedSeconds / 60)}:${(elapsedSeconds % 60).toString().padStart(2, '0')}`;
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} scrollEnabled={false} showsVerticalScrollIndicator={false}>
       <RetroText style={styles.title}>GAME OVER</RetroText>
       <View style={styles.titleLine} />
 

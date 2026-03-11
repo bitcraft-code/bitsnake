@@ -693,7 +693,7 @@ export default function App() {
 
   // Layout responsivo para mobile - estado 'playing'
   return wrapWithSafeArea(
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} scrollEnabled={false} showsVerticalScrollIndicator={false}>
       <View style={[styles.header, { width: gameBoardWidth }]}>
         <View style={styles.headerBlock}>
           <RetroText style={styles.scoreLabel}>{t('game.score')}</RetroText>
@@ -855,7 +855,7 @@ export default function App() {
                 <RetroText style={styles.drawerCloseText}>✕</RetroText>
               </Pressable>
             </View>
-            <ScrollView style={styles.drawerContent}>
+            <ScrollView style={styles.drawerContent} scrollEnabled={false} showsVerticalScrollIndicator={false}>
               <View style={styles.optionRow}>
                 <RetroText style={styles.optionLabel}>
                   {t('game.optionGhostWalls')}

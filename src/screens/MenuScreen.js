@@ -54,6 +54,8 @@ const MenuScreen = ({
         </View>
         <ScrollView
           contentContainerStyle={styles.container}
+          scrollEnabled={false}
+          showsVerticalScrollIndicator={false}
           style={styles.scrollFill}
         >
         <View style={styles.contentBack} pointerEvents="box-none">
@@ -100,7 +102,7 @@ const MenuScreen = ({
                 <RetroText style={styles.modalCloseText}>✕</RetroText>
               </Pressable>
             </View>
-            <ScrollView style={styles.modalContent}>
+            <ScrollView style={styles.modalContent} scrollEnabled={false} showsVerticalScrollIndicator={false}>
               <View style={styles.optionRow}>
                 <RetroText style={styles.optionLabel}>{t('game.optionGhostWalls')}</RetroText>
                 <OptionCheckbox

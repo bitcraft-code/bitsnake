@@ -39,7 +39,7 @@ const LeaderboardScreen = ({ entries = [], onBack }) => {
         <RetroText style={[styles.th, styles.thDate]}>{t('leaderboard.date')}</RetroText>
       </View>
 
-      <ScrollView style={styles.list} contentContainerStyle={styles.listContent}>
+      <ScrollView style={styles.list} contentContainerStyle={styles.listContent} scrollEnabled={false} showsVerticalScrollIndicator={false}>
         {entries.length === 0 ? (
           <View style={styles.emptyBlock}>
             <RetroText style={styles.empty}>{t('leaderboard.empty')}</RetroText>

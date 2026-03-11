@@ -11,7 +11,7 @@ const InstructionsScreen = ({ onBack }) => {
       <RetroText style={styles.title}>{t('instructions.title')}</RetroText>
       <View style={styles.titleLine} />
 
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} scrollEnabled={false} showsVerticalScrollIndicator={false}>
         <View style={styles.section}>
           <RetroText style={styles.sectionTitle}>{t('instructions.howToPlay')}</RetroText>
           <RetroText style={styles.paragraph}>{t('menu.instruction1')}</RetroText>
