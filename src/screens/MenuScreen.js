@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import RetroText from '../components/RetroText';
 
-const MenuScreen = ({ onStart, onLeaderboard }) => {
+const MenuScreen = ({ onStart }) => {
   const { t } = useTranslation();
 
   return (
@@ -17,12 +17,6 @@ const MenuScreen = ({ onStart, onLeaderboard }) => {
       <TouchableOpacity onPress={onStart} style={styles.startButton} activeOpacity={0.7}>
         <RetroText style={styles.buttonText}>{t('menu.startGame')}</RetroText>
       </TouchableOpacity>
-
-      {onLeaderboard ? (
-        <TouchableOpacity onPress={onLeaderboard} style={styles.leaderboardButton} activeOpacity={0.7}>
-          <RetroText style={styles.leaderboardButtonText}>{t('menu.leaderboard')}</RetroText>
-        </TouchableOpacity>
-      ) : null}
 
       <View style={styles.instructions}>
         <RetroText style={styles.instructionTitle}>{t('menu.howToPlay')}</RetroText>
@@ -92,21 +86,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 12,
     elevation: 8,
-  },
-  leaderboardButton: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#00aa33',
-    paddingVertical: 10,
-    paddingHorizontal: 32,
-    borderRadius: 4,
-    marginTop: 12,
-  },
-  leaderboardButtonText: {
-    color: '#00aa33',
-    fontSize: 12,
-    letterSpacing: 2,
-    textTransform: 'uppercase',
   },
   buttonText: {
     color: '#00ff41',

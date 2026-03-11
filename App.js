@@ -494,7 +494,7 @@ export default function App() {
 
   // RENDERIZAÇÃO CONDICIONAL BASEADA NO ESTADO DO JOGO
   if (gameState === 'menu') {
-    return <MenuScreen onStart={initGame} onLeaderboard={goLeaderboard} />;
+    return <MenuScreen onStart={initGame} />;
   }
 
   if (gameState === 'leaderboard') {
@@ -700,6 +700,16 @@ export default function App() {
                   ))}
                 </View>
               </View>
+              <Pressable
+                onPress={() => {
+                  closeOptions();
+                  goLeaderboard();
+                }}
+                style={({ pressed }) => [styles.optionRow, styles.optionRowPressable, pressed && styles.btnPressed]}
+              >
+                <RetroText style={styles.optionLabel}>{t('menu.leaderboard')}</RetroText>
+                <RetroText style={styles.optionRowArrow}>›</RetroText>
+              </Pressable>
             </ScrollView>
           </View>
         </View>
@@ -801,6 +811,15 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING,
     borderBottomWidth: 1,
     borderBottomColor: '#1a3322',
+  },
+  optionRowPressable: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#1a3322',
+  },
+  optionRowArrow: {
+    fontFamily: FONT_FAMILY,
+    fontSize: 18,
+    color: '#00ff41',
   },
   optionLabel: {
     fontFamily: FONT_FAMILY,
